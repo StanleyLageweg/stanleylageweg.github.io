@@ -1,10 +1,14 @@
 [![Jekyll](https://img.shields.io/badge/jekyll-%3E%3D%203.7-blue.svg)](https://jekyllrb.com/)
 
-## Development
+## Development Setup
 
-To set up your environment, run `bundle install`.
+Download the prerequisites, as per the [Jekyll documentation](https://jekyllrb.com/docs/installation/#requirements).  
+For Windows, install [Ruby+Devkit](https://rubyinstaller.org/downloads/), making sure to run the `ridk install` step to install MSYS2 and the MINGW development toolchain.
 
-To test the site, run `bundle exec rake serve` and open your browser at `http://localhost:4000/`. As modifications are made to the site, it will regenerate and you should see the changes in the browser after a refresh.
+In the cloned repo, run `npm install` and `bundle install`.
+
+To test the site, run `bundle exec rake serve` and open your browser at `http://localhost:4000/`.  
+As modifications are made to the site's source, the site will be rebuild and you should see the changes in the browser after a refresh.
 
 ## Credits
 
