@@ -1,0 +1,121 @@
+$timeline-dot-size: 1rem;
+$timeline-small-dot-size: 0.75rem;
+$timeline-line-thickness: 0.2rem;
+$timeline-line-margin: 1.25rem;
+$timeline-vertical-spacing: 0.8rem;
+$timeline-horizontal-spacing: 0.8rem;
+$timeline-image-size: 3.5rem;
+
+.timeline__body {
+  position: relative;
+  margin-left: $timeline-dot-size;
+  padding: 1px 0;
+  border-radius: 0 $border-radius $border-radius 0;
+  background-color: $lighter-gray;
+
+  p {
+    margin: 0;
+  }
+}
+
+.timeline__item {
+  position: relative;
+  margin: $timeline-vertical-spacing $timeline-horizontal-spacing $timeline-vertical-spacing $timeline-line-margin;
+
+  // Seperator lines
+  &:not(:last-of-type) {
+    border-bottom: 1px solid $light-gray;
+  }
+}
+
+.timeline__header {
+  display:flex;
+  position: relative;
+  flex-wrap: nowrap;
+  align-items: center;
+  column-gap: $timeline-horizontal-spacing;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+.timeline__image {
+  flex-shrink: 0;
+  width: $timeline-image-size;
+  height: $timeline-image-size;
+  border-radius: $border-radius;
+  overflow: hidden;
+  background-color: white;
+  
+  img {
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+.timeline__title {
+  font-weight: bold;
+  font-size: $type-size-4;
+}
+
+.timeline__date {
+  color: $muted-text-color;
+  font-size: $type-size-6;
+}
+
+.timeline__position {
+  position: relative;
+  margin: $timeline-vertical-spacing 0;
+}
+
+.timeline__position-title {
+  font-weight: bold;
+  font-size: $type-size-5;
+}
+
+.timeline__description {
+  font-size: $type-size-6;
+}
+
+// Line
+.timeline__body:after {
+  position: absolute;
+  top: 0;
+  left: calc(-#{$timeline-line-thickness});
+  box-sizing: border-box;
+  width: $timeline-line-thickness;
+  height: 100%;
+  content: "";
+  background-color: $primary-color;
+}
+
+@mixin timeline-dot($size, $bg-color) {
+  z-index: 10;
+  position: absolute;
+  top: calc(50% - #{$size} / 2);
+  left: calc((-#{$size} - #{$timeline-line-thickness}) / 2 - #{$timeline-line-margin});
+  box-sizing: border-box;
+  width: $size;
+  height: $size;
+  border-radius: 50%;
+  content: "";
+  background-color: $bg-color;
+}
+
+.timeline__item {
+  > .timeline__header::after {
+    @include timeline-dot($timeline-dot-size, $primary-color);
+  }
+
+  > .timeline__position::after {
+    @include timeline-dot($timeline-small-dot-size, $lighter-gray);
+    border: $timeline-line-thickness solid $primary-color;
+  }
+}
+

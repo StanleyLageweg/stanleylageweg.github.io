@@ -1,0 +1,12 @@
+---
+layout: archive
+---
+{%- assign locale = page.locale | default: layout.locale | default: site.locale %}
+
+<h2>Work Experience</h2>
+{% include timeline.html items=site.data.work-experience-timeline show_durations=true %}
+
+<h2>Education</h2>
+{% include timeline.html items=site.data.education-timeline %}
+
+{{ content }}

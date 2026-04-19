@@ -1,0 +1,13 @@
+﻿{% if include.from %}
+  {% assign to = include.to | default: 'Present' %}
+
+  {{ include.from }} - {{ to }}
+
+  {% if include.show_durations %}
+    <span
+      class="date-range-duration"
+      date-range-from="{{ include.from }}"
+      date-range-to="{{ to }}">
+    </span>
+  {% endif %}
+{% endif %}

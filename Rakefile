@@ -86,7 +86,7 @@ task :serve => %i[js] do
   Jekyll::Commands::Serve.process(options)
 end
 
-JS_FILES = ["assets/js/vendor/jquery/jquery-3.6.0.js"] + Dir.glob("assets/js/plugins/*.js") + ["assets/js/_main.js"]
+JS_FILES = ["assets/js/vendor/jquery/jquery-3.6.0.js"] + Dir.glob("assets/js/plugins/*.js") + Dir.glob("assets/js/custom/*.js") + ["assets/js/_main.js"]
 JS_TARGET = "assets/js/main.min.js"
 task :js => JS_TARGET
 file JS_TARGET => JS_FILES do |t|

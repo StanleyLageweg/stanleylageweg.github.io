@@ -128,10 +128,6 @@ blockquote {
 /* links */
 
 a {
-  &:focus {
-    @extend %tab-focus;
-  }
-
   &:visited {
     color: $link-color-visited;
   }

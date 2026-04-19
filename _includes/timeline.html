@@ -1,0 +1,65 @@
+<div class="timeline__body">
+  {% for item in include.items %}
+    <div class="timeline__item">
+      <div class="timeline__header">
+        {% if item.image %}
+          <div class="timeline__image">
+            {% if item.link %}
+              <a
+                href="{{ item.link }}"
+                title="{{ item.title }}"
+                target="_blank"
+                rel="noopener">
+            {% endif %}
+            <img src="{{ item.image }}" alt="{{ item.title }}" />
+            {% if item.link %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+        <div>
+          <p class="timeline__title">
+            {% if item.link %}
+              <a
+                href="{{ item.link }}"
+                title="{{ item.title }}"
+                target="_blank"
+                rel="noopener">
+            {% endif %}
+            {{ item.title }}
+            {% if item.link %}
+              </a>
+            {% endif %}
+          </p>
+          {% if item.from %}
+            <p class="timeline__date">
+              {% include date-range.html from=item.from to=item.to show_durations=include.show_durations %}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+      {% for position in item.positions %}
+        <div class="timeline__position">
+          <p class="timeline__position-title">
+            {{ position.title }}
+          </p>
+          {% if position.from %}
+            <p class="timeline__date">
+              {% include date-range.html from=position.from to=position.to show_durations=include.show_durations %}
+            </p>
+          {% endif %}
+          {% if position.description %}
+            <p class="timeline__description">
+              {{ position.description }}
+            </p>
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if item.description %}
+        <p class="timeline__description">
+          {{ item.description }}
+        </p>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
