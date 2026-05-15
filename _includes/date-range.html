@@ -1,13 +1,17 @@
-﻿{% if include.from %}
-  {% assign to = include.to | default: 'Present' %}
+﻿{% assign date_range__from = include.from %}
+{% assign date_range__to = include.to | default: 'Present' %}
+{% assign date_range__show_duration = include.show_duration | default: false %}
 
-  {{ include.from }} - {{ to }}
+{% if date_range__from %}
+  <p class="date-range">
+    {{ date_range__from }} - {{ date_range__to }}
 
-  {% if include.show_durations %}
-    <span
-      class="date-range-duration"
-      date-range-from="{{ include.from }}"
-      date-range-to="{{ to }}">
-    </span>
-  {% endif %}
+    {% if date_range__show_duration %}
+      <span
+        class="date-range__duration"
+        date-range-from="{{ date_range__from }}"
+        date-range-to="{{ date_range__to }}">
+      </span>
+    {% endif %}
+  </p>
 {% endif %}

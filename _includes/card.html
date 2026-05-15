@@ -1,0 +1,64 @@
+{% assign locale = include.locale | default: site.locale %}
+
+{% assign card__title = include.title | nil_default: include.card.title %}
+{% required card__title %}
+{% assign card__image = include.image | nil_default: include.card.image %}
+{% assign card__from = include.from | nil_default: include.card.from %}
+{% assign card__to = include.to | nil_default: include.card.to %}
+{% assign card__show_duration = include.show_duration | nil_default: include.card.show_duration %}
+{% assign card__tags = include.tags | nil_default: include.card.tags %}
+{% assign card__excerpt = include.excerpt | nil_default: include.card.excerpt %}
+{% assign card__link = include.link | nil_default: include.card.link %}
+{% assign card__collapsed_content = include.collapsed_content | nil_default: include.card.collapsed_content %}
+
+{% capture card__card %}
+  <div class="card card__horizontal">
+    {% if card__image %}
+    <div class="card__image">
+      <img src="{{ card__image | relative_url }}">
+    </div>
+    {% endif %}
+    <div class="card__text">
+      <div class="card__header">
+        {% if card__link %}
+        <div class="card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="7" y1="17" x2="17" y2="7"/>
+            <polyline points="8 7 17 7 17 16"/>
+          </svg>
+        </div>
+        {% elsif card__collapsed_content %}
+        <div class="card__icon">
+          <svg class="animated-details__rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </div>
+        {% endif %}
+        <h3 class="card__title">{{ card__title }}</h3>
+        {% include date-range.html from=card__from to=card__to show_duration=card__show_duration %}
+      </div>
+      <div class="card__content">
+        {% if card__excerpt %}
+        <p class="card__excerpt">{{ card__excerpt }}</p>
+        {% endif %}
+        <div>
+          {% for tag in card__tags %}
+            {% include tag.html tag=tag link=false %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endcapture %}
+
+<div class="card__wrapper">
+  {% if card__link %}
+  <a class="card__link" href="{{ card__link }}">
+    {{ card__card }}
+  </a>
+  {% elsif card__collapsed_content %}
+    {% include animated-details.html summary=card__card content=card__collapsed_content %}
+  {% else %}
+    {{ card__card }}
+  {% endif %}
+</div>

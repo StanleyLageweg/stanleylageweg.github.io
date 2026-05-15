@@ -31,11 +31,7 @@
               </a>
             {% endif %}
           </p>
-          {% if item.from %}
-            <p class="timeline__date">
-              {% include date-range.html from=item.from to=item.to show_durations=include.show_durations %}
-            </p>
-          {% endif %}
+          {% include date-range.html from=item.from to=item.to show_duration=include.show_durations %}
         </div>
       </div>
       {% for position in item.positions %}

@@ -309,6 +309,15 @@ compress_html:
     envs: development
 
 
+collections:
+  portfolio:
+    output: true
+    permalink: /:path/
+    order:
+      - Metro-Awakening.md
+      - Deliver-Us-Mars.md
+
+
 # Defaults
 defaults:
   # _posts
@@ -322,4 +331,12 @@ defaults:
       comments: # true
       share: true
       related: true
+  # _portfolio
+  - scope:
+      path: ""
+      type: portfolio
+    values:
+      layout: single
+      author_profile: false
+      share: false
 

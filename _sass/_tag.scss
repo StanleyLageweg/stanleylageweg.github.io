@@ -1,0 +1,21 @@
+.tag, a.tag {
+  $font-size: $type-size-6;
+  gap: 0.5 * $font-size;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25 * $font-size 0.5 * $font-size;
+  border-radius: $border-radius;
+  color: inherit;
+  font-size: $font-size;
+  text-decoration: none;
+  vertical-align: middle;
+  background: $lighter-gray;
+
+  img, svg {
+    height: 1.5em;
+  }
+}
+
+a.tag:hover {
+  text-decoration: underline;
+}

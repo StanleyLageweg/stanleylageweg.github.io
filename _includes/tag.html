@@ -1,0 +1,36 @@
+{% required include.tag %}
+
+{% if include.tag.first %}
+  {% assign tag__text = include.tag.tag %}
+  {% assign tag__image = include.image | nil_default: include.tag.image %}
+  {% assign tag__link = include.link | nil_default: include.tag.link %}
+{% else %}
+  {% assign tag__data = site.data.tags[include.tag] %}
+  {% assign tag__text = tag__data.tag | nil_default: include.tag %}
+  {% assign tag__image = include.image | nil_default: tag__data.image %}
+  {% assign tag__link = include.link | nil_default: tag__data.link %}
+{% endif %}
+
+{% if tag__image %}
+  {% capture tag__icon %}
+    <img src="{{ tag__image }}" alt="{{ tag__text }} icon" />
+  {% endcapture %}
+{% else %}
+  {% assign tag__icon = "" %}
+{% endif %}
+
+{% if tag__link %}
+
+<a class="tag" href="{{ tag__link }}" onclick="event.stopPropagation()" target="_blank" rel="noopener">
+  {{ tag__icon }}
+  {{ tag__text }}
+</a>
+
+{% else %}
+
+<span class="tag" onclick="event.stopPropagation()">
+  {{ tag__icon }}
+  {{ tag__text }}
+</span>
+
+{% endif %}

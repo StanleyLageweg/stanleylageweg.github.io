@@ -1,7 +1,7 @@
 jQuery(function() {
 
 function updateDateRangeDurations() {
-	const nodes = document.querySelectorAll(".date-range-duration");
+	const nodes = document.querySelectorAll(".date-range__duration");
 
 	for (const node of nodes) {
 		const fromString = node.getAttribute("date-range-from");

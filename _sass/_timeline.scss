@@ -5,13 +5,16 @@ $timeline-line-margin: 1.25rem;
 $timeline-vertical-spacing: 0.8rem;
 $timeline-horizontal-spacing: 0.8rem;
 $timeline-image-size: 3.5rem;
+$timeline-background-color: $background-color;
+$timeline-color: $primary-color;
 
 .timeline__body {
   position: relative;
   margin-left: $timeline-dot-size;
   padding: 1px 0;
   border-radius: 0 $border-radius $border-radius 0;
-  background-color: $lighter-gray;
+  background-color: $timeline-background-color;
+  box-shadow: $box-shadow;
 
   p {
     margin: 0;
@@ -55,18 +58,14 @@ $timeline-image-size: 3.5rem;
   
   img {
     object-fit: cover;
-    object-position: center;
+    width: 100%;
+    height: 100%;
   }
 }
 
 .timeline__title {
   font-weight: bold;
   font-size: $type-size-4;
-}
-
-.timeline__date {
-  color: $muted-text-color;
-  font-size: $type-size-6;
 }
 
 .timeline__position {
@@ -92,7 +91,7 @@ $timeline-image-size: 3.5rem;
   width: $timeline-line-thickness;
   height: 100%;
   content: "";
-  background-color: $primary-color;
+  background-color: $timeline-color;
 }
 
 @mixin timeline-dot($size, $bg-color) {
@@ -110,12 +109,12 @@ $timeline-image-size: 3.5rem;
 
 .timeline__item {
   > .timeline__header::after {
-    @include timeline-dot($timeline-dot-size, $primary-color);
+    @include timeline-dot($timeline-dot-size, $timeline-color);
   }
 
   > .timeline__position::after {
-    @include timeline-dot($timeline-small-dot-size, $lighter-gray);
-    border: $timeline-line-thickness solid $primary-color;
+    @include timeline-dot($timeline-small-dot-size, $timeline-background-color);
+    border: $timeline-line-thickness solid $timeline-color;
   }
 }
 

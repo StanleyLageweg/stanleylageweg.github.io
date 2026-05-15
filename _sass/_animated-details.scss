@@ -1,0 +1,73 @@
+details.animated-details {
+  overflow: hidden;
+
+  &[open] .animated-details__rotate {
+    transform: rotate(180deg);
+  }
+}
+
+summary.animated-details__summary {
+  list-style: none;
+
+  &:hover {
+    cursor: pointer;
+
+    h1, h2, h3, h4, h5, h6 {
+      text-decoration: underline;
+    }
+  }
+}
+
+summary.animated-details__summary::-webkit-details-marker {
+  display: none;
+}
+
+.animated-details__content {
+  overflow: hidden;
+}
+
+.animated-details__rotate {
+  transition: transform var(--animatedDetails-duration-transition) ease-out;
+}
+
+// Details animation, using new css features
+@supports (interpolate-size: allow-keywords) and (transition-behavior: allow-discrete) {
+  @supports #{"selector(::details-content)"} {
+    details.animated-details {
+      interpolate-size: allow-keywords;
+
+      &::details-content {
+        block-size: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: block-size var(--animatedDetails-duration-transition) ease-out,
+                    content-visibility var(--animatedDetails-duration-transition) ease-out,
+                    opacity var(--animatedDetails-duration-transition) ease-out;
+        transition-behavior: allow-discrete;
+      }
+
+      &[open]::details-content {
+        block-size: auto;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Details animation fallback, requiring javascript
+@supports not ((interpolate-size: allow-keywords) and (transition-behavior: allow-discrete)) {
+  @supports #{"not selector(::details-content)"} {
+    details.animated-details[open].animated-details--open > .animated-details__content-wrapper {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .animated-details__content-wrapper {
+      grid-template-rows: 0fr;
+      display: grid;
+      opacity: 0;
+      transition: grid-template-rows var(--animatedDetails-duration-transition) ease-out, 
+                  opacity var(--animatedDetails-duration-transition) ease-out;
+    }
+  }
+}

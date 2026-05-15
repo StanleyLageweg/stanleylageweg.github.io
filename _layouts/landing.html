@@ -3,6 +3,17 @@ layout: archive
 ---
 {%- assign locale = page.locale | default: layout.locale | default: site.locale %}
 
+<div class="landing__cards">
+  {%- for entry in site["portfolio"] -%}
+    {% if entry.output %}
+      {% assign link = entry.url %}
+    {% else %}
+      {% assign link = nil %}
+    {% endif %}
+    {% include card.html card=entry.card link=link show_duration=true locale=locale %}
+  {%- endfor -%}
+</div>
+
 <h2>Work Experience</h2>
 {% include timeline.html items=site.data.work-experience-timeline show_durations=true %}
 

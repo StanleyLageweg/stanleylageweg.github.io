@@ -208,7 +208,8 @@ $right-sidebar-width-wide: 400px !default;
    ========================================================================== */
 
 $border-radius: 4px !default;
-$box-shadow: 0 1px 1px rgba(0, 0, 0, 0.125) !default;
+$box-shadow: 3px 6px 25px 0px rgba(0, 0, 0, 0.1);
+$box-shadow-hover: 6px 12px 35px rgba(0, 0, 0, 0.2);
 $nav-height: 2em !default;
 $nav-toggle-height: 2rem !default;
 $navicon-width: 1.5rem !default;
