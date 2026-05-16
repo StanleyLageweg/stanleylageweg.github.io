@@ -1,6 +1,9 @@
 $card-spacing: 0.8rem;
+$card-image-aspect-ratio: 16 / 9;
+$card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 
 .card__wrapper {
+  container-type: inline-size;
   border-radius: $border-radius;
   overflow: hidden;
   box-shadow: $box-shadow;
@@ -12,11 +15,11 @@ $card-spacing: 0.8rem;
 }
 
 .card__image {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: #{$card-image-aspect-ratio};
   flex-shrink: 0;
-  width: 10rem / 9 * 16;
-  max-width: 50%;
+  width: $card-image-width;
   overflow: hidden;
+  transition: width $global-transition-timing;
 
   img {
     object-fit: cover;
@@ -27,13 +30,10 @@ $card-spacing: 0.8rem;
 
 .card__text {
   display: flex;
+  flex-shrink: 0;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - #{$card-image-width} - 2 * #{$card-spacing});
   margin: $card-spacing;
-}
-
-.card__header {
-  width: 100%;
 }
 
 .card__title {
@@ -57,7 +57,6 @@ $card-spacing: 0.8rem;
   flex-grow: 1;
   flex-direction: column;
   justify-content: space-evenly;
-  width: 100%;
 }
 
 .card__excerpt {
@@ -83,5 +82,19 @@ a.card__link {
     .card__title {
       text-decoration: underline;
     }
+  }
+}
+
+@container (max-width: 650px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .card__image {
+    width: 100%;
+  }
+
+  .card__text {
+    width: calc(100% - 2 * #{$card-spacing});
   }
 }

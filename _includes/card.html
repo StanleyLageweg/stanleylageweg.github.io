@@ -12,7 +12,7 @@
 {% assign card__collapsed_content = include.collapsed_content | nil_default: include.card.collapsed_content %}
 
 {% capture card__card %}
-  <div class="card card__horizontal">
+  <div class="card">
     {% if card__image %}
     <div class="card__image">
       <img src="{{ card__image | relative_url }}">
