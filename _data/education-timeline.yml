@@ -1,5 +1,5 @@
 - title: Delft University of Technology
-  image: /assets/images/education/TU Delft.jpg
+  image: /assets/images/education/tu_delft.jpg
   link: https://www.tudelft.nl/
   positions:
     - title: BSc Computer Science and Engineering
@@ -7,7 +7,7 @@
       to: July 2020
       description: Cum Laude
 - title: Leiden University
-  image: /assets/images/education/Leiden University.png
+  image: /assets/images/education/leiden_university.png
   link: https://www.universiteitleiden.nl/
   positions:
     - title: Minor Game Studies and Cultural Analysis
