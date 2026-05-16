@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 
+ruby file: ".ruby-version"
+
 gem "jekyll", ">= 3.7", "< 5.0"
 gem "jekyll-paginate", "~> 1.1"
 gem "jekyll-sass-converter", "~> 2.2" # Locked to 2.2, as newer versions cause deprecation warnings. The theme would need to be refactored to support Dart Sass.
