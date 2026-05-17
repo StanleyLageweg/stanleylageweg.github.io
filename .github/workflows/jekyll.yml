@@ -32,6 +32,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install Node.js packages
+        run: npm ci
+
       - name: Configure GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
