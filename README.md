@@ -7,7 +7,7 @@ For Windows, install [Ruby+Devkit](https://rubyinstaller.org/downloads/), making
 
 In the cloned repo, run `npm install` and `bundle install`.
 
-To test the site, run `bundle exec rake serve` and open your browser at `http://localhost:4000/`.  
+To test the site, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000/`.  
 As modifications are made to the site's source, the site will be rebuild and you should see the changes in the browser after a refresh.
 
 ## Credits
