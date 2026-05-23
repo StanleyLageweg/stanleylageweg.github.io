@@ -10,6 +10,7 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
+    "html-minifier-terser": "^7.2.0",
     "uglify-js": "^3.17.4"
   }
 }

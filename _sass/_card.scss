@@ -64,6 +64,12 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   font-size: $type-size-6;
 }
 
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $card-spacing / 3;
+}
+
 a.card__link {
   color: inherit;
   text-decoration: inherit;

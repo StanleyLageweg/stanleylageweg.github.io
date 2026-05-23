@@ -41,7 +41,7 @@
         {% if card__excerpt %}
         <p class="card__excerpt">{{ card__excerpt }}</p>
         {% endif %}
-        <div>
+        <div class="card__tags">
           {% for tag in card__tags %}
             {% include tag.html tag=tag link=false %}
           {% endfor %}

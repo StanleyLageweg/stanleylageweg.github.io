@@ -21,7 +21,8 @@ Jekyll::Hooks.register :site, :pre_render do |site|
   target_map_file = File.join(site.dest, target_map)
   target_mtime = File.exist?(target_file) ? File.mtime(target_file) : Time.at(0)
   target_map_mtime = File.exist?(target_map_file) ? File.mtime(target_map_file) : Time.at(0)
-  needs_rebuild = JS_FILES.any? { |file| File.mtime(file) > [target_mtime, target_map_mtime].min }
+  needs_rebuild = !site.config['incremental'] ||
+    JS_FILES.any? { |file| File.mtime(file) > [target_mtime, target_map_mtime].min }
 
   if needs_rebuild
     started_at = Time.now
