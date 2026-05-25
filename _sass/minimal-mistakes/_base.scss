@@ -215,7 +215,7 @@ figure {
   &.half {
     > a,
     > img {
-      @include breakpoint($small) {
+      @media (min-width: $small) {
         width: calc(50% - 0.5em);
       }
     }
@@ -228,7 +228,7 @@ figure {
   &.third {
     > a,
     > img {
-      @include breakpoint($small) {
+      @media (min-width: $small) {
         width: calc(33.3333% - 0.5em);
       }
     }

@@ -26,9 +26,6 @@ Minimal Mistakes incorporates [Susy](http://susy.oddbird.net/).
 Copyright (c) 2017, Miriam Eric Suzanne.  
 Susy is distributed under the terms of the [BSD 3-clause "New" or "Revised" License](https://opensource.org/licenses/BSD-3-Clause).
 
-Minimal Mistakes incorporates [Breakpoint](http://breakpoint-sass.com/).  
-Breakpoint is distributed under the terms of the [MIT/GPL Licenses](http://opensource.org/licenses/MIT).
-
 Minimal Mistakes incorporates [FitVids.js](https://github.com/davatron5000/FitVids.js/).  
 Copyright (c) 2013 Dave Rubert and Chris Coyier.  
 FitVids is distributed under the terms of the [WTFPL License](http://www.wtfpl.net/).
