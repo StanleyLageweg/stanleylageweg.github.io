@@ -27,6 +27,8 @@ Jekyll::Hooks.register :site, :pre_render do |site|
     started_at = Time.now
     Jekyll.logger.info("Javascript Minify:", "starting.")
 
+    FileUtils.mkdir_p(File.dirname(target_file))
+
     system(
       "npx", "uglifyjs",
       "-c",
