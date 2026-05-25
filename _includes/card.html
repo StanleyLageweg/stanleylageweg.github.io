@@ -1,5 +1,3 @@
-{% assign locale = include.locale | default: site.locale %}
-
 {% assign card__title = include.title | nil_default: include.card.title %}
 {% required card__title %}
 {% assign card__image = include.image | nil_default: include.card.image %}

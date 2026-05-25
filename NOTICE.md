@@ -53,17 +53,9 @@ Minimal Mistakes incorporates [GreedyNav.js](https://github.com/lukejacksonn/Gre
 Copyright (c) 2015 Luke Jackson.  
 GreedyNav.js is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates [Jekyll Group-By-Array](https://github.com/mushishi78/jekyll-group-by-array).  
-Copyright (c) 2015 Max White <mushishi78@gmail.com>.  
-Jekyll Group-By-Array is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
 Minimal Mistakes incorporates [@allejo's Pure Liquid Jekyll Table of Contents](https://allejo.io/blog/a-jekyll-toc-in-liquid-only/).  
 Copyright (c) 2017 Vladimir Jimenez.  
 Pure Liquid Jekyll Table of Contents is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-Minimal Mistakes incorporates [Lunr](http://lunrjs.com).  
-Copyright (c) 2018 Oliver Nightingale.  
-Lunr is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
 Minimal Mistakes incorporates [clipboard.js](https://clipboardjs.com/).  
 Copyright (c) 2021 Zeno Rocha.  

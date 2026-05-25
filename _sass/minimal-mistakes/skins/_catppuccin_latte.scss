@@ -46,7 +46,6 @@ $border-color: transparent !default;
 $code-background-color: mix2(#000, $background-color, 15%) !default;
 $code-background-color-dark: mix(#000, $background-color, 20%) !default;
 $form-background-color: mix(#000, $background-color, 15%) !default;
-$footer-background-color: map-get(map-get($palette, "latte"), "mantle") !default;
 $masthead-link-color: $text-color !default;
 $masthead-link-color-hover: mix(#000, $text-color, 20%) !default;
 $navicon-link-color-hover: mix(#000, $background-color, 30%) !default;
@@ -82,12 +81,6 @@ $masthead-link-color-hover: mix(#000, $primary-color, 25%) !default;
 $navicon-link-color-hover: mix(#fff, $primary-color, 75%) !default;
 
 .author__urls.social-icons i,
-.author__urls.social-icons .svg-inline--fa,
-.page__footer-follow .social-icons i,
-.page__footer-follow .social-icons .svg-inline--fa  {
+.author__urls.social-icons .svg-inline--fa {
   color: inherit;
-}
-
-.ais-search-box .ais-search-box--input {
-  background-color: $form-background-color;
 }

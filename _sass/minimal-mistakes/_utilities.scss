@@ -468,18 +468,6 @@ a.reversefootnote {
 }
 
 /*
-   Google Custom Search Engine
-   ========================================================================== */
-
-.gsc-control-cse {
-  table,
-  tr,
-  td {
-    border: 0; /* remove table borders widget */
-  }
-}
-
-/*
    Responsive Video Embed
    ========================================================================== */
 
@@ -504,8 +492,7 @@ a.reversefootnote {
 
 // full screen video fixes
 :-webkit-full-screen-ancestor {
-  .masthead,
-  .page__footer {
+  .masthead {
     position: static;
   }
 }
