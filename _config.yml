@@ -328,6 +328,7 @@ defaults:
       comments: # true
       share: true
       related: true
+      masthead: true
   # _portfolio
   - scope:
       path: ""
@@ -336,4 +337,5 @@ defaults:
       layout: single
       author_profile: false
       share: false
+      masthead: true
 

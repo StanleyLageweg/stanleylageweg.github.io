@@ -1,5 +1,5 @@
 ---
-title: "Metro Awakening"
+title: Metro Awakening
 output: false
 card:
   image: /assets/images/vertigo/impact/metro_awakening.png

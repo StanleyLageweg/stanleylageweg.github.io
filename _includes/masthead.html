@@ -1,6 +1,7 @@
 {% assign locale = include.locale | default: site.locale %}
 {% capture logo_path %}{{ site.logo }}{% endcapture %}
 
+{% if page.masthead or layout.masthead %}
 <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
@@ -38,3 +39,4 @@
     </div>
   </div>
 </div>
+{% endif %}
