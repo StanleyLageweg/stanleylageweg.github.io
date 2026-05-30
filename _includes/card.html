@@ -1,5 +1,12 @@
+
+{% if include.card %}
+  {% validate_fields include required="card" optional="title, image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
+  {% validate_fields include.card required="title" optional="image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
+{% else %}
+  {% validate_fields include required="title" optional="image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
+{% endif %}
+
 {% assign card__title = include.title | nil_default: include.card.title %}
-{% required card__title %}
 {% assign card__image = include.image | nil_default: include.card.image %}
 {% assign card__from = include.from | nil_default: include.card.from %}
 {% assign card__to = include.to | nil_default: include.card.to %}

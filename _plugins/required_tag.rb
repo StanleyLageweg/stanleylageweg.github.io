@@ -8,7 +8,7 @@ module Jekyll
     end
 
     def render(context)
-      value = context[@markup]
+      value = Liquid::VariableLookup.parse(@markup).evaluate(context)
       if value.nil? || (value.respond_to?(:empty?) && value.empty?)
         raise Liquid::Error, "Missing parameter '#{@markup}'."
       end

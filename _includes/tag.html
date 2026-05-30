@@ -1,11 +1,13 @@
-{% required include.tag %}
+{% validate_fields include required="tag" optional="image, link" %}
 
 {% if include.tag.first %}
+  {% validate_fields include.tag optional="tag, image, link" %}
   {% assign tag__text = include.tag.tag %}
   {% assign tag__image = include.image | nil_default: include.tag.image %}
   {% assign tag__link = include.link | nil_default: include.tag.link %}
 {% else %}
   {% assign tag__data = site.data.tags[include.tag] %}
+  {% validate_fields tag__data optional="tag, image, link" %}
   {% assign tag__text = tag__data.tag | nil_default: include.tag %}
   {% assign tag__image = include.image | nil_default: tag__data.image %}
   {% assign tag__link = include.link | nil_default: tag__data.link %}

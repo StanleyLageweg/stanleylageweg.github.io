@@ -1,5 +1,8 @@
+{% validate_fields include required="items" optional="show_durations" %}
+
 <div class="timeline__body">
   {% for item in include.items %}
+    {% validate_fields item required="title" optional="from, to, image, link, description, positions" %}
     <div class="timeline__item">
       <div class="timeline__header">
         {% if item.image %}
@@ -35,14 +38,13 @@
         </div>
       </div>
       {% for position in item.positions %}
+        {% validate_fields position required="title" optional="from, to, description" %}
         <div class="timeline__position">
           <p class="timeline__position-title">
             {{ position.title }}
           </p>
           {% if position.from %}
-            <p class="timeline__date">
-              {% include date-range.html from=position.from to=position.to show_durations=include.show_durations %}
-            </p>
+            {% include date-range.html from=position.from to=position.to show_duration=include.show_durations %}
           {% endif %}
           {% if position.description %}
             <p class="timeline__description">

@@ -1,9 +1,7 @@
+{% validate_fields animated_details required="summary, content" optional="animation_duration" %}
+
 {% assign animated_details__summary = include.summary %}
-{% required animated_details__summary %}
-
 {% assign animated_details__content = include.content %}
-{% required animated_details__content %}
-
 {% assign animated_details__animation-duration = include.animation_duration | default: "0.3s" %}
 
 <details class="animated-details" style="--animatedDetails-duration-transition: {{ animated_details__animation-duration }};">

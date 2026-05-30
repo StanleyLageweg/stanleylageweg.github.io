@@ -1,4 +1,6 @@
-﻿{% assign date_range__from = include.from %}
+﻿{% validate_fields include optional="from, to, show_duration" %}
+
+{% assign date_range__from = include.from %}
 {% assign date_range__to = include.to | default: 'Present' %}
 {% assign date_range__show_duration = include.show_duration | default: false %}
 
