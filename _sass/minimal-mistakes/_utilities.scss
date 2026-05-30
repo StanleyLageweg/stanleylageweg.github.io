@@ -345,7 +345,7 @@ $text-alignments: left, right, start, end, center, justify;
     @include clearfix();
     position: -webkit-sticky;
     position: sticky;
-    top: 2em;
+    top: 1em;
 
     > * {
       display: block;
