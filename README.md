@@ -26,8 +26,6 @@ As modifications are made to the site's source, the site will be rebuild and you
 
 - [Jekyll](http://jekyllrb.com/)
 - [jQuery](http://jquery.com/)
-- [Susy](http://susy.oddbird.net/)
-- [Breakpoint](http://breakpoint-sass.com/)
 - [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
 - [FitVids.JS](http://fitvidsjs.com/)
 - [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav)

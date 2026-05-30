@@ -170,14 +170,6 @@ $text-alignments: left, right, start, end, center, justify;
   margin-inline: auto;
 }
 
-/* file page content container */
-
-.full {
-  @media (min-width: $large) {
-    margin-inline-end: -1 * span(2.5 of 12) !important;
-  }
-}
-
 /*
    Icons
    ========================================================================== */

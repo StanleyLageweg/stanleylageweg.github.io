@@ -20,10 +20,6 @@ Copyright (c) 2017 Dave Gandy.
 Font Awesome is distributed under the terms of the [SIL OFL 1.1](http://scripts.sil.org/OFL) 
 and [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates [Susy](http://susy.oddbird.net/).  
-Copyright (c) 2017, Miriam Eric Suzanne.  
-Susy is distributed under the terms of the [BSD 3-clause "New" or "Revised" License](https://opensource.org/licenses/BSD-3-Clause).
-
 Minimal Mistakes incorporates [FitVids.js](https://github.com/davatron5000/FitVids.js/).  
 Copyright (c) 2013 Dave Rubert and Chris Coyier.  
 FitVids is distributed under the terms of the [WTFPL License](http://www.wtfpl.net/).
