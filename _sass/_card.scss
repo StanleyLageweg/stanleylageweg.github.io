@@ -7,6 +7,7 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   border-radius: $border-radius;
   overflow: hidden;
   box-shadow: $box-shadow;
+  margin: 0.75em 0;
 }
 
 .card {

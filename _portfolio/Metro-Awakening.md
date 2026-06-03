@@ -5,7 +5,7 @@ card:
   image: /assets/images/vertigo/impact/metro_awakening.png
   title: Metro Awakening
   from: Sept. 2022
-  to: Dec 2024
+  to: Dec. 2024
   excerpt: A story-driven first person adventure built exclusively for VR that blends atmospheric exploration, stealth and combat.
   tags:
   - tag: VR Game of the Year

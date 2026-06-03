@@ -10,6 +10,14 @@ In the cloned repo, run `npm install` and `bundle install`.
 To test the site, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000/`.  
 As modifications are made to the site's source, the site will be rebuild and you should see the changes in the browser after a refresh.
 
+## Math rendering
+
+Math is rendered at build time to MathML (via kramdown + KaTeX), so no client-side math rendering script is needed.
+
+- Inline math supports `$...$` and `$$...$$`.
+- Block math uses `$$` on separate lines.
+- Escape literal dollar signs with `\$`.
+
 ## Credits
 
 ### Jekyll theme

@@ -9,6 +9,7 @@ def minify_html(file)
   stdout, stderr, status = Open3.capture3('npx', 'html-minifier-terser',
     '--collapse-boolean-attributes',
     '--collapse-whitespace',
+    '--conservative-collapse',
     '--minify-css',
     '--minify-js',
     '--minify-urls',
