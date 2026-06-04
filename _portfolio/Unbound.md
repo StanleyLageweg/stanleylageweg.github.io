@@ -19,9 +19,9 @@ For an unannounced VR action adventure game based on a AAA IP, I was responsible
 The sense of freedom was key. If it looked like the player could go somewhere, then it needed to be possible to do so.
 
 With these grand aspirations, came an extensive list of requirements. The player needed to be able to walk, run, crouch, jump, fall, dodge, slide, climb, mantle, zipline, swing on ropes, swim and wade. And all of this with the added complication of VR, where the player is able to physically move around as well.
-This was a massive technical undertaking that I owned end-to-end. Beyond the engineering work, I also played a key role in shaping the design itself, collaborating closely with a principal game designer ([Ruben Runhardt](https://rubenrunhardt.com/)) and the game director ([Kent Kune](http://www.kentyman.net/)) to ensure the system felt intuitive and satisfying.
+This was a massive technical undertaking that I owned end-to-end. Beyond the engineering work, I also played a key role in shaping the design itself, collaborating closely with a principal game designer ([Ruben Runhardt](https://rubenrunhardt.com/){:target="_blank"}) and the game director ([Kent Kune](http://www.kentyman.net/){:target="_blank"}) to ensure the system felt intuitive and satisfying.
 
-Since our movement system needed to be so varied and custom, I decided to use [Unreal's Mover system](https://dev.epicgames.com/documentation/en-us/unreal-engine/mover-in-unreal-engine) as a base. Its architecture makes it easy to create independent movement modes, which lent itself perfectly to this project. Mover also has support for Trajectory Generation, which we needed for the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine) animation approach we were taking for our player character.
+Since our movement system needed to be so varied and custom, I decided to use [Unreal's Mover system](https://dev.epicgames.com/documentation/en-us/unreal-engine/mover-in-unreal-engine){:target="_blank"} as a base. Its architecture makes it easy to create independent movement modes, which lent itself perfectly to this project. Mover also has support for Trajectory Generation, which we needed for the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine){:target="_blank"} animation approach we were taking for our player character.
 
 <div style="container-type: inline-size">
     <div class="video-grid__responsive">
@@ -62,7 +62,7 @@ This information was gathered into a `FMoverInputCmdContext`, along with button 
 </video>
 
 ### Crouching
-The crouching system was inspired by [BONELAB](https://store.steampowered.com/app/1592190/BONELAB/). The player had to move their joystick up or down to stand or crouch respectively, instead of pressing the joystick to toggle the state.  
+The crouching system was inspired by [BONELAB](https://store.steampowered.com/app/1592190/BONELAB/){:target="_blank"}. The player had to move their joystick up or down to stand or crouch respectively, instead of pressing the joystick to toggle the state.  
 One advantage of this approach was that it paired nicely with the swimming mode, which used the same up/down stick input to allow the player to swim up or down.  
 Another advantage was that holding the stick down longer would allow us to trigger a crawling mode in the future, which we were considering.  
 More importantly though, this control scheme allowed us to drop the notion of explicitly being in a 'standing' or 'crouching' state. This is a logical fit for a VR game, as the player can physically move up or down to any height as well.
@@ -108,14 +108,14 @@ As an added bonus, I was also able to use this offset in other scenarios. If you
 {% capture_markdown camera_smoothing %}
 
 Comfort and motion sickness are important considerations for any VR game. Having the camera jitter up and down, as you're walking on uneven ground (especially stairs), leads to an uncomfortable game experience.  
-For precisely this reason, our locomotion system from [Metro Awakening](#metro-awakening) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine) as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth.  
+For precisely this reason, our locomotion system from [Metro Awakening](/Metro-Awakening/) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine){:target="_blank"} as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth.  
 Relying on level designers to manually place invisible colliders was not an option, as this would have been too much work, unreliable and hard to maintain and test. We needed an automated system which could reliable handle any situation.
 
 Having a smooth camera was so important for us, that it was one of the first things I prototyped before starting on implementing the full system itself.  
 My solution consisted of two steps:
 
 1. To know how to smoothen the camera movement, I needed an estimate of the ground plane.  
-The naive approach would have been to perform a bunch of traces around the player, to get sample points to estimate the ground plane. However, I decided to use the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine) trajectory instead, as we were already generating that for the animation system anyway. This way the ground plane estimate was very cheap to compute. Another advantage is that we only look at actually relevant ground collision: where we were and where we're going.  
+The naive approach would have been to perform a bunch of traces around the player, to get sample points to estimate the ground plane. However, I decided to use the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine){:target="_blank"} trajectory instead, as we were already generating that for the animation system anyway. This way the ground plane estimate was very cheap to compute. Another advantage is that we only look at actually relevant ground collision: where we were and where we're going.  
 I wrote an algorithm which takes all the trajectory points, filters them and uses them to calculate a weighted average up-vector for the ground plane estimate.
 2. While the player was walking around, any height changes would be ignored by the camera. Then, after all the movement was performed, a camera smoothing step was responsible for moving the camera back into alignment. Based on the ground plane estimate that was computed earlier, I could calculate where we estimate the player character to be in 2 meters. For this location, there was also a desired camera location. Then, it was as simple as moving the camera along the line between the previous camera location and the desired camera location. If the ground angle didn't change, the camera would be realigned after 2 meters.
 
@@ -560,7 +560,7 @@ $$v_t = \frac{1}{\frac{1}{v_0 + h} + c_q t}$$
 With the drag sorted, there was still the question of when and how to apply that drag from the hands. Having it always enabled wouldn't work, as you'd push yourself back and forth as you swing your arms back and forth.
 I went through various iterations, to find satisfying controls.  
 The first iteration required players to press a button to activate the hand drag, to push themselves. During testing, we quickly noticed that this wasn't intuitive for a lot of players and many players had issues timing the button presses correctly.  
-The next iteration was inspired by [Subside](https://store.steampowered.com/app/2550040/Subside/). Their approach, which we also settled on, was to enable the hand drag when the hand orientation matches the movement direction. This sounds simple, but it did require a lot of extra iterations, tweaks and tricks to get it to feel right. Some of the little tweaks/tricks include:
+The next iteration was inspired by [Subside](https://store.steampowered.com/app/2550040/Subside/){:target="_blank"}. Their approach, which we also settled on, was to enable the hand drag when the hand orientation matches the movement direction. This sounds simple, but it did require a lot of extra iterations, tweaks and tricks to get it to feel right. Some of the little tweaks/tricks include:
 
 - Remapping the hand velocity with a curve. This also limits the maximum hand velocity and thus the maximum swimming velocity.
 - Changing the hand drag configuration based on the hand's speed.
@@ -664,7 +664,7 @@ The shader is applied to the 'Player Collision' view mode to ensure that you see
 {% capture_markdown debug_tooling %}
 
 In Mover, 'input commands' and the system's state ('sync states') are stored in structs of type `FMoverDataStructBase`. This way the entire state of the system is described by these data structs, making it easy to replicate over the network.  
-I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine) integration. This allowed us to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
+I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine){:target="_blank"} integration. This allowed us to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/debug-tooling//visual-log-cropped.mp4" type="video/mp4">
