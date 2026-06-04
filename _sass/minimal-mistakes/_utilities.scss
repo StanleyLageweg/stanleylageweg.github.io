@@ -559,3 +559,33 @@ pre {
     opacity: 1;
   }
 }
+
+.video-grid, .video-grid__responsive {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr 1fr;
+}
+
+@container (max-width: 650px) {
+    .video-grid__responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+.katex {
+    margin: 0 0.1em;
+}
+
+p .katex {
+    margin: 0;
+}
+
+.page__content .math-derivation {
+  p {
+    margin: 0.1em 0 0 0;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+}

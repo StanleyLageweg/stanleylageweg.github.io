@@ -46,6 +46,7 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 .card__text {
   display: flex;
   flex-shrink: 0;
+  flex-grow: 1;
   flex-direction: column;
   width: calc(100% - #{$card-image-width} - 2 * #{$card-spacing});
   margin: $card-spacing;

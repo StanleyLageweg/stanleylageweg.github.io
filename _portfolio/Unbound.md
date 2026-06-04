@@ -23,20 +23,6 @@ This was a massive technical undertaking that I owned end-to-end. Beyond the eng
 
 Since our movement system needed to be so varied and custom, I decided to use [Unreal's Mover system](https://dev.epicgames.com/documentation/en-us/unreal-engine/mover-in-unreal-engine) as a base. Its architecture makes it easy to create independent movement modes, which lent itself perfectly to this project. Mover also has support for Trajectory Generation, which we needed for the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine) animation approach we were taking for our player character.
 
-<style>
-.video-grid, .video-grid__responsive {
-    display: grid;
-    gap: 1em;
-    grid-template-columns: 1fr 1fr;
-}
-
-@container (max-width: 650px) {
-    .video-grid__responsive {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
-
 <div style="container-type: inline-size">
     <div class="video-grid__responsive">
         <video autoplay muted loop width="100%">
@@ -332,8 +318,6 @@ $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \cdot \Vert \vec{g} \Vert \cdot (\cos
 {% endcapture_markdown%}
 
 {% capture_markdown swing_angle_clamping_derivation %}
-#### Derivation
-
 We can calculate the maximum velocity by using conservation of energy. At the given angle $$(\theta_i)$$, the system will have some amount of potential energy $$(E_{p,i})$$ and kinetic energy $$(E_{k,i})$$. At the maximum angle $$(\theta_{\text{max}})$$, the system will have some amount of potential energy $$(E_{p,f})$$ but no kinetic energy.  
 As energy is conserved:
 
@@ -368,7 +352,9 @@ $$\Vert \vec{\omega} \Vert^2 = \frac{2 \Vert \vec{g} \Vert (\cos(\theta_i) - \co
 $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \Vert \vec{g} \Vert (\cos(\theta_i) - \cos(\theta_{\text{max}}))}{\Vert \vec{r} \Vert \sin^2(\angle(\vec{\omega}, \vec{r}))}}$$
 {% endcapture_markdown%}
 
-{% include card.html excerpt=swing_angle_clamping_formula collapsed_content=swing_angle_clamping_derivation %}
+<div class="math-derivation">
+    {% include card.html excerpt=swing_angle_clamping_formula collapsed_content=swing_angle_clamping_derivation %}
+</div>
 
 This formula does have one issue, in that it doesn't return a real result if $$\theta > \theta_{\text{max}}$$. Returning 0 instead makes sense, but does mean that the rope would get stuck if it ever got higher than the maximum angle. Which can happen due to floating point innacuaries and the discrete math. To solve this, I simply interpolated the `AngularVelocity` to this maximum angular speed instead. This meant the rope would never get fully stuck, but would in practice still be clamped to within a degree of the maximum swing angle.
 
@@ -395,8 +381,6 @@ $$v(t) = \frac{c_l \cdot v_0 \cdot e^{-c_lt}}{c_l + c_q \cdot v_0(1 - e^{-c_lt})
 {% endcapture_markdown %}
 
 {% capture_markdown swimming_derivation%}
-### Derivation
-
 We look at the velocity change $$(dv)$$ over an infinitesimally small time step $$(dt)$$.
 
 $$\frac{dv}{dt} = -(c_q v^2 + c_l v)$$
@@ -447,7 +431,9 @@ $$v_t(c_l + c_q v_0 (1 - e^{-c_l t})) = c_l v_0 e^{-c_l t}$$
 $$v_t = \frac{c_l v_0 e^{-c_l t}}{c_l + c_q v_0 (1 - e^{-c_l t})}$$
 {% endcapture_markdown %}
 
-{% include card.html excerpt=swimming_formula collapsed_content=swimming_derivation %}
+<div class="math-derivation">
+    {% include card.html excerpt=swimming_formula collapsed_content=swimming_derivation %}
+</div>
 
 The constant drag is tacked onto the formula and isn't included in the integration. This means the solution isn't 100% correct, but it was good enough to solve or problem without introducing unnecessary complexity. Including the constant drag in the integration complicates the math a lot.
 
@@ -484,7 +470,9 @@ FVector UVGSwimmingUtils::ApplyDrag(const FVector& Velocity, const float Mass,
 }
 {% endhighlight %}
 
-While writing this I figured I'd give the full derivation a shot, with the constant drag included in the integration. The math does work out, but unfortunately splits off into 3 separate cases based on the sign of $$k$$, and a case if the quadratic drag is 0.
+{% capture swimming_derivation_full_text %}
+While writing this I figured I'd give the full derivation a shot, with the constant drag included in the integration. The math does work out, but unfortunately splits off into separate cases.
+{% endcapture %}
 
 {% capture_markdown swimming_derivation_full %}
 We look at the velocity change $$(dv)$$ over an infinitesimally small time step $$(dt)$$.
@@ -565,7 +553,9 @@ $$u_t = \frac{1}{\frac{1}{u_0} + c_q t}$$
 $$v_t = \frac{1}{\frac{1}{v_0 + h} + c_q t}$$
 {% endcapture_markdown %}
 
-{% include card.html excerpt="Full Derivation" collapsed_content=swimming_derivation_full %}
+<div class="math-derivation">
+    {% include card.html excerpt=swimming_derivation_full_text collapsed_content=swimming_derivation_full %}
+</div>
 
 With the drag sorted, there was still the question of when and how to apply that drag from the hands. Having it always enabled wouldn't work, as you'd push yourself back and forth as you swing your arms back and forth.
 I went through various iterations, to find satisfying controls.  
