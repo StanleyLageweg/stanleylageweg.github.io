@@ -170,9 +170,13 @@ body {
   }
 
   /* vertical alignment for first content */
-  :first-child, 
+  &:first-child, 
   aside + :nth-child(2) {
     margin-top: 0em;
+  }
+
+  img, video {
+    border-radius: $border-radius;
   }
 }
 
@@ -306,5 +310,12 @@ body {
     @media (min-width: $x-large) {
       padding-inline-end: 0;
     }
+  }
+}
+
+.centered {
+  .page {
+    float: unset;
+    margin: 0 auto;
   }
 }

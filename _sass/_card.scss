@@ -5,13 +5,28 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 .card__wrapper {
   container-type: inline-size;
   border-radius: $border-radius;
-  overflow: hidden;
-  box-shadow: $box-shadow;
+  margin: 0.75em 0;
+
+  @supports #{"selector(::details-content)"} {
+    & > .animated-details::details-content {
+      box-shadow: $box-shadow;
+      clip-path: inset(0px -50px -50px -50px);
+    }
+  }
+
+  @supports #{"not selector(::details-content)"} {
+    & > .animated-details .animated-details__content-wrapper {
+      box-shadow: $box-shadow;
+      clip-path: inset(0px -50px -50px -50px);
+    }
+  }
 }
 
 .card {
   display: flex;
   overflow: hidden;
+  box-shadow: $box-shadow;
+  transition: box-shadow 0.2s ease;
 }
 
 .card__image {
@@ -25,12 +40,14 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
     object-fit: cover;
     width: 100%;
     height: 100%;
+    border-radius: unset;
   }
 }
 
 .card__text {
   display: flex;
   flex-shrink: 0;
+  flex-grow: 1;
   flex-direction: column;
   width: calc(100% - #{$card-image-width} - 2 * #{$card-spacing});
   margin: $card-spacing;
@@ -42,8 +59,8 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 
 .card__icon {
   float: right;
-  width: 1em;
-  height: 1em;
+  width: $h-size-3 * $h-line-height;
+  height: $h-size-3 * $h-line-height;
 
   svg {
     width: 100%;
@@ -59,9 +76,13 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   justify-content: space-evenly;
 }
 
-.card__excerpt {
+p.card__excerpt {
   margin: 0;
   font-size: $type-size-6;
+}
+
+.card:not(:has(.card__image)) .card__excerpt {
+  font-size: $type-size-5;
 }
 
 .card__tags {
@@ -74,10 +95,6 @@ a.card__link {
   color: inherit;
   text-decoration: inherit;
 
-  .card {
-    transition: box-shadow 0.2s ease;
-  }
-
   &:hover {
     color: inherit;
 
@@ -89,6 +106,10 @@ a.card__link {
       text-decoration: underline;
     }
   }
+}
+
+.animated-details__summary:hover .card {
+  box-shadow: $box-shadow-hover;
 }
 
 @container (max-width: 650px) {

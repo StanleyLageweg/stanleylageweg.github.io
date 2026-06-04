@@ -1,9 +1,9 @@
 
 {% if include.card %}
   {% validate_fields include required="card" optional="title, image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
-  {% validate_fields include.card required="title" optional="image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
+  {% validate_fields include.card optional="title, image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
 {% else %}
-  {% validate_fields include required="title" optional="image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
+  {% validate_fields include optional="title, image, from, to, show_duration, tags, excerpt, link, collapsed_content" %}
 {% endif %}
 
 {% assign card__title = include.title | nil_default: include.card.title %}
@@ -39,18 +39,20 @@
           </svg>
         </div>
         {% endif %}
-        <h3 class="card__title">{{ card__title }}</h3>
+        {% if card__title %}<h3 class="card__title">{{ card__title }}</h3>{% endif %}
         {% include date-range.html from=card__from to=card__to show_duration=card__show_duration %}
       </div>
       <div class="card__content">
         {% if card__excerpt %}
         <p class="card__excerpt">{{ card__excerpt }}</p>
         {% endif %}
-        <div class="card__tags">
-          {% for tag in card__tags %}
-            {% include tag.html tag=tag link=false %}
-          {% endfor %}
-        </div>
+        {% if card__tags and card__tags.size != 0 %}
+          <div class="card__tags">
+            {% for tag in card__tags %}
+              {% include tag.html tag=tag link=false %}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

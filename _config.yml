@@ -134,6 +134,10 @@ incremental: false
 # Markdown Processing
 kramdown:
   input: GFM
+  math_engine: katex
+  math_engine_opts:
+    output: mathml
+    throw_on_error: true
   hard_wrap: false
   auto_ids: true
   footnote_nr: 1
@@ -172,6 +176,7 @@ collections:
     output: true
     permalink: /:path/
     order:
+      - Unbound.md
       - Metro-Awakening.md
       - Deliver-Us-Mars.md
 
