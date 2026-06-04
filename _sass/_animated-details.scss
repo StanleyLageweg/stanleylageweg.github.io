@@ -1,9 +1,5 @@
-details.animated-details {
-  overflow: hidden;
-
-  &[open] .animated-details__rotate {
-    transform: rotate(180deg);
-  }
+details.animated-details[open] > summary.animated-details__summary .animated-details__rotate {
+  transform: rotate(180deg);
 }
 
 summary.animated-details__summary {
@@ -38,17 +34,17 @@ summary.animated-details__summary::-webkit-details-marker {
       interpolate-size: allow-keywords;
 
       &::details-content {
-        block-size: 0;
+        height: 0;
         opacity: 0;
         overflow: hidden;
-        transition: block-size var(--animatedDetails-duration-transition) ease-out,
+        transition: height var(--animatedDetails-duration-transition) ease-out,
                     content-visibility var(--animatedDetails-duration-transition) ease-out,
                     opacity var(--animatedDetails-duration-transition) ease-out;
         transition-behavior: allow-discrete;
       }
 
       &[open]::details-content {
-        block-size: auto;
+        height: auto;
         opacity: 1;
       }
     }
