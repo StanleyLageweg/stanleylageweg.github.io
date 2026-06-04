@@ -46,11 +46,13 @@
         {% if card__excerpt %}
         <p class="card__excerpt">{{ card__excerpt }}</p>
         {% endif %}
-        <div class="card__tags">
-          {% for tag in card__tags %}
-            {% include tag.html tag=tag link=false %}
-          {% endfor %}
-        </div>
+        {% if card__tags and card__tags.size != 0 %}
+          <div class="card__tags">
+            {% for tag in card__tags %}
+              {% include tag.html tag=tag link=false %}
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

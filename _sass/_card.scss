@@ -40,6 +40,7 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
     object-fit: cover;
     width: 100%;
     height: 100%;
+    border-radius: unset;
   }
 }
 
@@ -75,9 +76,13 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   justify-content: space-evenly;
 }
 
-.card__excerpt {
+p.card__excerpt {
   margin: 0;
   font-size: $type-size-6;
+}
+
+.card:not(:has(.card__image)) .card__excerpt {
+  font-size: $type-size-5;
 }
 
 .card__tags {
