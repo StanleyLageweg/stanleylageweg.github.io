@@ -24,32 +24,32 @@ This was a massive technical undertaking that I owned end-to-end. Beyond the eng
 Since our movement system needed to be so varied and custom, I decided to use [Unreal's Mover system](https://dev.epicgames.com/documentation/en-us/unreal-engine/mover-in-unreal-engine) as a base. Its architecture makes it easy to create independent movement modes, which lent itself perfectly to this project. Mover also has support for Trajectory Generation, which we needed for the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine) animation approach we were taking for our player character.
 
 <style>
-.video-grid {
+.video-grid, .video-grid__responsive {
     display: grid;
     gap: 1em;
     grid-template-columns: 1fr 1fr;
 }
 
 @container (max-width: 650px) {
-    .video-grid {
+    .video-grid__responsive {
         grid-template-columns: 1fr;
     }
 }
 </style>
 
 <div style="container-type: inline-size">
-    <div class="video-grid">
+    <div class="video-grid__responsive">
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/platforming.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/platforming-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/sliding.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/sliding-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/climbing.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/climbing-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/swimming.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/swimming-optimized.mp4" type="video/mp4">
         </video>
     </div>
 </div>
@@ -98,7 +98,7 @@ It would also be noticeable if the height correction would move you too far. Tha
 The height correction shouldn't be applied when a player is actively moving their head up and down, as this would disrupt the movement parity between their head and their view, which would be uncomfortable and lead to motion sickness. To prevent this, I simply check if the player is moving their head up or down faster than a generously small threshold of 10cm/s.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-movement/height-correction-with-text.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/camera-movement/height-correction-with-text-cropped.mp4" type="video/mp4">
 </video>
 
 A problem I ran into was that, due to human anatomy, pitching you head up or down would also move the headset up or down. The height correction system was adjusting for this, which felt unnatural.  
@@ -106,7 +106,7 @@ To fix this, I measured how the headset moved as different people pitched their 
 As an added bonus, I was also able to use this offset in other scenarios. If your height is being clamped, for example, you'll still be able to pitch your head without the clamping affecting that movement.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-movement/height-prediction.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" type="video/mp4">
 </video>
 
 ![](/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png)
@@ -134,7 +134,7 @@ I wrote an algorithm which takes all the trajectory points, filters them and use
 2. While the player was walking around, any height changes would be ignored by the camera. Then, after all the movement was performed, a camera smoothing step was responsible for moving the camera back into alignment. Based on the ground plane estimate that was computed earlier, I could calculate where we estimate the player character to be in 2 meters. For this location, there was also a desired camera location. Then, it was as simple as moving the camera along the line between the previous camera location and the desired camera location. If the ground angle didn't change, the camera would be realigned after 2 meters.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-smoothing/visual-log.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/camera-smoothing/visual-log-cropped.mp4" type="video/mp4">
 </video>
 
 *The desired camera height (purple line) is drawn based on the 'ground plane estimate' (magenta circle). The camera is moved along the yellow line, so that it'll be at the desired height after 2 meters.*
@@ -143,7 +143,7 @@ The beauty of this system is that it doesn't just respond to height changes, it 
 Another advantage of this system is that it's stable when walking along a longer slope. Once the camera is realigned at the desired height, the '2 meter long line we move the camera along' will be parallel with the ground. This means that the camera will stably remain at the desired height, as if the smoothing wasn't even there.
 
 <div style="container-type: inline-size">
-    <div class="video-grid">
+    <div class="video-grid__responsive">
         <video autoplay muted loop width="100%">
             <source src="/assets/portfolio/unbound/camera-smoothing/disabled.mp4" type="video/mp4">
         </video>
@@ -227,7 +227,7 @@ The heights at which I check for mantle destinations also ensure that players wi
 The height checks also ensure that players will never mantle downwards. Instead they can position themselves over the platform, dropping themselves onto it.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/mantling/dynamic-mantling.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/mantling/dynamic-mantling-cropped.mp4" type="video/mp4">
 </video>
 
 {% endcapture_markdown %}
@@ -248,14 +248,15 @@ $$\Delta \vec{\omega} = \frac{\vec{r} \times \vec{g}}{\Vert \vec{r} \Vert^{2}} \
 
 Where:
 
-- $\Delta \vec{\omega}$ is the change in angular velocity.
-- $\vec{r}$ is the position vector from the pivot to the pendulum bob, in our case the player.
-- $\Vert \vec{r} \Vert$ is the the length of the pendulum string.
-- $\vec{g}$ is the gravitation acceleration vector.
-- $\Delta t$ is the time step.
+- $$\Delta \vec{\omega}$$ is the change in angular velocity.
+- $$\vec{r}$$ is the position vector from the pivot to the pendulum bob, in our case the player.
+- $$\Vert \vec{r} \Vert$$ is the the length of the pendulum string.
+- $$\vec{g}$$ is the gravitation acceleration vector.
+- $$\Delta t$$ is the time step.
 
 This simple formula results in a stable pendulum motion, as long as you add sub-stepping to prevent lag spikes or low fps from introducing instability.  
-I also added some simple linear $(c_l)$ and quadratic $(c_q)$ drag:
+I also added some simple linear $$(c_l)$$ and quadratic $$(c_q)$$ drag:
+
 $$\Delta \vec{\omega} = - (c_l \Vert \vec{\omega} \Vert + c_q \Vert \vec{\omega} \Vert^2) \cdot \Delta t$$
 
 ### Player Input
@@ -314,10 +315,10 @@ During a regular non-orbiting swing, the `AngularAcceleration` vector is perpend
 <div style="container-type: inline-size">
     <div class="video-grid">
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/rope-swinging/orbiting-before.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/rope-swinging/orbiting-before-cropped.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/rope-swinging/orbiting-after.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/rope-swinging/orbiting-after-cropped.mp4" type="video/mp4">
         </video>
     </div>
 </div>
@@ -333,26 +334,24 @@ $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \cdot \Vert \vec{g} \Vert \cdot (\cos
 {% capture_markdown swing_angle_clamping_derivation %}
 #### Derivation
 
-We can calculate the maximum velocity by using conservation of energy.  
-At the given angle $(\theta_i)$, the system will have some amount of potential energy $(E_{p,i})$ and kinetic energy $(E_{k,i})$.  
-At the maximum angle $(\theta_{\text{max}})$, the system will have some amount of potential energy $(E_{p,f})$ but no kinetic energy.  
+We can calculate the maximum velocity by using conservation of energy. At the given angle $$(\theta_i)$$, the system will have some amount of potential energy $$(E_{p,i})$$ and kinetic energy $$(E_{k,i})$$. At the maximum angle $$(\theta_{\text{max}})$$, the system will have some amount of potential energy $$(E_{p,f})$$ but no kinetic energy.  
 As energy is conserved:
 
 $$E_{p,i} + E_{k,i} = E_{p,f}$$
 
-Substitute $E_p = m g h$ and $E_k = \frac{1}{2} m \Vert \vec{v} \Vert^2$
+Substitute $$E_p = m g h$$ and $$E_k = \frac{1}{2} m \Vert \vec{v} \Vert^2$$
 
 $$m \Vert \vec{g} \Vert h_i + \frac{1}{2} m \Vert \vec{v}_i \Vert^2 = m \Vert \vec{g} \Vert h_f$$
 
-Substitute $h = \Vert r \Vert (1 - \cos(\theta))$ and $\vec{v} = \vec{\omega} \times \vec{r}$
+Substitute $$h = \Vert r \Vert (1 - \cos(\theta))$$ and $$\vec{v} = \vec{\omega} \times \vec{r}$$
 
 $$m \Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_i)) + \frac{1}{2} m \Vert \vec{\omega} \times \vec{r} \Vert^2 = m \Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_{\text{max}}))$$
 
-Substitute $\Vert \vec{a} \times \vec{b} \Vert = \Vert \vec{a} \Vert \Vert \vec{b} \Vert \sin(\angle(\vec{a} \times \vec{b}))$
+Substitute $$\Vert \vec{a} \times \vec{b} \Vert = \Vert \vec{a} \Vert \Vert \vec{b} \Vert \sin(\angle(\vec{a} \times \vec{b}))$$
 
 $$m \Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_i)) + \frac{1}{2} m (\Vert \vec{\omega} \Vert \Vert \vec{r} \Vert \sin(\angle(\vec{\omega}, \vec{r})))^2 = m \Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_{\text{max}}))$$
 
-Solve for $\Vert \vec{\omega} \Vert$
+Solve for $$\Vert \vec{\omega} \Vert$$
 
 $$\Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_i)) + \frac{1}{2} (\Vert \vec{\omega} \Vert \Vert \vec{r} \Vert \sin(\angle(\vec{\omega}, \vec{r})))^2 = \Vert \vec{g} \Vert \Vert r \Vert (1 - \cos(\theta_{\text{max}}))$$
 
@@ -371,7 +370,7 @@ $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \Vert \vec{g} \Vert (\cos(\theta_i) -
 
 {% include card.html excerpt=swing_angle_clamping_formula collapsed_content=swing_angle_clamping_derivation %}
 
-This formula does have one issue, in that it doesn't return a real result if $\theta > \theta_{\text{max}}$. Returning 0 instead makes sense, but does mean that the rope would get stuck if it ever got higher than the maximum angle. Which can happen due to floating point innacuaries and the discrete math. To solve this, I simply interpolated the `AngularVelocity` to this maximum angular speed instead. This meant the rope would never get fully stuck, but would in practice still be clamped to within a degree of the maximum swing angle.
+This formula does have one issue, in that it doesn't return a real result if $$\theta > \theta_{\text{max}}$$. Returning 0 instead makes sense, but does mean that the rope would get stuck if it ever got higher than the maximum angle. Which can happen due to floating point innacuaries and the discrete math. To solve this, I simply interpolated the `AngularVelocity` to this maximum angular speed instead. This meant the rope would never get fully stuck, but would in practice still be clamped to within a degree of the maximum swing angle.
 
 {% endcapture_markdown %}
 
@@ -384,10 +383,11 @@ This formula does have one issue, in that it doesn't return a real result if $\t
 {% capture_markdown swimming %}
 
 We wanted the swimming mode to feel realistic, requiring the player to actually swing their arms to move themselves around. That's why I decided to model the entire system around drag. The player's body would experience water drag, slowing them down. But the hands would also experience drag as the player swung them around, speeding the player up.  
-The formula for drag boils down to $F = c \cdot v^2$, where $F$ is the drag force, $c$ is an amalgamation of various constants and $v$ is the velocity difference between the object and the water. While this was physically accurate, it didn't feel good. The exponential nature of drag meant that the drag on the body felt too strong while you were moving quickly, but it also wasn't strong enough to bring you too a full stop. That's why I setup a system which allowed us to tweak constant, linear and quadratic drag separately. This gave us the tools to tweak the system to feel as floaty as you'd expect from swimming, while still giving you a sense of control. I used this simple formula:  
+The formula for drag boils down to $$F = c \cdot v^2$$, where $$F$$ is the drag force, $$c$$ is an amalgamation of various constants and $$v$$ is the velocity difference between the object and the water. While this was physically accurate, it didn't feel good. The exponential nature of drag meant that the drag on the body felt too strong while you were moving quickly, but it also wasn't strong enough to bring you too a full stop. That's why I setup a system which allowed us to tweak constant, linear and quadratic drag separately. This gave us the tools to tweak the system to feel as floaty as you'd expect from swimming, while still giving you a sense of control. I used this simple formula:
+
 $$v_f = v_i - \Delta t(c_q \cdot v_i^2 + c_l \cdot v_i + c_c)$$
 
-I did run into an issue, in that the drag felt inconsistent due to the discrete calculation. This is because the deceleration was calculated for the full timestep $t$, as if we were moving with a velocity of $v_i$ for the full timestep. In reality, that deceleration would constantly lower $v_i$ and thus the deceleration would also be lower. The simple calculation thus resulted in a deceleration that was too high and inconsistent depending on frame rate.  
+I did run into an issue, in that the drag felt inconsistent due to the discrete calculation. This is because the deceleration was calculated for the full timestep $$t$$, as if we were moving with a velocity of $$v_i$$ for the full timestep. In reality, that deceleration would constantly lower $$v_i$$ and thus the deceleration would also be lower. The simple calculation thus resulted in a deceleration that was too high and inconsistent depending on frame rate.  
 The solution was to use integration, to calculate the area under the velocity curve. This results in the following formula:
 
 {% capture_markdown swimming_formula %}
@@ -397,7 +397,7 @@ $$v(t) = \frac{c_l \cdot v_0 \cdot e^{-c_lt}}{c_l + c_q \cdot v_0(1 - e^{-c_lt})
 {% capture_markdown swimming_derivation%}
 ### Derivation
 
-We look at the velocity change $(dv)$ over an infinitesimally small time step $(dt)$.
+We look at the velocity change $$(dv)$$ over an infinitesimally small time step $$(dt)$$.
 
 $$\frac{dv}{dt} = -(c_q v^2 + c_l v)$$
 
@@ -413,8 +413,8 @@ $$\frac{1}{v(c_q v + c_l)} = \frac{A}{v} + \frac{B}{c_q v + c_l}$$
 
 $$1 = A(c_q v + c_l) + Bv$$
 
-If $v = 0$, then $1 = A(c_l) + B \cdot 0 \implies A = 1/c_l$  
-If $v = -c_l / c_q$, then $1 = A(0) + B(-c_l / c_q) \implies B = -c_q / c_l$.
+If $$v = 0$$, then $$1 = A(c_l) + B \cdot 0 \implies A = 1/c_l$$  
+If $$v = -c_l / c_q$$, then $$1 = A(0) + B(-c_l / c_q) \implies B = -c_q / c_l$$.
 
 Substitute and integrate.
 
@@ -430,7 +430,7 @@ $$\frac{1}{c_l} \left( \ln \left| \frac{v_t}{c_q v_t + c_l} \right| - \ln \left|
 
 $$\ln \left| \frac{v_t(c_q v_0 + c_l)}{v_0(c_q v_t + c_l)} \right| = -c_l t$$
 
-Solve for $v_t$ and simplify.
+Solve for $$v_t$$ and simplify.
 
 $$\frac{v_t(c_q v_0 + c_l)}{v_0(c_q v_t + c_l)} = e^{-c_l t}$$
 
@@ -484,10 +484,10 @@ FVector UVGSwimmingUtils::ApplyDrag(const FVector& Velocity, const float Mass,
 }
 {% endhighlight %}
 
-While writing this I figured I'd give the full derivation a shot, with the constant drag included in the integration. The math does work out, but unfortunately splits off into 3 separate cases based on the sign of $k$, and a case if the quadratic drag is 0.
+While writing this I figured I'd give the full derivation a shot, with the constant drag included in the integration. The math does work out, but unfortunately splits off into 3 separate cases based on the sign of $$k$$, and a case if the quadratic drag is 0.
 
 {% capture_markdown swimming_derivation_full %}
-We look at the velocity change $(dv)$ over an infinitesimally small time step $(dt)$.
+We look at the velocity change $$(dv)$$ over an infinitesimally small time step $$(dt)$$.
 
 $$\frac{dv}{dt} = -(c_q v^2 + c_l v + c_c)$$
 
@@ -507,16 +507,16 @@ $$c_q \left( \left(v + \frac{c_l}{2c_q} \right)^2 - \left( \frac{c_l}{2c_q} \rig
 
 $$c_q \left( \left(v + \frac{c_l}{2c_q} \right)^2 + \frac{c_c}{c_q} - \left( \frac{c_l}{2c_q} \right)^2 \right)$$
 
-We now have an equation in the completed-square form: $(v + h)^2 + k$,  
-where h = $\frac{c_l}{2c_q}$ and k = $\frac{c_c}{c_q} - h^2$.
+We now have an equation in the completed-square form: $$(v + h)^2 + k$$,  
+where h = $$\frac{c_l}{2c_q}$$ and k = $$\frac{c_c}{c_q} - h^2$$.
 
 $$\int_{v_0}^{v_t} \frac{1}{c_q((v + h)^2 + k)} dv = \int_0^t -dt$$
 
 $$\frac{1}{c_q} \int_{v_0}^{v_t} \frac{1}{(v + h)^2 + k} dv = \int_0^t -dt$$
 
-Case 1: $k > 0$.  
-We use the standard form $\int \frac{1}{u^2 + a^2} du = \frac{1}{a} \arctan(\frac{u}{a})$.  
-Let $a^2 = k$ and $u = v + h$.
+Case 1: $$k > 0$$.  
+We use the standard form $$\int \frac{1}{u^2 + a^2} du = \frac{1}{a} \arctan(\frac{u}{a})$$.  
+Let $$a^2 = k$$ and $$u = v + h$$.
 
 $$\frac{1}{c_q} \int_{u_0}^{u_t} \frac{1}{u^2 + a^2} du = \int_0^t -dt$$
 
@@ -532,9 +532,9 @@ $$u_t = a \cdot \tan \left( \arctan \left( \frac{u_0}{a} \right) - c_q a t \righ
 
 $$v_t = \sqrt{k} \cdot \tan \left( \arctan \left( \frac{v_0 + h}{\sqrt{k}} \right) - c_q \sqrt{k} t \right) - h$$
 
-Case 2: $k < 0$  
-We use the standard form $\int \frac{1}{u^2 - a^2} du = -\frac{1}{a} \text{artanh}(\frac{u}{a})$  
-Let $-a^2 = k$ and $u = v + h$
+Case 2: $$k < 0$$  
+We use the standard form $$\int \frac{1}{u^2 - a^2} du = -\frac{1}{a} \text{artanh}(\frac{u}{a})$$  
+Let $$-a^2 = k$$ and $$u = v + h$$
 
 $$\frac{1}{c_q} \int_{u_0}^{u_t} \frac{1}{u^2 - a^2} du = \int_0^t -dt$$
 
@@ -550,7 +550,7 @@ $$u_t = a \cdot \tanh \left( \operatorname{artanh} \left( \frac{u_0}{a} \right) 
 
 $$v_t = \sqrt{k} \cdot \tanh \left( \operatorname{artanh} \left( \frac{v_0 + h}{\sqrt{k}} \right) + c_q \sqrt{k} t \right) - h$$
 
-Case 3: $k = 0$
+Case 3: $$k = 0$$
 
 $$\frac{1}{c_q} \int_{v_0}^{v_t} \frac{1}{(v + h)^2} dv = \int_0^t -dt$$
 
@@ -618,7 +618,8 @@ The sliding system has 3 different slide 'styles' depending on angle of the grou
 ### Horizontal Ground
 
 On horizontal ground, the player can initiate a slide by crouching down while they're sprinting. This initiates a slide, with a configurable distance.  
-I don't actually track the distance of the slide though. Instead, I apply a deceleration value to the current velocity, which I precalculated such that the slide will have the desired distance. I calculate the deceleration value using this formula:  
+I don't actually track the distance of the slide though. Instead, I apply a deceleration value to the current velocity, which I precalculated such that the slide will have the desired distance. I calculate the deceleration value using this formula:
+
 $$\text{Deceleration} = \frac{\text{StartSpeed}^2 - {EndSpeed}^2}{2 \cdot Distance}$$
 
 The advantage of this approach, is that it makes it simple to dynamically switch in and out of the 'horizontal ground' style depending on the angle of the ground. We can transition into this style at any speed and the system will be able to handle it. If you get onto horizontal ground with a lower speed, then the slide will simply be shorter.
@@ -676,7 +677,7 @@ In Mover, 'input commands' and the system's state ('sync states') are stored in 
 I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine) integration. This allowed us to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/debug-tooling//visual-log.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/debug-tooling//visual-log-cropped.mp4" type="video/mp4">
 </video>
 
 {% highlight C++ %}
