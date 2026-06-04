@@ -42,7 +42,7 @@ Since our movement system needed to be so varied and custom, I decided to use [U
 
 {% capture_markdown camera_movement %}
 
-The best way to guarantee stability between the movement of the camera (VR headset) and the player character, is for the locomotion system to take full control of the camera movement. The system interfaces directly with OpenXR to retrieve information about the VR headset's position and rotation, along with additional information like 'tracking space recenter' calls.  
+The best way to guarantee stability between the movement of the camera (VR headset) and the player character is for the locomotion system to take full control of the camera movement. The system interfaces directly with OpenXR to retrieve information about the VR headset's position and rotation, along with additional information like 'tracking space recenter' calls.  
 This information is gathered into a `FMoverInputCmdContext`, along with button and stick inputs, and passed to the movement modes. This allows me to apply the camera movement differently, based on the movement mode:
 
 - **Walking Mode**  
@@ -50,26 +50,26 @@ This information is gathered into a `FMoverInputCmdContext`, along with button a
 - **Swimming Mode**  
   The swimming mode applies the full 3D headset movement as additional movement input. It's again treated like regular movement input and can also be blocked by world geometry. The player capsule remains at a fixed predetermined height.
 - **Pause Mode**  
-  While the game is paused, the player capsule is frozen in place. The headset movement is applied to the camera directly, allowing it to move away from the player capsule. When the player unpauses, their camera snaps back to where they were before pausing. This approach ensures that the player can't cheat certain gameplay challenges by using the pause menu, while preventing motion sickness by ensuring that the player view still moves with their head.
+  While the game is paused, the player capsule is frozen in place. The headset movement is applied to the camera directly, allowing it to move away from the player capsule. When the player unpauses, their camera snaps back to where it was before pausing. This approach ensures that the player can't cheat certain gameplay challenges by using the pause menu, while preventing motion sickness by ensuring that the player's view still moves with their head.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/camera-movement/pause-menu.mp4" type="video/mp4">
 </video>
 
 ### Crouching
-The crouching system was inspired by [BONELAB](https://store.steampowered.com/app/1592190/BONELAB/){:target="_blank"}. The player has to move their joystick up or down to stand or crouch respectively, instead of pressing the joystick to toggle the state. One advantage of this approach is that it paired nicely with the swimming mode, which uses the same up/down stick input to allow the player to swim up or down. Another advantage is that holding the stick down longer would have allow us to trigger a crawling mode in the future, which we were considering. More importantly though, this control scheme allows me to drop the notion of explicitly being in a 'standing' or 'crouching' state. This is a logical fit for a VR game, as the player can physically move up or down to any height as well.
+The crouching system was inspired by [BONELAB](https://store.steampowered.com/app/1592190/BONELAB/){:target="_blank"}. The player has to move their joystick up or down to stand or crouch respectively, instead of pressing the joystick to toggle the state. One advantage of this approach is that it pairs nicely with the swimming mode, which uses the same up/down stick input to allow the player to swim up or down. Another advantage is that holding the stick down longer would have allowed us to trigger a crawling mode in the future, which we were considering. More importantly though, this control scheme allows me to drop the notion of explicitly being in a 'standing' or 'crouching' state. This is a logical fit for a VR game, as the player can physically move up or down to any height as well.
 
-Moving the joystick up or down interpolates the camera to a predetermined 'standing' or 'crouching' height. This is the same for players of all sizes, to ensure everyone will be able to reach the same ledges and will be able to fit into the same crouching areas. This also means that any up/down input also serves as a quick height calibration. Beyond that, the player is able to freely move their head up or down, although clamped within some constraints to prevent cheating and clipping through the ground.
+Moving the joystick up or down interpolates the camera to a predetermined 'standing' or 'crouching' height. This is the same for players of all sizes, to ensure everyone will be able to reach the same ledges and will be able to fit into the same crouching areas. This also means that any up/down input serves as a quick height calibration. Beyond that, the player is able to freely move their head up or down, although clamped within some constraints to prevent cheating and clipping through the ground.
 
-Based on the camera's actually height, I determine whether the player is 'crouching'. This information is used to alter things like the movement speed, animations, footstep sounds and the noise detection radius for AI characters.
+Based on the camera's actual height, I determine whether the player is 'crouching'. This information is used to alter things like the movement speed, animations, footstep sounds and the noise detection radius for AI characters.
 
 ### Dynamic Height Correction
 
 Ideally, the player should always be at either the standing or crouching height, as the levels are designed with those metrics in mind. A tall player might want to physically crouch, but might not get low enough to actually fit into our crouching areas. That's why I implemented a height correction system, which smoothly moves the camera back to our desired heights. An important requirement was for the effect to be subtle, so that players wouldn't notice it.
 
-If the player is standing still, they'd notice if their camera is being moved up or down over time. That's why I move the camera based on the speed of the horizontal locomotion movement. The quicker the player moves, the faster the height correction is. No height correction would happens if they're standing still.
+If the player is standing still, they'd notice if their camera is being moved up or down over time. That's why I move the camera based on the speed of the horizontal locomotion movement. The quicker the player moves, the faster the height correction is. No height correction happens if they're standing still.
 
-It would also be noticeable if the height correction would move you too far. That's why I only apply the height correction if the camera is within 20cm of either the standing or the crouching height.
+It would also be noticeable if the height correction moved you too far. That's why I only apply the height correction if the camera is within 20cm of either the standing or the crouching height.
 
 The height correction shouldn't be applied when a player is actively moving their head up and down, as this would disrupt the movement parity between their head and their view, which would be uncomfortable and lead to motion sickness. To prevent this, I simply check if the player is moving their head up or down faster than a generously small threshold of 10cm/s.
 
@@ -77,7 +77,7 @@ The height correction shouldn't be applied when a player is actively moving thei
     <source src="/assets/portfolio/unbound/camera-movement/height-correction-with-text-cropped.mp4" type="video/mp4">
 </video>
 
-A problem I ran into was that, due to human anatomy, pitching you head up or down also moves the headset up or down. The height correction system was adjusting for this, which felt unnatural. To fix this, I measured how the headset moved as different people pitched their head up and down. From this data I was able to construct a curve which maps the headset's pitch to an offset which estimates where the headset would have been without pitch. I was then able to use this offset to get a better estimate of the camera height, to eliminate the issue I described earlier. As an added bonus, I was also able to use this offset in other scenarios. If your height is being clamped, for example, you'll still be able to pitch your head without the clamping affecting that movement.
+A problem I ran into was that, due to human anatomy, pitching your head up or down also moves the headset up or down. The height correction system was adjusting for this, which felt unnatural. To fix this, I measured how the headset moved as different people pitched their head up and down. From this data, I was able to construct a curve which maps the headset's pitch to an offset which estimates where the headset would have been without pitch. I was then able to use this offset to get a better estimate of the camera height, to eliminate the issue I described earlier. As an added bonus, I was also able to use this offset in other scenarios. If your height is being clamped, for example, you'll still be able to pitch your head without the clamping affecting that movement.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" type="video/mp4">
@@ -95,7 +95,7 @@ A problem I ran into was that, due to human anatomy, pitching you head up or dow
 
 {% capture_markdown camera_smoothing %}
 
-Comfort and motion sickness are important considerations for any VR game. Having the camera jitter up and down, as you're walking on uneven ground (especially stairs), leads to an uncomfortable game experience. For precisely this reason, our locomotion system from [Metro Awakening](/Metro-Awakening/) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine){:target="_blank"} as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth. Relying on level designers to manually place invisible colliders was not an option, as this would have been too much work, unreliable and hard to maintain and test. We needed a dynamic system which could reliable handle any situation.
+Comfort and motion sickness are important considerations for any VR game. Having the camera jitter up and down, as you're walking on uneven ground (especially stairs), leads to an uncomfortable game experience. For precisely this reason, our locomotion system from [Metro Awakening](/Metro-Awakening/) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine){:target="_blank"} as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth. Relying on level designers to manually place invisible colliders was not an option, as this would have been too much work, unreliable and hard to maintain and test. We needed a dynamic system which could reliably handle any situation.
 
 My solution consists of two steps:
 
@@ -108,7 +108,7 @@ My solution consists of two steps:
 
 *The desired camera height (purple line) is drawn based on the 'ground plane estimate' (magenta circle). The camera is moved along the yellow line, so that it'll be at the desired height after 2 meters.*
 
-The beauty of this system is that it doesn't just respond to height changes, it anticipates them. The ground plane estimate will already start to tilt as the player is approaching an incline. This means that the desired camera location will have moved up, and that the system will start moving the camera up already. The camera won't move due to the step-up, so it will go from being a bit too high to being a bit too low. This makes step-ups/downs feel smoother, the height difference between the actual and desired camera height is minimized.  
+The beauty of this system is that it doesn't just respond to height changes, it anticipates them. The ground plane estimate will already start to tilt as the player is approaching an incline. This means that the desired camera location will have moved up, and that the system will start moving the camera up already. The camera won't move due to the step-up, so it will go from being a bit too high to being a bit too low. This makes step-ups/downs feel smoother, as the height difference between the actual and desired camera height is minimized.  
 Another advantage of this system is that it's stable when walking along a longer slope. Once the camera is realigned at the desired height, the '2 meter long line the camera is moved along' will be parallel with the ground. This means that the camera will stably remain at the desired height, as if the smoothing wasn't even there.
 
 <div style="container-type: inline-size">
@@ -138,13 +138,13 @@ Another advantage of this system is that it's stable when walking along a longer
 
 {% capture_markdown climbing %}
 
-In the climbing mode, I simply apply the player's controller movement to the body, in the opposite direction. This causes the controller to realign with the visual hand and moves you in the way you'd expect. However, the player capsule's movement can be obstructed by level geometry, causing the controller to not align with the hand anymore. I solve this by not applying any controller movement which brings the controller closer to the visual hand. This way the hand parity is restored, before the player moves again. The hand automatically releases if the distance between the controller and visual hand becomes large, causing the player to fall.  
+In the climbing mode, I simply apply the player's controller movement to the body, in the opposite direction. This causes the controller to realign with the visual hand and moves you in the way you'd expect. However, the player capsule's movement can be obstructed by level geometry, causing the controller to not align with the hand anymore. I solve this by not applying any controller movement which brings the controller closer to the visual hand. This way the hand parity is restored before the player moves again. The hand automatically releases if the distance between the controller and visual hand becomes large, causing the player to fall.  
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/climbing/obstructed-by-level-geometry.mp4" type="video/mp4">
 </video>
 
-While climbing, only 1 'active' hand is actually followed. This is always the last hand that grabbed a climbing hold. The other hand will still visually hold on, but the movement isn't actually being followed. This might sound strange, but it's actually the most intuitive. For most players their focus is on what they grabbed last, so they expect their body to follow that hand. Players also tend to intuitively move both hands in sync, preventing hand parity loss.  
+While climbing, only 1 'active' hand is actually followed. This is always the last hand that grabbed a climbing hold. The other hand will still visually hold on, but the movement isn't actually being followed. This might sound strange, but it's actually the most intuitive. For most players, their focus is on what they grabbed last, so they expect their body to follow that hand. Players also tend to intuitively move both hands in sync, preventing hand parity loss.  
 If the player releases their active hand, then their other hand becomes the active hand. When this happens, the controller isn't aligned with the visual hand anymore. To fix this, I simply interpolate the body to resolve this offset. This quickly and smoothly realigns the controller and visual hand. The interpolation is also relevant when a player initially grabs a hold, as the body needs to move slightly due to the hand moving to grab the climbing hold.   
 
 <video autoplay muted loop width="100%">
@@ -180,7 +180,7 @@ if (ClimbingSettings->ControllerAlignmentInterpSpeed > 0)
 
 {% endcapture_markdown %}
 
-{% include card.html title="Climbing" image="/assets/portfolio/unbound/climbing/teaser.png" excerpt="Climbing is a great fit for VR, as it's an intuitive way to move yourself with you motion controllers. Mechanically, it's also relatively straightforward to implement. There are however a couple edge cases, like movement being obstructed and hand parity loss, that need to be handled correctly." collapsed_content=climbing %}
+{% include card.html title="Climbing" image="/assets/portfolio/unbound/climbing/teaser.png" excerpt="Climbing is a great fit for VR, as it's an intuitive way to move yourself with your motion controllers. Mechanically, it's also relatively straightforward to implement. However, there are a couple of edge cases, like movement being obstructed and hand parity loss, that need to be handled correctly." collapsed_content=climbing %}
 
 
 
@@ -198,7 +198,7 @@ The player will simply fall if no valid destination is found.
 
 This system has proven to be very reliable. It's also very intuitive for players, as they'll simply mantle where they're looking.  
 The heights at which I check for mantle destinations also ensure that players will only mantle onto ledges below their eye height, giving them the option to drop down instead by simply moving themselves below the ledge.  
-The height checks also ensure that players will never mantle downwards. Instead they can position themselves over the platform, dropping themselves onto it.
+The height checks also ensure that players will never mantle downwards. Instead, they can position themselves over the platform, dropping themselves onto it.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/mantling/dynamic-mantling-cropped.mp4" type="video/mp4">
@@ -224,7 +224,7 @@ Where:
 
 - $$\Delta \vec{\omega}$$ is the change in angular velocity.
 - $$\vec{r}$$ is the position vector from the pivot to the pendulum bob, in our case the player.
-- $$\Vert \vec{r} \Vert$$ is the the length of the pendulum string.
+- $$\Vert \vec{r} \Vert$$ is the length of the pendulum string.
 - $$\vec{g}$$ is the gravitation acceleration vector.
 - $$\Delta t$$ is the time step.
 
@@ -237,7 +237,7 @@ $$\Delta \vec{\omega} = - (c_l \Vert \vec{\omega} \Vert + c_q \Vert \vec{\omega}
 
 The next step was to give the player control. My first approach was to simply apply the stick input as additional angular velocity. This worked, but was hard to control as it was difficult to gauge your swinging direction and as the turning took a bit of time. This meant that people would overcorrect and overshoot the direction they wanted to swing in.  
 We also ran into a problem, which I called orbiting. Instead of swinging back and forth in a straight line, underneath the pivot, the player could end up in a situation where they would swing around in circles around the pivot. This situation was easy to get yourself into, extremely hard to get yourself out of, and nauseating.  
-I tackled both these issues by reworking the player input. To make steering easier, I limited the stick input to only forwards and backwards input, in the direction of the camera. I then rotate the `RopeRotation` and `AngularVelocity` over time, around the vertical center axis, to align with the direction the player is looking in. This is much more intuitive, as the player can simply look where they want to go.  
+I tackled both these issues by reworking the player input. To make steering easier, I limited the stick input to only forwards and backwards input, in the direction of the camera. I rotate the `RopeRotation` and `AngularVelocity` over time, around the vertical center axis, to align with the direction the player is looking in. This is much more intuitive, as the player can simply look where they want to go. This rotation approach also doesn't introduce any orbiting.  
 To accelerate, the player needs to move their joystick back and forth with the rhythm of the swing, mimicking the motion you'd make with your legs while on a swingset.
 
 {% highlight C++ %}
@@ -284,7 +284,7 @@ AngularVelocity += AngularVelocity.IsNearlyZero()
 {% endhighlight %}
 
 The player could still get into an orbiting situation if they jumped sideways onto a rope that was already swinging.  
-During a regular non-orbiting swing, the `AngularAcceleration` vector is perpendicular to the plane defined by the `RopeRotation` vector and the gravity vector. This isn't the case while orbiting. To blend out the orbiting, all I need to do was to slowly rotate the `AngularAcceleration` to be perpendicular with that plane again.
+During a regular non-orbiting swing, the `AngularAcceleration` vector is perpendicular to the plane defined by the `RopeRotation` vector and the gravity vector. This isn't the case while orbiting. To blend out the orbiting, all I needed to do was to slowly rotate the `AngularAcceleration` to be perpendicular with that plane again.
 
 <div style="container-type: inline-size">
     <div class="video-grid">
@@ -305,7 +305,7 @@ During a regular non-orbiting swing, the `AngularAcceleration` vector is perpend
 
 ### Swing Angle Clamping
 
-I wanted to limit the maximum swinging angle, to make the mechanic reliable and to prevent unnaturally high swings. The naive approach would be to simply clamp the angle, but this has downside of introducing a clear hard barrier which you can hit. I wanted the swing to smoothly end up at exactly the configured maximum angle. To do this, I need to calculate the maximum angular speed at any angle such that the angular speed will be exactly 0 once your reach the configured maximum angle. For this I was able to come up with the following formula.
+I wanted to limit the maximum swinging angle, to make the mechanic reliable and to prevent unnaturally high swings. The naive approach would be to simply clamp the angle, but this has the downside of introducing a clear hard barrier which you can hit. I wanted the swing to smoothly end up at exactly the configured maximum angle. To do this, I needed to calculate the maximum angular speed at any angle such that the angular speed will be exactly 0 once you reach the configured maximum angle. For this I was able to come up with the following formula.
 
 {% capture_markdown swing_angle_clamping_formula %}
 $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \cdot \Vert \vec{g} \Vert \cdot (\cos(\theta) - \cos(\theta_{\text{max}}))}{\Vert \vec{r} \Vert \cdot \sin^2(\angle(\vec{\omega}, \vec{r}))}}$$
@@ -350,7 +350,7 @@ $$\Vert \vec{\omega} \Vert = \sqrt{\frac{2 \Vert \vec{g} \Vert (\cos(\theta_i) -
     {% include card.html excerpt=swing_angle_clamping_formula collapsed_content=swing_angle_clamping_derivation %}
 </div>
 
-This formula does have one issue, in that it doesn't return a real result if $$\theta > \theta_{\text{max}}$$. Returning 0 instead makes sense, but does mean that the rope would get stuck if it ever got higher than the maximum angle. Which can happen due to floating point innacuaries and the discrete math. To solve this, I simply interpolate the `AngularVelocity` to this maximum angular speed instead. This means the rope never gets fully stuck, but still gets clamped to within a degree of the maximum swing angle.
+This formula does have one issue, in that it doesn't return a real result if $$\theta > \theta_{\text{max}}$$. Returning 0 instead makes sense, but does mean that the rope would get stuck if it ever got higher than the maximum angle. To solve this, I simply interpolate the `AngularVelocity` to this maximum angular speed instead. This means the rope never gets fully stuck, but still gets clamped to within a degree of the maximum swing angle.
 
 {% endcapture_markdown %}
 
@@ -363,7 +363,7 @@ This formula does have one issue, in that it doesn't return a real result if $$\
 {% capture_markdown swimming %}
 
 We wanted the swimming mode to feel realistic, requiring the player to actually swing their arms to move themselves around. That's why I decided to model the entire system around drag. The player's body experiences water drag, slowing them down. But the hands also experience drag as the player swings them around, speeding the player up.  
-The formula for drag boils down to $$F = c \cdot v^2$$, where $$F$$ is the drag force, $$c$$ is an amalgamation of various constants and $$v$$ is the velocity difference between the object and the water. While this was physically accurate, it didn't feel good. The exponential nature of drag meant that the drag on the body felt too strong while you were moving quickly, but it also wasn't strong enough to bring you too a full stop. That's why I setup a system which allowed us to tweak constant, linear and quadratic drag separately. This gave us the tools to tweak the system to feel as floaty as you'd expect from swimming, while still giving you a sense of control. I used this simple formula:
+The formula for drag boils down to $$F = c \cdot v^2$$, where $$F$$ is the drag force, $$c$$ is an amalgamation of various constants and $$v$$ is the velocity difference between the object and the water. While this was physically accurate, it didn't feel good. The quadratic nature of drag meant that the drag on the body felt too strong while you were moving quickly, but it also wasn't strong enough to bring you to a full stop. That's why I set up a system which allowed us to tweak constant, linear and quadratic drag separately. This gave us the tools to tweak the system to feel as floaty as you'd expect from swimming, while still giving you a sense of control. I used this simple formula:
 
 $$v_f = v_i - \Delta t(c_q \cdot v_i^2 + c_l \cdot v_i + c_c)$$
 
@@ -429,7 +429,7 @@ $$v_t = \frac{c_l v_0 e^{-c_l t}}{c_l + c_q v_0 (1 - e^{-c_l t})}$$
     {% include card.html excerpt=swimming_formula collapsed_content=swimming_derivation %}
 </div>
 
-The constant drag is tacked onto the formula and isn't included in the integration. This means the solution isn't 100% correct, but it was good enough to solve or problem without introducing unnecessary complexity. Including the constant drag in the integration complicates the math a lot.
+The constant drag is tacked onto the formula and isn't included in the integration. This means the solution isn't 100% correct, but it was good enough to solve our problem without introducing unnecessary complexity. Including the constant drag in the integration complicates the math a lot.
 
 {% highlight C++ %}
 FVector UVGSwimmingUtils::ApplyDrag(const FVector& Velocity, const float Mass,
@@ -562,15 +562,15 @@ Some of the tweaks/tricks include:
 - Not applying hand drag if the player is moving through the water, but isn't moving their hand.
 - Reducing the velocity change if the player is going backwards.
 
-The most important trick, was to detect if the player was doing a breaststroke motion. Based on how much the movement looks like a breaststroke, I redirect the velocity change towards the camera direction. This makes it very intuitive for players to swim long distances, as they can simply swing their arms and look where they want to go. This solves a major issue where people would naturally lower their arms during their swing, causing them to push themselves upwards. At the same time, this system still gives players the freedom to move backwards, sideways or vertically by pushing in those directions.
+The most important trick was to detect if the player was doing a breaststroke motion. Based on how much the movement looks like a breaststroke, I redirect the velocity change towards the camera direction. This makes it very intuitive for players to swim long distances, as they can simply swing their arms and look where they want to go. This solves a major issue where people would naturally lower their arms during their swing, causing them to push themselves upwards. At the same time, this system still gives players the freedom to move backwards, sideways or vertically by pushing in those directions.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/swimming/physical-swimming.mp4" type="video/mp4">
 </video>
 
-Another neat trick, was to store the velocity from landing in the water separately. This allows me to split this part of the velocity off from the total velocity and to apply higher drag on it. This way I can tweak the drag so it feels good for swimming, while also being able to tweak a stronger drag that prevents you from hitting the bottom of the pool when you jump in.
+Another neat trick was to store the velocity from landing in the water separately. This allows me to split this part of the velocity off from the total velocity and to apply higher drag on it. This way I can tweak the drag so it feels good for swimming, while also being able to tweak a stronger drag that prevents you from hitting the bottom of the pool when you jump in.
 
-Since the whole system is build around drag, it's also very easy to apply currents to the water. Drag is calculated based on the velocity of the object relative to the water. Simply subtracting the flow velocity from the objects velocity before applying the drag, and adding it back after, is enough to implement flowing water. A flow velocity which is higher than the maximum swimming velocity also automatically ensures that the player can't swim up against the flow.
+Since the whole system is built around drag, it's also very easy to apply currents to the water. Drag is calculated based on the velocity of the object relative to the water. Simply subtracting the flow velocity from the object's velocity before applying the drag, and adding it back after, is enough to implement flowing water. A flow velocity which is higher than the maximum swimming velocity also automatically ensures that the player can't swim up against the flow.
 
 {% highlight C++ %}
 // Apply drag
@@ -597,7 +597,7 @@ SwimmingState.LandingVelocity = UVGMathLibrary::ClampedProjectOnToVector(Velocit
 
 {% capture_markdown sliding %}
 
-The sliding system has 3 different slide 'styles' depending on angle of the ground.
+The sliding system has 3 different slide 'styles' depending on the angle of the ground.
 
 ### Horizontal Ground
 
@@ -606,7 +606,7 @@ I don't actually track the distance of the slide though. Instead, I apply a dece
 
 $$\text{Deceleration} = \frac{\text{StartSpeed}^2 - {EndSpeed}^2}{2 \cdot Distance}$$
 
-The advantage of this approach, is that it makes it simple to dynamically switch in and out of the 'horizontal ground' style depending on the angle of the ground. We can transition into this style at any speed and the system will be able to handle it. If you get onto horizontal ground with a lower speed, then the slide will simply be shorter.
+The advantage of this approach is that it makes it simple to dynamically switch in and out of the 'horizontal ground' style depending on the angle of the ground. We can transition into this style at any speed and the system will be able to handle it. If you get onto horizontal ground with a lower speed, then the slide will simply be shorter.
 
 The player can stop sliding by un-crouching. Or they can decelerate by pulling the joystick backwards, which will quickly stop and end the slide.
 
@@ -616,7 +616,7 @@ The player can stop sliding by un-crouching. Or they can decelerate by pulling t
 
 ### Shallow Slope
 
-Between 15° and 35° is considered a 'shallow slope'. At these angles the player is still able to walk up the slope, and they can initiate a slide in the same way as on horizontal ground. The difference with this style, is that the player can keep sliding indefinitely. The player can also only slide down the slope. They can use their joystick to steer a bit, allowing them to deviate at most 20° from straight down the slope.  
+Between 15° and 35° is considered a 'shallow slope'. At these angles the player is still able to walk up the slope, and they can initiate a slide in the same way as on horizontal ground. The difference with this style is that the player can keep sliding indefinitely. The player can also only slide down the slope. They can use their joystick to steer a bit, allowing them to deviate at most 20° from straight down the slope.  
 The maximum speed, acceleration and deceleration are all driven by slope-angle curves, giving us full control over the feel of the slide.
 
 The player is also still able to decelerate by pulling the joystick backwards, stopping and ending the slide.  
@@ -639,7 +639,7 @@ Beyond 55°, the slope is too steep to slide on and the player will fall instead
 
 ### Slope Visualization Tool
 
-With these different slope metrics, it's important for level designers to be able to reliably create create slopes that are within a certain angle range. This is especially relevant with landscapes as it's easy to accidentally have a patch be either steeper or shallower than intended. A patch beyond 55° would cause the player to fall instead of slide. And a patch bellow 15° could unexpectedly end the slide in the middle of the slope.
+With these different slope metrics, it's important for level designers to be able to reliably create slopes that are within a certain angle range. This is especially relevant with landscapes as it's easy to accidentally have a patch be either steeper or shallower than intended. A patch beyond 55° would cause the player to fall instead of slide. And a patch below 15° could unexpectedly end the slide in the middle of the slope.
 Shallow patches on a steep slope are especially problematic, as you don't notice them if you're not actively pulling the joystick backwards. Meanwhile, a player might be able to exploit the shallow patches to walk and jump back up onto a steep slope that is intended as a one-way barrier.
 
 That's why I created a custom shader, which you can enable with a button in the editor, to visualize the slope angles. Horizontal ground in green, shallow slopes in yellow, steep slopes in orange and beyond 55° in red.
@@ -649,7 +649,7 @@ The shader is applied to the 'Player Collision' view mode to ensure that you see
 
 {% endcapture_markdown %}
 
-{% include card.html title="Sliding" image="/assets/portfolio/unbound/sliding/teaser.png" excerpt="The sliding system has 3 different sliding 'styles', based on the angle of the slope. Each has it's own behavior and can seamlessly transition to every other style." collapsed_content=sliding %}
+{% include card.html title="Sliding" image="/assets/portfolio/unbound/sliding/teaser.png" excerpt="The sliding system has 3 different sliding 'styles', based on the angle of the slope. Each has its own behavior and can seamlessly transition to every other style." collapsed_content=sliding %}
 
 
 
@@ -661,7 +661,7 @@ In Mover, 'input commands' and the system's state ('sync states') are stored in 
 I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine){:target="_blank"} integration. This allowed me to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/debug-tooling//visual-log-cropped.mp4" type="video/mp4">
+    <source src="/assets/portfolio/unbound/debug-tooling/visual-log-cropped.mp4" type="video/mp4">
 </video>
 
 {% highlight C++ %}
@@ -706,4 +706,4 @@ If the player moved unexpectedly, this feature made it super easy to pinpoint ex
 
 {% endcapture_markdown %}
 
-{% include card.html title="Debug Tooling" image="/assets/portfolio/unbound/debug-tooling/teaser.png" excerpt="Locomotion systems are notoriously difficulty to debug, as there are so many moving parts. That's why the Visual Logger integration I created for the locomotion system was so useful. Being able to rewind through gameplay while seeing the entire state of the system made it super easy to pinpoint the cause of an issue." collapsed_content=debug_tooling %}
+{% include card.html title="Debug Tooling" image="/assets/portfolio/unbound/debug-tooling/teaser.png" excerpt="Locomotion systems are notoriously difficult to debug, as there are so many moving parts. That's why the Visual Logger integration I created for the locomotion system was so useful. Being able to rewind through gameplay while seeing the entire state of the system made it super easy to pinpoint the cause of an issue." collapsed_content=debug_tooling %}
