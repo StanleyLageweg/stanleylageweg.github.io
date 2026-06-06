@@ -7,16 +7,11 @@ For Windows, install [Ruby+Devkit](https://rubyinstaller.org/downloads/), making
 
 In the cloned repo, run `npm install` and `bundle install`.
 
-To test the site, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000/`.  
-As modifications are made to the site's source, the site will be rebuild and you should see the changes in the browser after a refresh.
+Install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).
 
-## Math rendering
-
-Math is rendered at build time to MathML (via kramdown + KaTeX), so no client-side math rendering script is needed.
-
-- Inline math supports `$...$` and `$$...$$`.
-- Block math uses `$$` on separate lines.
-- Escape literal dollar signs with `\$`.
+To test the site, run `bundle exec jekyll build --watch` and click `Go Live` in the bottom right corner to start the live server.
+As modifications are made to the site's source, the site will be rebuild and the browser will refresh on its own.  
+(`bundle exec jekyll serve --livereload` should work the same, but has issues with loading videos.)
 
 ## Credits
 

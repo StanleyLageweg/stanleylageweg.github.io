@@ -145,7 +145,7 @@ In the climbing mode, I simply apply the player's controller movement to the bod
 </video>
 
 While climbing, only 1 'active' hand is actually followed. This is always the last hand that grabbed a climbing hold. The other hand will still visually hold on, but the movement isn't actually being followed. This might sound strange, but it's actually the most intuitive. For most players, their focus is on what they grabbed last, so they expect their body to follow that hand. Players also tend to intuitively move both hands in sync, preventing hand parity loss.  
-If the player releases their active hand, then their other hand becomes the active hand. When this happens, the controller isn't aligned with the visual hand anymore. To fix this, I simply interpolate the body to resolve this offset. This quickly and smoothly realigns the controller and visual hand. The interpolation is also relevant when a player initially grabs a hold, as the body needs to move slightly due to the hand moving to grab the climbing hold.   
+If the player releases their active hand, then their other hand becomes the active hand. When this happens, the controller isn't aligned with the visual hand anymore. To fix this, I simply interpolate the body to resolve this offset. This quickly and smoothly realigns the controller and visual hand. The interpolation is also relevant when a player initially grabs a hold, as the body needs to move slightly due to the hand moving to grab the climbing hold.
 
 <video autoplay muted loop width="100%">
     <source src="/assets/portfolio/unbound/climbing/interpolation-to-resolve-hand-parity.mp4" type="video/mp4">
@@ -231,7 +231,7 @@ Where:
 This simple formula results in a stable pendulum motion, as long as you add sub-stepping to prevent lag spikes or low fps from introducing instability.  
 I also added some simple linear $$(c_l)$$ and quadratic $$(c_q)$$ drag:
 
-$$\Delta \vec{\omega} = - (c_l \Vert \vec{\omega} \Vert + c_q \Vert \vec{\omega} \Vert^2) \cdot \Delta t$$
+$$\Delta \Vert \vec{\omega} \Vert = - (c_l \Vert \vec{\omega} \Vert + c_q \Vert \vec{\omega} \Vert^2) \cdot \Delta t$$
 
 ### Player Input
 
@@ -440,7 +440,7 @@ FVector UVGSwimmingUtils::ApplyDrag(const FVector& Velocity, const float Mass,
     {
         return Velocity;
     }
-    
+
     const float LinearDrag = DragSettings.LinearDrag / Mass;
     const float QuadraticDrag = FMath::Max(DragSettings.QuadraticDrag / Mass, 0);
 
