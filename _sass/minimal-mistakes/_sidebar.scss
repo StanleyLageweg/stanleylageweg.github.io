@@ -7,27 +7,15 @@
    ========================================================================== */
 
 .sidebar {
-  margin-top: 1em;
+  width: $right-sidebar-width;
+  flex-shrink: 0;
 
-  @media (min-width: $large) {
-    float: inline-start;
-    width: calc(#{$right-sidebar-width-narrow} - 1em);
-
-    &.sticky {
-      overflow-y: auto;
-      /* calculate height of nav list
-         viewport height - nav height - masthead x-padding
-      */
-      max-height: calc(100vh - #{$nav-height} - 1em);
-    }
+  @media (max-width: $x-large) {
+    width: $right-sidebar-width-narrow;
   }
 
-  @media (min-width: $x-large) {
-    width: calc(#{$right-sidebar-width} - 1em);
-  }
-
-  > * {
-    margin-bottom: 1em;
+  @media (max-width: $large) {
+    width: unset;
   }
 
   h2,
@@ -106,22 +94,21 @@
 
 .h-card {
   display: flex;
+  flex-direction: column;
   
-  @media (min-width: $large) {
-    flex-direction: column;
+  @media (max-width: $large) {
+    flex-direction: row;
+    gap: 1em;
   }
 }
 
 .author__avatar {
-  max-width: 40%;
-  height: 9em;
   aspect-ratio: 1 / 1;
+  flex-shrink: 0;
 
-  @media (min-width: $large) {
-    display: block;
-    width: auto;
-    max-width: none;
-    height: auto;
+  @media (max-width: $large) {
+    max-width: 40%;
+    height: 9em;
   }
 
   img {
@@ -131,13 +118,7 @@
 }
 
 .author__content {
-  padding-inline: 15px 25px;
   line-height: 1;
-
-  @media (min-width: $large) {
-    width: 100%;
-    padding-inline: 0;
-  }
 
   a {
     color: inherit;
@@ -153,19 +134,8 @@
   font-size: $type-size-5;
 }
 
-.author__bio {
-  margin: 0;
-
-  @media (min-width: $large) {
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
-}
-
 .author__urls-wrapper {
-  position: relative;
   font-family: $sans-serif;
-  z-index: 20;
 
   li:last-child {
     a {

@@ -2,18 +2,22 @@
    SINGLE PAGE/POST
    ========================================================================== */
 
-#main {
-  @include clearfix;
-  margin-inline: auto;
+main {
+  display: flex;
+  gap: 1em;
+  align-items: flex-start;
+  margin: 1em auto 2em auto;
   padding-inline: 1em;
   -webkit-animation: $intro-transition;
   animation: $intro-transition;
-  max-width: 100%;
+  width: 100%;
+  max-width: $max-width;
   -webkit-animation-delay: 0.15s;
   animation-delay: 0.15s;
 
-  @media (min-width: $x-large) {
-    max-width: $max-width;
+  @media (max-width: $large) {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 

@@ -3,9 +3,6 @@
    ========================================================================== */
 
 .archive {
-  margin-top: 1em;
-  margin-bottom: 2em;
-
   @media (min-width: $large) {
     float: inline-end;
     width: calc(100% - #{$right-sidebar-width-narrow});

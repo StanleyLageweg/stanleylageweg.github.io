@@ -4,7 +4,7 @@
 
 $(document).ready(function () {
   // FitVids init
-  $("#main").fitVids();
+  $("main").fitVids();
 
   // Follow menu drop down
   $(".author__urls-wrapper button").on("click", function () {
