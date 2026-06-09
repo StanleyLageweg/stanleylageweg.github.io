@@ -9,6 +9,7 @@
 .sidebar {
   width: $right-sidebar-width;
   flex-shrink: 0;
+  align-self: stretch;
 
   @media (max-width: $x-large) {
     width: $right-sidebar-width-narrow;
@@ -88,6 +89,7 @@
   }
 }
 
+
 /*
    Author profile and links
    ========================================================================== */
@@ -95,10 +97,28 @@
 .h-card {
   display: flex;
   flex-direction: column;
-  
+  height: 100%;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   @media (max-width: $large) {
-    flex-direction: row;
-    gap: 1em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "avatar name"
+      "avatar urls"
+      "bio bio";
+    gap: 0.5em 1em;
+  }
+}
+
+.author__header,
+.author__body {
+  @media (max-width: $large) {
+    display: contents;
   }
 }
 
@@ -107,7 +127,8 @@
   flex-shrink: 0;
 
   @media (max-width: $large) {
-    max-width: 40%;
+    grid-area: avatar;
+    width: 9em;
     height: 9em;
   }
 
@@ -117,25 +138,25 @@
   }
 }
 
-.author__content {
-  line-height: 1;
-
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-}
-
 .author__name {
   margin: 1em 0 0 0;
-}
-.sidebar .author__name {
+  grid-area: name;
   font-family: $sans-serif;
   font-size: $type-size-5;
 }
 
+.author__bio {
+  margin-bottom: 1em;
+  grid-area: bio;
+
+  p {
+    margin: 0;
+  }
+}
+
 .author__urls-wrapper {
   font-family: $sans-serif;
+  grid-area: urls;
 
   li:last-child {
     a {
@@ -175,6 +196,61 @@
     }
   }
 }
+
+
+/*
+   Sidebar Sticking
+   ========================================================================== */
+
+.author__header {
+  position: sticky;
+  top: 0;
+
+  // Add a background, with a fade at the bottom, to hide the author__body scrolling underneath
+  background: $page-background;
+  $fade-distance: 1em;
+  padding-bottom: $fade-distance;
+  @include ease-in-gradient(to bottom, #000, calc(100% - #{$fade-distance}), transparent, 100%);
+  z-index: 2;
+  
+  // Add padding to hide the author__body above the header, while it scrolls up
+  padding-top: $page-margin-top;
+  margin-top: -$page-margin-top;
+
+  @media (max-width: $large) {
+    position: unset;
+    top: unset;
+    background: unset;
+    padding-bottom: unset;
+    z-index: unset;
+    padding-top: unset;
+    margin-top: unset;
+  }
+}
+
+.author__body {
+  // Stick in place, under the header
+  position: sticky;
+  top: var(--author-header-height, 0px);
+  z-index: 1;
+
+  @media (max-width: $large) {
+    position: unset;
+    top: unset;
+    z-index: unset;
+  }
+}
+
+.sidebar.is-tall .author__body {
+  // Body is too tall to fit in the viewport.
+  // Scroll with the page until the bottom of the body is visible, then stick in place.
+  top: calc(100vh - #{$page-margin-bottom} - var(--author-body-height, 0px));
+
+  @media (max-width: $large) {
+    top: unset;
+  }
+}
+
 
 /*
    Wide Pages

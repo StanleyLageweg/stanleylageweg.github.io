@@ -66,7 +66,7 @@ analytics:
 author:
   name             : "Stanley Lageweg"
   avatar           : "/assets/images/stanley.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Senior Game Programmer"
+  bio              : "I'm a senior programmer with 6 years of experience in game development, specializing in user-facing interactive systems. I love collaborating in varied teams, to create something greater than the sum of its parts. Challenging work is what keeps me motivated, whether it's creating clean code architectures, solving complex 3D math problems or tweaking a feature to get the feel just right."
   location         : "Alphen aan den Rijn, Netherlands"
   email            :
   linkedin         : "stanley-lageweg"

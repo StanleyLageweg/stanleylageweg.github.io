@@ -6,7 +6,7 @@ main {
   display: flex;
   gap: 1em;
   align-items: flex-start;
-  margin: 1em auto 2em auto;
+  margin: $page-margin-top auto $page-margin-bottom auto;
   padding-inline: 1em;
   -webkit-animation: $intro-transition;
   animation: $intro-transition;

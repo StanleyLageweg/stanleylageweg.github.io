@@ -90,3 +90,55 @@
   background-color: $background-color;
   color: yiq-contrast-color($background-color, $dark, $light, $threshold);
 }
+
+/*
+   Gradient
+   ========================================================================== */
+
+/*
+   Generates a CSS mask-image that interpolates between two colors along an
+   `ease-in` curve (cubic-bezier(0.42, 0, 1, 1)). A two-stop linear gradient
+   reads as a visible "band" because alpha isn't perceived linearly; sampling
+   the curve with a handful of stops makes the transition appear smooth.
+
+   $direction:      gradient direction (e.g. `to bottom`, `to right`).
+   $start-color:    color at $start-distance (typically the opaque end).
+   $start-distance: position where the fade region begins.
+   $end-color:      color at $end-distance (typically the transparent end).
+   $end-distance:   position where the fade region ends.
+   $samples:        number of intermediate stops sampled from the curve, between
+                    the start and end stops. Higher = smoother but larger CSS.
+*/
+@mixin ease-in-gradient(
+  $direction,
+  $start-color,
+  $start-distance,
+  $end-color,
+  $end-distance,
+  $samples: 9
+) {
+  // Cubic Bezier control points: p0=(0,0), p1=(0.42, 0), p2=(1, 1), p3=(1, 1).
+  // Since p1y=0 and p2y=p3y=1, y(t) simplifies to t² * (3 - 2t) — smoothstep.
+  $stops: "#{$start-color} #{$start-distance}";
+
+  @for $i from 1 through $samples {
+    $t: $i / ($samples + 1);
+    $one-minus-t: 1 - $t;
+    $x: 3 * $one-minus-t * $one-minus-t * $t * 0.42
+        + 3 * $one-minus-t * $t * $t
+        + $t * $t * $t;
+    $y: $t * $t * (3 - 2 * $t);
+
+    $color: mix($end-color, $start-color, percentage($y));
+    $one-minus-x: 1 - $x;
+    $position: calc(#{$start-distance} * #{$one-minus-x} + #{$end-distance} * #{$x});
+
+    $stops: "#{$stops}, #{$color} #{$position}";
+  }
+
+  $stops: "#{$stops}, #{$end-color} #{$end-distance}";
+  $gradient: linear-gradient(#{$direction}, #{$stops});
+
+  -webkit-mask-image: $gradient;
+          mask-image: $gradient;
+}

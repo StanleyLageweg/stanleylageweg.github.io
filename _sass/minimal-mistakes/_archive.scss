@@ -3,15 +3,11 @@
    ========================================================================== */
 
 .archive {
-  @media (min-width: $large) {
-    float: inline-end;
-    width: calc(100% - #{$right-sidebar-width-narrow});
-    padding-inline-end: $right-sidebar-width-narrow;
-  }
+  width: 100%;
+  padding-right: $right-sidebar-width;
 
-  @media (min-width: $x-large) {
-    width: calc(100% - #{$right-sidebar-width});
-    padding-inline-end: $right-sidebar-width;
+  @media (max-width: $large) {
+    padding-right: $right-sidebar-width-narrow;
   }
 }
 
@@ -82,7 +78,7 @@
   bottom: 0;
   inset-inline-end: 0;
   margin: 0 auto;
-  padding: 2px 5px;
+  padding: 5px 10px;
   color: #fff;
   font-family: $caption-font-family;
   font-size: $type-size-8;
@@ -92,8 +88,8 @@
   opacity: 0.5;
   border-radius: $border-radius 0 0 0;
 
-  @media (min-width: $large) {
-    padding: 5px 10px;
+  @media (max-width: $large) {
+    padding: 2px 5px;
   }
 
   a {
@@ -222,12 +218,10 @@
 
 .wide {
   .archive {
-    @media (min-width: $large) {
-      padding-inline-end: 0;
-    }
+    padding-right: 0;
 
-    @media (min-width: $x-large) {
-      padding-inline-end: 0;
+    @media (max-width: $large) {
+      padding-right: 0;
     }
   }
 }

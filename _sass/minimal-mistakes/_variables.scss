@@ -99,6 +99,7 @@ $light-gray: mix(#fff, $gray, 50%) !default;
 $lighter-gray: mix(#fff, $gray, 90%) !default;
 
 $background-color: #fff !default;
+$page-background: $background-color !default;
 $code-background-color: #fafafa !default;
 $code-background-color-dark: $light-gray !default;
 $text-color: $dark-gray !default;
@@ -217,3 +218,5 @@ $navicon-height: 0.25rem !default;
 $global-transition-timing: 0.2s ease-in-out !default;
 $global-transition: all $global-transition-timing !default;
 $intro-transition: intro 0.3s both !default;
+$page-margin-top: 1em !default;
+$page-margin-bottom: 2em !default;
