@@ -29,10 +29,10 @@ Since our movement system needed to be so varied and custom, I decided to use [U
             <source src="/assets/portfolio/unbound/platforming-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/sliding-optimized.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/climbing-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/climbing-optimized.mp4" type="video/mp4">
+            <source src="/assets/portfolio/unbound/sliding-optimized.mp4" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
             <source src="/assets/portfolio/unbound/swimming-optimized.mp4" type="video/mp4">
