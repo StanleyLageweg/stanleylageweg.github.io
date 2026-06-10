@@ -143,6 +143,10 @@
   grid-area: name;
   font-family: $sans-serif;
   font-size: $type-size-5;
+
+  @media (max-width: $large) {
+    margin-top: 0.25rem;
+  }
 }
 
 .author__bio {
@@ -193,6 +197,10 @@
 
     &:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: $large) {
+      padding-block: 0;
     }
   }
 }

@@ -21,10 +21,6 @@
 {%- assign author = page.author | default: page.authors[0] | default: site.author -%}
 {%- assign author = site.data.authors[author] | default: author -%}
 
-{%- if author.twitter -%}
-  {%- assign author_twitter = author.twitter | replace: "@", "" -%}
-{%- endif -%}
-
 {%- assign page_large_image = page.header.og_image | default: page.header.overlay_image | default: page.header.image | absolute_url | escape -%}
 {%- assign page_teaser_image = page.header.teaser | default: site.og_image | absolute_url | escape -%}
 {%- assign site_og_image = site.og_image | absolute_url | escape -%}
@@ -88,10 +84,6 @@
         <meta name="twitter:image:alt" content="{{ og_image_alt }}">
       {% endif %}
     {% endif %}
-  {% endif %}
-
-  {% if author_twitter %}
-    <meta name="twitter:creator" content="@{{ author_twitter }}">
   {% endif %}
 {% endif %}
 

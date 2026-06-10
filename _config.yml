@@ -68,10 +68,17 @@ author:
   avatar           : "/assets/images/stanley.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I'm a senior programmer with 6 years of experience in game development, specializing in user-facing interactive systems. I love collaborating in varied teams, to create something greater than the sum of its parts. Challenging work is what keeps me motivated, whether it's creating clean code architectures, solving complex 3D math problems or tweaking a feature to get the feel just right."
   location         : "Alphen aan den Rijn, Netherlands"
-  email            :
-  linkedin         : "stanley-lageweg"
   # fediverse      : "@you@instance.social"  # used for fediverse:creator meta tag
   links:
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/stanley-lageweg"
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/StanleyLageweg"
+    - label: "Resume"
+      icon: "fa-regular fa-file"
+      url: "/assets/files/resume.pdf"
     - label: "Email"
       icon: "fas fa-fw fa-square-envelope"
       # url: "mailto:your.name@email.com"
@@ -84,12 +91,22 @@ author:
     - label: "Facebook"
       icon: "fab fa-fw fa-square-facebook"
       # url: "https://facebook.com/"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
+    - label: "GitLab"
+      icon: "fab fa-fw fa-gitlab"
+      # url: "https://gitlab.com/"
+    - label: "Stack Overflow"
+      icon: "fab fa-fw fa-stack-overflow"
+      # url: "https://stackoverflow.com/"
+    - label: "CodePen"
+      icon: "fab fa-fw fa-codepen"
+      # url: "https://codepen.io/"
+    - label: "steam"
+      icon: "fab fa-fw fa-steam"
+      # url: "https://steamcommunity.com/"
+    
 
 
 # Reading Files
