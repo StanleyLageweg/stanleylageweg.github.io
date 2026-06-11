@@ -17,7 +17,7 @@
 {% assign card__collapsed_content = include.collapsed_content | nil_default: include.card.collapsed_content %}
 
 {% capture card__card %}
-  <div class="card">
+  <div class="card {% unless card__title or card__image or card__from or card__to %}card--minimal{% endunless %}">
     {% if card__image %}
     <div class="card__image">
       <img src="{{ card__image | relative_url }}">

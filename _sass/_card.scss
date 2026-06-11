@@ -89,10 +89,6 @@ p.card__excerpt {
   font-size: $type-size-6;
 }
 
-.card:not(:has(.card__image)) .card__excerpt {
-  font-size: $type-size-5;
-}
-
 .card__tags {
   display: flex;
   flex-wrap: wrap;
@@ -131,5 +127,13 @@ a.card__link {
 
   .card__text {
     width: calc(100% - 2 * #{$card-spacing});
+  }
+}
+
+.card--minimal > .card__text {
+  display: unset;
+
+  & > .card__content > .card__excerpt {
+    font-size: $type-size-5;
   }
 }
