@@ -34,7 +34,6 @@ As modifications are made to the site's source, the site will be rebuild and the
 - [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav)
 - [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
 - [Gumshoe](https://github.com/cferdinandi/gumshoe)
-- [Clipboard.js](https://clipboardjs.com)
 
 ## License
 
