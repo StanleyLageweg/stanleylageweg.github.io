@@ -179,13 +179,11 @@ timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 plugins:
   - jekyll-sitemap
   - jekyll-gist
-  - jekyll-include-cache
 
 # mimic GitHub Pages with --safe
 whitelist:
   - jekyll-sitemap
   - jekyll-gist
-  - jekyll-include-cache
 
 
 collections:
