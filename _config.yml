@@ -110,19 +110,12 @@ author:
 
 
 # Reading Files
-include:
-  - .htaccess
-  - _pages
 exclude:
   - "*.sublime-project"
   - "*.sublime-workspace"
   - vendor
-  - .asset-cache
   - .bundle
-  - .jekyll-assets-cache
   - .sass-cache
-  - Capfile
-  - config
   - Gemfile
   - LICENSE
   - NOTICE.md
@@ -130,7 +123,6 @@ exclude:
   - node_modules
   - package.json
   - package-lock.json
-  - Rakefile
   - README.md
   - tmp
 keep_files:
@@ -161,7 +153,6 @@ kramdown:
   entity_output: as_char
   toc_levels: 1..6
   smart_quotes: lsquo,rsquo,ldquo,rdquo
-  enable_coderay: false
 
 
 # Sass/SCSS
@@ -173,15 +164,6 @@ sass:
 # Outputting
 permalink: /:categories/:title/
 timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
-
-# Plugins (previously gems:)
-plugins:
-  - jekyll-sitemap
-
-# mimic GitHub Pages with --safe
-whitelist:
-  - jekyll-sitemap
 
 
 collections:
