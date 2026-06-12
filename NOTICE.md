@@ -36,10 +36,6 @@ Minimal Mistakes incorporates [Gumshoejs](http://github.com/cferdinandi/gumshoe)
 Copyright (c) 2019 Chris Ferdinandi.  
 Gumshoejs is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates [jQuery throttle / debounce](http://benalman.com/projects/jquery-throttle-debounce-plugin/).  
-Copyright (c) 2010 "Cowboy" Ben Alman.  
-jQuery throttle / debounce is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
 Minimal Mistakes incorporates [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav).  
 Copyright (c) 2015 Luke Jackson.  
 GreedyNav.js is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
