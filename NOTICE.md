@@ -28,10 +28,6 @@ Minimal Mistakes incorporates [Magnific Popup](http://dimsemenov.com/plugins/mag
 Copyright (c) 2014-2016 [Dmitry Semenov](http://dimsemenov.com/).  
 Magnific Popup is distributed under the terms of the MIT License.
 
-Minimal Mistakes incorporates [Smooth Scroll](http://github.com/cferdinandi/smooth-scroll).  
-Copyright (c) 2019 Chris Ferdinandi.  
-Smooth Scroll is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
 Minimal Mistakes incorporates [Gumshoejs](http://github.com/cferdinandi/gumshoe).  
 Copyright (c) 2019 Chris Ferdinandi.  
 Gumshoejs is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
