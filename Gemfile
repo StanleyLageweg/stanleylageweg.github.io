@@ -9,5 +9,4 @@ gem "kramdown-math-katex", "~> 1.0"
 
 gem "bigdecimal"
 gem "bundler"
-gem "rake", ">= 12.3.3"
 gem "wdm", ">= 0.1.0"
