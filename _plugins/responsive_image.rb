@@ -1,30 +1,9 @@
-# frozen_string_literal: true
-
-# Place this file in your Jekyll site's `_plugins/` directory.
-#
-# Example `_config.yml`:
-#
-# responsive_image:
-#   output_dir: assets/generated/images
-#   default_widths: [480, 960, 1440]
-#   default_formats: [webp, jpg]
-#   alt_map_data_file: responsive_image_alts
-#   warn_on_missing_alt: true
-#
-# Example `_data/responsive_image_alts.yml`:
-#
-# mountain.jpg: "Snowy mountain at sunrise"
-# gallery/forest.jpg: "Forest path after rain"
-#
-# Tag usage:
-#
-# {% responsive_image assets/images/mountain.jpg class="hero" %}
-# {% responsive_image assets/images/mountain.jpg widths="360,720,1080" formats="webp,jpg" class="hero" %}
-# {% responsive_image assets/images/mountain.jpg heights="300,600" formats="jpg" %}
+# {% responsive_image /assets/images/mountain.jpg class="hero" %}
+# {% responsive_image /assets/images/mountain.jpg widths="360,720,1080" formats="webp,jpg" class="hero" %}
+# {% responsive_image /assets/images/mountain.jpg heights="300,600" formats="jpg" %}
 #
 # Notes:
 # - Generated files are written to site.dest only; they are not copied from source.
-# - Stale generated files in the output_dir are removed after each build.
 # - `srcset` uses standard `w` descriptors, even when the image was generated from heights.
 
 require "cgi"
@@ -41,7 +20,6 @@ require "vips"
 module Jekyll
   module ResponsiveImage
     DEFAULT_CONFIG = {
-      "output_dir" => "assets/generated/images",
       "default_widths" => [],
       "default_heights" => [],
       "default_formats" => ["webp", "jpg"],
@@ -134,24 +112,16 @@ module Jekyll
         data[rel] || data[base] || data[rel.to_sym] || data[base.to_sym]
       end
 
-      def output_root(site, config)
-        File.expand_path(config["output_dir"].to_s, site.dest)
-      end
-
-      def output_path_for(site, config, source_rel, size, axis, format)
-        rel = source_rel.to_s.sub(%r{\A/+}, "")
-        rel_path = Pathname.new(rel)
-        dir = rel_path.dirname.to_s
-        dir = "" if dir == "."
-
-        basename = rel_path.basename(rel_path.extname).to_s
+      def get_output_path(site, source_rel, size, axis, format)
+        path = Pathname.new(source_rel)
+        basename = path.basename(path.extname)
         ext = normalize_format(format)
         size_suffix = "#{Integer(size)}#{axis}"
-
-        File.join(output_root(site, config), dir, "#{basename}--#{size_suffix}.#{ext}")
+        File.join(site.dest, path.dirname, "#{basename}-#{size_suffix}.#{ext}")
       end
 
       def normalize_format(format)
+        # Remove the '.' at the start of the string
         ext = format.to_s.downcase.sub(%r{\A\.}, "")
         ext = "jpg" if ext == "jpeg"
         ext
@@ -185,8 +155,8 @@ module Jekyll
         image
       end
 
-      def generate_variant(site, config, source_path, source_rel, size, axis, format)
-        output_path = output_path_for(site, config, source_rel, size, axis, format)
+      def generate_variant(site, source_path, source_rel, size, axis, format)
+        output_path = get_output_path(site, source_rel, size, axis, format)
         source_mtime = File.mtime(source_path)
 
         if File.exist?(output_path) && File.mtime(output_path) >= source_mtime
@@ -227,12 +197,12 @@ module Jekyll
         output_path
       end
 
-      def build_candidates(site, config, source_path, source_rel, sizes, axis, formats)
+      def build_candidates(site, source_path, source_rel, sizes, axis, formats)
         candidates = []
 
         sizes.each do |size|
           formats.each do |format|
-            out = generate_variant(site, config, source_path, source_rel, size, axis, format)
+            out = generate_variant(site, source_path, source_rel, size, axis, format)
             image = Vips::Image.new_from_file(out, access: :sequential)
             image = image.autorot if image.respond_to?(:autorot)
 
@@ -249,35 +219,6 @@ module Jekyll
         end
 
         candidates
-      end
-
-      def cleanup_generated_files(site)
-        config = config_for(site)
-        root = output_root(site, config)
-        return unless Dir.exist?(root)
-
-        keep = registry_for(site)[:generated].map { |p| File.expand_path(p) }.to_set
-
-        Dir.glob(File.join(root, "**", "*"), File::FNM_DOTMATCH).each do |path|
-          next if [".", ".."].include?(File.basename(path))
-          next if path == root
-          next if File.directory?(path)
-
-          File.delete(path) unless keep.include?(File.expand_path(path))
-        end
-
-        Dir.glob(File.join(root, "**", "*"), File::FNM_DOTMATCH)
-           .select { |path| File.directory?(path) }
-           .sort_by { |path| -path.length }
-           .each do |path|
-          next if path == root
-
-          begin
-            Dir.rmdir(path)
-          rescue Errno::ENOTEMPTY, Errno::ENOENT, Errno::EEXIST
-            # keep directory if it still contains files
-          end
-        end
       end
 
       def reset_after_build(site)
@@ -335,7 +276,7 @@ module Jekyll
 
         css_class = opts["class"].to_s.strip
 
-        candidates = ResponsiveImage.build_candidates(site, config, source_path, source_rel, sizes, axis, formats)
+        candidates = ResponsiveImage.build_candidates(site, source_path, source_rel, sizes, axis, formats)
         raise ArgumentError, "Image generation produced no files for #{source_rel}." if candidates.empty?
 
         primary_format = ResponsiveImage.normalize_format(formats.first)
@@ -370,10 +311,6 @@ end
 
 Jekyll::Hooks.register :site, :after_init do |site|
   Jekyll::ResponsiveImage.reset_after_build(site)
-end
-
-Jekyll::Hooks.register :site, :post_write do |site|
-  Jekyll::ResponsiveImage.cleanup_generated_files(site)
 end
 
 Liquid::Template.register_tag("responsive_image", Jekyll::ResponsiveImage::ImageTag)
