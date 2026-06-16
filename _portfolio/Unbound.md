@@ -83,7 +83,7 @@ A problem I ran into was that, due to human anatomy, pitching your head up or do
     <source src="/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" type="video/mp4">
 </video>
 
-![](/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png)
+{% responsive_image /assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png %}
 
 {% endcapture_markdown %}
 

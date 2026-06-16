@@ -9,4 +9,5 @@ gem "kramdown-math-katex", "~> 1.0"
 
 gem "bigdecimal"
 gem "bundler"
+gem "ruby-vips"
 gem "wdm", ">= 0.1.0"
