@@ -196,10 +196,3 @@ defaults:
       author_profile: false
       masthead: true
 
-
-responsive_image:
-  output_dir: assets/generated/images
-  default_widths: [480, 960, 1440]
-  default_formats: [webp, jpg]
-  alt_map_data_file: responsive_image_alts
-

@@ -20,7 +20,7 @@ require "vips"
 module Jekyll
   module ResponsiveImage
     DEFAULT_CONFIG = {
-      "default_widths" => [],
+      "default_widths" => [480, 960, 1440],
       "default_heights" => [],
       "default_formats" => ["webp", "jpg"],
       "alt_map_data_file" => "responsive_image_alts"
@@ -43,11 +43,6 @@ module Jekyll
           cache: {},
           warned_missing_alt: Set.new
         }
-      end
-
-      def config_for(site)
-        site_cfg = site.config.fetch("responsive_image", {}) || {}
-        DEFAULT_CONFIG.merge(site_cfg)
       end
 
       def parse_tag_text(text)
@@ -219,7 +214,7 @@ module Jekyll
 
       def render(context)
         site = context.registers[:site]
-        config = ResponsiveImage.config_for(site)
+        config = DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
         opts = ResponsiveImage.parse_tag_text(@raw)
 
         source_rel = opts.fetch("source")
