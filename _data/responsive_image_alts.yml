@@ -1,4 +1,3 @@
-# Map source file paths (relative to the site source) to alt text.
-# The plugin will also try the basename if the full relative path is not found.
-
-/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: "3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value."
+/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: 3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value.
+/assets/portfolio/unbound/sliding/slope-visualization-tool.png: A custom shader showing different colors based on the slope of the terrain.
+/assets/portfolio/unbound/debug-tooling/move-record-visualization.png: Lines drawn using Unreal Engine's Visual Logger, to show every individual move from a frame.

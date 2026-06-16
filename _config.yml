@@ -202,5 +202,4 @@ responsive_image:
   default_widths: [480, 960, 1440]
   default_formats: [webp, jpg]
   alt_map_data_file: responsive_image_alts
-  warn_on_missing_alt: true
 

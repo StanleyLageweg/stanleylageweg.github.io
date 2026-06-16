@@ -23,8 +23,7 @@ module Jekyll
       "default_widths" => [],
       "default_heights" => [],
       "default_formats" => ["webp", "jpg"],
-      "alt_map_data_file" => "responsive_image_alts",
-      "warn_on_missing_alt" => true
+      "alt_map_data_file" => "responsive_image_alts"
     }.freeze
 
     class << self
@@ -101,15 +100,21 @@ module Jekyll
         candidates.find { |path| File.file?(path) } || raise(ArgumentError, "Image source not found: #{source_rel}")
       end
 
-      def alt_text_for(site, source_rel, config)
+      def get_alt_text(site, source_rel, config)
         alt_file = config["alt_map_data_file"].to_s
         data = site.data[alt_file] || site.data[alt_file.to_sym]
-        return nil unless data.respond_to?(:[])
+        if data.respond_to?(:[])
+          result = data[source_rel]
+          return result if result
+        end
 
-        rel = source_rel.to_s.sub(%r{\A/+}, "")
-        base = File.basename(rel)
+        registry = registry_for(site)
+        unless registry[:warned_missing_alt].include?(source_rel)
+          registry[:warned_missing_alt] << source_rel
+          Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_rel}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
+        end
 
-        data[rel] || data[base] || data[rel.to_sym] || data[base.to_sym]
+        return ""
       end
 
       def get_output_path(site, source_rel, size, axis, format)
@@ -138,17 +143,6 @@ module Jekyll
         url.empty? ? "/#{rel}" : url
       end
 
-      def warn_missing_alt(site, source_rel, config)
-        return unless config["warn_on_missing_alt"]
-
-        key = source_rel.to_s.sub(%r{\A/+}, "")
-        registry = registry_for(site)
-        return if registry[:warned_missing_alt].include?(key)
-
-        registry[:warned_missing_alt] << key
-        Jekyll.logger.warn("responsive_image", "Missing alt text for '#{key}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
-      end
-
       def maybe_flatten_for_jpeg(image)
         image.flatten(background: [255, 255, 255])
       rescue StandardError
@@ -157,43 +151,34 @@ module Jekyll
 
       def generate_variant(site, source_path, source_rel, size, axis, format)
         output_path = get_output_path(site, source_rel, size, axis, format)
+        rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
         source_mtime = File.mtime(source_path)
 
-        if File.exist?(output_path) && File.mtime(output_path) >= source_mtime
-          registry_for(site)[:generated] << File.expand_path(output_path)
-          return output_path
+        # Generate the variant if it doesn't exist or is outdated
+        unless File.exist?(output_path) && File.mtime(output_path) >= source_mtime
+          started_at = Time.now
+
+          FileUtils.mkdir_p(File.dirname(output_path))
+
+          image = Vips::Image.new_from_file(source_path, access: :sequential)
+          image = image.autorot if image.respond_to?(:autorot)
+
+          source_width = image.width.to_f
+          source_height = image.height.to_f
+          target = Integer(size)
+          scale = axis.to_s == "h" ? target / source_height : target / source_width
+
+          resized = scale == 1.0 ? image : image.resize(scale)
+          resized = maybe_flatten_for_jpeg(resized) if %w[jpg jpeg].include?(normalize_format(format))
+
+          resized.write_to_file(output_path)
+          Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
         end
 
-        FileUtils.mkdir_p(File.dirname(output_path))
-
-        cache_key = [
-          File.expand_path(source_path),
-          source_mtime.to_i,
-          Integer(size),
-          axis.to_s,
-          normalize_format(format)
-        ]
-
-        registry = registry_for(site)
-        if registry[:cache].key?(cache_key) && File.exist?(output_path)
-          registry[:generated] << File.expand_path(output_path)
-          return output_path
+        unless site.keep_files.include?(rel_output_path)
+          site.keep_files << rel_output_path
         end
 
-        image = Vips::Image.new_from_file(source_path, access: :sequential)
-        image = image.autorot if image.respond_to?(:autorot)
-
-        source_width = image.width.to_f
-        source_height = image.height.to_f
-        target = Integer(size)
-        scale = axis.to_s == "h" ? target / source_height : target / source_width
-
-        resized = scale == 1.0 ? image : image.resize(scale)
-        resized = maybe_flatten_for_jpeg(resized) if %w[jpg jpeg].include?(normalize_format(format))
-
-        resized.write_to_file(output_path)
-        registry[:cache][cache_key] = output_path
-        registry[:generated] << File.expand_path(output_path)
         output_path
       end
 
@@ -270,9 +255,7 @@ module Jekyll
                end
 
         sizes = widths.empty? ? heights : widths
-        alt = opts["alt"] || ResponsiveImage.alt_text_for(site, source_rel, config)
-        ResponsiveImage.warn_missing_alt(site, source_rel, config) if alt.nil?
-        alt = "" if alt.nil?
+        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
 
         css_class = opts["class"].to_s.strip
 
