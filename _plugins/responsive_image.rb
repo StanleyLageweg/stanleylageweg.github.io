@@ -80,19 +80,10 @@ module Jekyll
         end
       end
 
-      def source_path_for(site, source_rel, config)
-        raw = source_rel.to_s
-        raw = raw.sub(%r{\A/+}, "")
-
-        candidates = []
-        candidates << File.expand_path(raw, site.source)
-
-        source_dir = config["source_dir"].to_s.strip
-        unless source_dir.empty?
-          candidates << File.expand_path(File.join(source_dir, raw), site.source)
-        end
-
-        candidates.find { |path| File.file?(path) } || raise(ArgumentError, "Image source not found: #{source_rel}")
+      def get_source_path(site, source_rel, config)
+        source_path = File.join(site.source, source_rel)
+        raise Liquid::Error, "Image source not found: #{source_rel}" unless File.exist?(source_path)
+        source_path
       end
 
       def get_alt_text(site, source_rel, config)
@@ -218,7 +209,7 @@ module Jekyll
         opts = ResponsiveImage.parse_tag_text(@raw)
 
         source_rel = opts.fetch("source")
-        source_path = ResponsiveImage.source_path_for(site, source_rel, config)
+        source_path = ResponsiveImage.get_source_path(site, source_rel, config)
 
         widths = if opts.key?("widths")
                    ResponsiveImage.parse_int_list(opts["widths"])
