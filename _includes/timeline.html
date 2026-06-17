@@ -14,7 +14,7 @@
                 target="_blank"
                 rel="noopener">
             {% endif %}
-            <img src="{{ item.image }}" alt="{{ item.title }}" />
+            {% responsive_image item.image %}
             {% if item.link %}
               </a>
             {% endif %}

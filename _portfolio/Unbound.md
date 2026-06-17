@@ -83,7 +83,7 @@ A problem I ran into was that, due to human anatomy, pitching your head up or do
     <source src="/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" type="video/mp4">
 </video>
 
-{% responsive_image /assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png %}
+{% responsive_image "/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png" %}
 
 {% endcapture_markdown %}
 
@@ -645,7 +645,7 @@ Shallow patches on a steep slope are especially problematic, as you don't notice
 That's why I created a custom shader, which you can enable with a button in the editor, to visualize the slope angles. Horizontal ground in green, shallow slopes in yellow, steep slopes in orange and beyond 55° in red.
 The shader is applied to the 'Player Collision' view mode to ensure that you see the actual slope value that'll be used in gameplay, instead of the approximation you'd get from applying the shader on the regular meshes.
 
-{% responsive_image /assets/portfolio/unbound/sliding/slope-visualization-tool.png %}
+{% responsive_image "/assets/portfolio/unbound/sliding/slope-visualization-tool.png" %}
 
 {% endcapture_markdown %}
 
@@ -702,7 +702,7 @@ void FVGRopeSwingingSyncState::GrabDebugSnapshot(const UVGMoverComponent* MoverC
 Mover also has the `FMovementRecord` feature, where the name and translation of every movement is stored in a list. Epic wasn't really using this data yet, so I decided to also log it in the Visual Log. I log an indexed list of movements and draw indexed lines to show the movement. 
 If the player moved unexpectedly, this feature made it super easy to pinpoint exactly which movement step caused the issue.
 
-{% responsive_image /assets/portfolio/unbound/debug-tooling/move-record-visualization.png %}
+{% responsive_image "/assets/portfolio/unbound/debug-tooling/move-record-visualization.png" %}
 
 {% endcapture_markdown %}
 

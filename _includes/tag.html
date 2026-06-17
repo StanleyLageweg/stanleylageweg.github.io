@@ -15,7 +15,7 @@
 
 {% if tag__image %}
   {% capture tag__icon %}
-    <img src="{{ tag__image }}" alt="{{ tag__text }} icon" />
+    {% responsive_image tag__image %}
   {% endcapture %}
 {% else %}
   {% assign tag__icon = "" %}
@@ -23,14 +23,14 @@
 
 {% if tag__link %}
 
-<a class="tag" href="{{ tag__link }}" onclick="event.stopPropagation()" target="_blank" rel="noopener">
+<a class="tag" href="{{ tag__link }}" target="_blank" rel="noopener">
   {{ tag__icon }}
   {{ tag__text }}
 </a>
 
 {% else %}
 
-<span class="tag" onclick="event.stopPropagation()">
+<span class="tag">
   {{ tag__icon }}
   {{ tag__text }}
 </span>

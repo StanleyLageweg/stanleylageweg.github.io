@@ -10,7 +10,6 @@ require "cgi"
 require "fileutils"
 require "pathname"
 require "set"
-require "shellwords"
 require "yaml"
 
 require "jekyll"
@@ -46,19 +45,20 @@ module Jekyll
       end
 
       def parse_tag_text(text)
-        tokens = Shellwords.split(text.to_s)
-        raise ArgumentError, "responsive_image tag requires a source path" if tokens.empty?
+        source_match = text.to_s.strip.match(/\A(\S+)\s*(.*)/m)
+        raise ArgumentError, "responsive_image tag requires a source path" if source_match.nil?
 
-        source = tokens.shift
-        options = { "source" => source }
-
-        tokens.each do |token|
-          key, value = token.split("=", 2)
-          raise ArgumentError, "Invalid option '#{token}'. Use key=\"value\"." if value.nil?
-          options[key] = value
+        tokens = [{ key: "source", expr: Liquid::Expression.parse(source_match[1]) }]
+        source_match[2].scan(Liquid::TagAttributes) do |key, value|
+          tokens << { key: key, expr: Liquid::Expression.parse(value) }
         end
+        tokens
+      end
 
-        options
+      def resolve_tokens(tokens, context)
+        tokens.each_with_object({}) do |token, options|
+          options[token[:key]] = context.evaluate(token[:expr])
+        end
       end
 
       def parse_list(value)
@@ -238,16 +238,26 @@ module Jekyll
     class ImageTag < Liquid::Tag
       def initialize(tag_name, text, tokens)
         super
-        @raw = text.to_s
+        @tokens = ResponsiveImage.parse_tag_text(text)
       end
 
       def render(context)
         site = context.registers[:site]
         config = DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
-        opts = ResponsiveImage.parse_tag_text(@raw)
+        opts = ResponsiveImage.resolve_tokens(@tokens, context)
 
         source_rel = opts.fetch("source")
         source_path = ResponsiveImage.get_source_path(site, source_rel, config)
+
+        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
+        css_class = opts["class"].to_s.strip
+
+        if ResponsiveImage.normalize_format(File.extname(source_path)) == "svg"
+          img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
+          img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
+          img_attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
+          return %(<img #{img_attrs.join(' ')}/>)
+        end
 
         widths = if opts.key?("widths")
                    ResponsiveImage.parse_int_list(opts["widths"])
@@ -283,13 +293,8 @@ module Jekyll
           %(<source type="#{escape_html(ResponsiveImage.mime_type(format))}" srcset="#{escape_html(srcset)}"/>)
         end
 
-        fallback_src = ResponsiveImage.public_url(site, File.join(site.dest, source_rel))
-        img_attrs = [%(src="#{escape_html(fallback_src)}")]
-
-        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
+        img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
         img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
-
-        css_class = opts["class"].to_s.strip
         img_attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
 
         %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)

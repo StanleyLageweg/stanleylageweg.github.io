@@ -1,3 +1,12 @@
+/assets/images/education/leiden_university.png: Leiden University logo.
+/assets/images/education/tu_delft.jpg: TU Delft logo.
+/assets/images/icons/cpp.png: C++ logo.
+/assets/images/icons/steam.svg: Steam logo.
+/assets/images/icons/the_game_awards.svg: The Game Awards logo.
+/assets/images/icons/unreal_engine_2023_black.svg: Unreal Engine logo.
+/assets/images/icons/unreal_engine_4.svg: Unreal Engine 4 logo.
+/assets/images/keoken/keoken_interactive.jfif: Keoken Interactive logo.
+/assets/images/vertigo/vertigo_games.png: Vertigo Games logo.
 /assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: 3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value.
 /assets/portfolio/unbound/sliding/slope-visualization-tool.png: A custom shader showing different colors based on the slope of the terrain.
 /assets/portfolio/unbound/debug-tooling/move-record-visualization.png: Lines drawn using Unreal Engine's Visual Logger, to show every individual move from a frame.
