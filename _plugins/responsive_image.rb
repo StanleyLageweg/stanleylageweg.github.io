@@ -136,12 +136,6 @@ module Jekyll
         url.empty? ? "/#{rel}" : url
       end
 
-      def maybe_flatten_for_jpeg(image)
-        image.flatten(background: [255, 255, 255])
-      rescue StandardError
-        image
-      end
-
       def has_alpha?(image)
         image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
       end
@@ -150,10 +144,22 @@ module Jekyll
         has_alpha?(image) && image[image.bands - 1].min < 255
       end
 
+      def add_keep_file(site, path)
+        site.keep_files << path unless site.keep_files.include?(path)
+      end
+
       def generate_image(site, source_path, source_rel, size, axis, format)
         output_path = get_output_path(site, source_rel, size, axis, format)
         rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
         source_mtime = File.mtime(source_path)
+
+        # Check if there's a marker file indicating the source image should be used for this size/format
+        marker_path = "#{output_path}.use-source"
+        rel_marker_path = "#{rel_output_path}.use-source"
+        if File.exist?(marker_path) && File.mtime(marker_path) >= source_mtime
+          add_keep_file(site, rel_marker_path)
+          return source_path
+        end
 
         # Generate the variant if it doesn't exist or is outdated
         unless File.exist?(output_path) && File.mtime(output_path) >= source_mtime
@@ -164,22 +170,30 @@ module Jekyll
           image = Vips::Image.new_from_file(source_path, access: :sequential)
           image = image.autorot if image.respond_to?(:autorot)
 
+          source_dimension = axis.to_s == "h" ? image.height.to_i : image.width.to_i
+          source_format = normalize_format(File.extname(source_path))
+
           source_width = image.width.to_f
           source_height = image.height.to_f
           target = Integer(size)
           scale = axis.to_s == "h" ? target / source_height : target / source_width
 
           resized = scale == 1.0 ? image : image.resize(scale)
-          resized = maybe_flatten_for_jpeg(resized) if %w[jpg jpeg].include?(normalize_format(format))
-
           resized.write_to_file(output_path)
-          Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
+
+          # If the generated file is larger than the source, use the source instead and create a marker file to skip regeneration next time.
+          if Integer(size) == source_dimension && format == source_format && File.size(source_path) <= File.size(output_path)
+            File.delete(output_path)
+            FileUtils.touch(marker_path)
+            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
+            add_keep_file(site, rel_marker_path)
+            return source_path
+          else
+            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
+          end
         end
 
-        unless site.keep_files.include?(rel_output_path)
-          site.keep_files << rel_output_path
-        end
-
+        add_keep_file(site, rel_output_path)
         output_path
       end
 
@@ -187,6 +201,7 @@ module Jekyll
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
         source_dimension = axis.to_s == "h" ? source_image.height.to_i : source_image.width.to_i
+        source_format = normalize_format(File.extname(source_path))
 
         effective_sizes = sizes.map { |s| Integer(s) }.select { |s| s < source_dimension }
         effective_sizes = (effective_sizes << source_dimension).uniq.sort
