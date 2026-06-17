@@ -248,16 +248,19 @@ module Jekyll
 
         source_rel = opts.fetch("source")
         source_path = ResponsiveImage.get_source_path(site, source_rel, config)
+        source_format = ResponsiveImage.normalize_format(File.extname(source_path))
 
         alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
-        css_class = opts["class"].to_s.strip
-
-        if ResponsiveImage.normalize_format(File.extname(source_path)) == "svg"
-          img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
-          img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
-          img_attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
-          return %(<img #{img_attrs.join(' ')}/>)
+        reserved_keys = %w[source widths heights formats alt]
+        extra_attrs = opts.reject { |k, _| reserved_keys.include?(k) }.map do |k, v|
+          %(#{k}="#{escape_html(v)}")
         end
+
+        img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
+        img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
+        img_attrs.concat(extra_attrs)
+
+        return %(<img #{img_attrs.join(' ')}/>) if source_format == "svg"
 
         widths = if opts.key?("widths")
                    ResponsiveImage.parse_int_list(opts["widths"])
@@ -292,10 +295,6 @@ module Jekyll
           srcset = source.map { |c| "#{c[:url]} #{c[:width]}w" }.join(", ")
           %(<source type="#{escape_html(ResponsiveImage.mime_type(format))}" srcset="#{escape_html(srcset)}"/>)
         end
-
-        img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
-        img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
-        img_attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
 
         %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)
       end

@@ -20,7 +20,7 @@
   <div class="card {% unless card__title or card__image or card__from or card__to %}card--minimal{% endunless %}">
     {% if card__image %}
     <div class="card__image">
-      <img src="{{ card__image | relative_url }}">
+      {% responsive_image card__image %}
     </div>
     {% endif %}
     <div class="card__text">

@@ -1,12 +1,25 @@
-/assets/images/education/leiden_university.png: Leiden University logo.
-/assets/images/education/tu_delft.jpg: TU Delft logo.
-/assets/images/icons/cpp.png: C++ logo.
-/assets/images/icons/steam.svg: Steam logo.
-/assets/images/icons/the_game_awards.svg: The Game Awards logo.
-/assets/images/icons/unreal_engine_2023_black.svg: Unreal Engine logo.
-/assets/images/icons/unreal_engine_4.svg: Unreal Engine 4 logo.
-/assets/images/keoken/keoken_interactive.jfif: Keoken Interactive logo.
-/assets/images/vertigo/vertigo_games.png: Vertigo Games logo.
+/assets/images/stanley.jpg: A photo of Stanley Lageweg
+/assets/images/leiden-university.png: Leiden University logo.
+/assets/images/tu-delft.jpg: TU Delft logo.
+/assets/images/cpp.png: C++ logo.
+/assets/images/steam.svg: Steam logo.
+/assets/images/the-game-awards.svg: The Game Awards logo.
+/assets/images/unreal-engine-2023-black.svg: Unreal Engine logo.
+/assets/images/unreal-engine-4.svg: Unreal Engine 4 logo.
+/assets/images/keoken-interactive.jfif: Keoken Interactive logo.
+/assets/images/vertigo-games.png: Vertigo Games logo.
+/assets/portfolio/deliver-us-mars/teaser.jpg: The cover art for Deliver Us Mars, showing Kathy looking out over a martian mining base, with the Deliver Us Mars logo on the left.
+/assets/portfolio/impact/teaser.png: The cover art for Metro Awakening, showing Khan walking in a metro tunnel, with the Metro Awakening logo on the left.
+/assets/portfolio/unbound/hero.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
+/assets/portfolio/unbound/teaser.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
 /assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: 3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value.
+/assets/portfolio/unbound/camera-movement/teaser.png: Unreal Engine's Quinn, wearing a VR headset, looking at the camera with her head tilted to the side.
+/assets/portfolio/unbound/camera-smoothing/teaser.png: Unreal Engine's Quinn, wearing a VR headset, walking up a staircase.
+/assets/portfolio/unbound/climbing/teaser.png: Unreal Engine's Quinn, wearing a VR headset, climbing on a wall.
+/assets/portfolio/unbound/debug-tooling/teaser.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge. Debug visuals are displayed on top, showing the player capsule, camera and trajectory.
+/assets/portfolio/unbound/mantling/teaser.png: Unreal Engine's Quinn, wearing a VR headset, mantling onto a ledge.
+/assets/portfolio/unbound/rope-swinging/teaser.png: Unreal Engine's Quinn, wearing a VR headset, swinging on a rope.
+/assets/portfolio/unbound/swimming/teaser.png: Unreal Engine's Quinn, wearing a VR headset, swimming in a pool.
+/assets/portfolio/unbound/sliding/teaser.png: Unreal Engine's Quinn, wearing a VR headset, sliding down a slope while seated.
 /assets/portfolio/unbound/sliding/slope-visualization-tool.png: A custom shader showing different colors based on the slope of the terrain.
 /assets/portfolio/unbound/debug-tooling/move-record-visualization.png: Lines drawn using Unreal Engine's Visual Logger, to show every individual move from a frame.

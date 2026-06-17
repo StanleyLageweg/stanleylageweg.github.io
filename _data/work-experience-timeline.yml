@@ -1,5 +1,5 @@
 - title: Vertigo Games
-  image: /assets/images/vertigo/vertigo_games.png
+  image: /assets/images/vertigo-games.png
   link: https://www.vertigo-games.com/
   from: Sept. 2022
   positions:
@@ -10,7 +10,7 @@
       to: Dec. 2023
 
 - title: KeokeN Interactive
-  image: /assets/images/keoken/keoken_interactive.jfif
+  image: /assets/images/keoken-interactive.jfif
   link: https://keokeninteractive.com/
   positions:
     - title: Game Programmer

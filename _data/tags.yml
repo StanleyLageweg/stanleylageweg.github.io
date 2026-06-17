@@ -1,15 +1,15 @@
 C++:
-  image: /assets/images/icons/cpp.png
+  image: /assets/images/cpp.png
   link: https://isocpp.org/
 KeokeN Interactive:
-  image: /assets/images/keoken/keoken_interactive.jfif
+  image: /assets/images/keoken-interactive.jfif
   link: https://keokeninteractive.com/
 Unreal Engine 4:
-  image: /assets/images/icons/unreal_engine_4.svg
+  image: /assets/images/unreal-engine-4.svg
   link: https://www.unrealengine.com/
 Unreal Engine 5:
-  image: /assets/images/icons/unreal_engine_2023_black.svg
+  image: /assets/images/unreal-engine-2023-black.svg
   link: https://www.unrealengine.com/
 Vertigo Games:
-  image: /assets/images/vertigo/vertigo_games.png
+  image: /assets/images/vertigo-games.png
   link: https://www.vertigo-games.com/
