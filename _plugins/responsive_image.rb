@@ -20,9 +20,9 @@ require "vips"
 module Jekyll
   module ResponsiveImage
     DEFAULT_CONFIG = {
-      "default_widths" => [480, 960, 1440],
+      "default_widths" => [480, 960, 1280, 1920, 2560, 3840],
       "default_heights" => [],
-      "default_formats" => ["webp", "jpg"],
+      "default_formats" => ["webp", "jpg", "png"],
       "alt_map_data_file" => "responsive_image_alts"
     }.freeze
 
@@ -118,6 +118,13 @@ module Jekyll
         ext
       end
 
+      def mime_type(format)
+        case format
+        when "jpg" then "image/jpeg"
+        else "image/#{format}"
+        end
+      end
+
       def public_url(site, path)
         dest = File.expand_path(site.dest)
         rel = Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(dest)).to_s.tr(File::SEPARATOR, "/")
@@ -135,7 +142,15 @@ module Jekyll
         image
       end
 
-      def generate_variant(site, source_path, source_rel, size, axis, format)
+      def has_alpha?(image)
+        image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
+      end
+
+      def has_transparency?(image)
+        has_alpha?(image) && image[image.bands - 1].min < 255
+      end
+
+      def generate_image(site, source_path, source_rel, size, axis, format)
         output_path = get_output_path(site, source_rel, size, axis, format)
         rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
         source_mtime = File.mtime(source_path)
@@ -168,28 +183,36 @@ module Jekyll
         output_path
       end
 
-      def build_candidates(site, source_path, source_rel, sizes, axis, formats)
-        candidates = []
+      def build_sources(site, source_path, source_rel, sizes, axis, formats)
+        source_image = Vips::Image.new_from_file(source_path, access: :sequential)
+        source_image = source_image.autorot if source_image.respond_to?(:autorot)
+        source_dimension = axis.to_s == "h" ? source_image.height.to_i : source_image.width.to_i
 
-        sizes.each do |size|
-          formats.each do |format|
-            out = generate_variant(site, source_path, source_rel, size, axis, format)
+        effective_sizes = sizes.map { |s| Integer(s) }.select { |s| s < source_dimension }
+        effective_sizes = (effective_sizes << source_dimension).uniq.sort
+
+        effective_formats = formats.uniq
+        if has_transparency?(source_image)
+          effective_formats = formats.reject { |f| f == "jpg" }
+        end
+
+        effective_formats.each_with_object({}) do |format, groups|
+          groups[format] = effective_sizes.map do |size|
+            out = generate_image(site, source_path, source_rel, size, axis, format)
             image = Vips::Image.new_from_file(out, access: :sequential)
             image = image.autorot if image.respond_to?(:autorot)
 
-            candidates << {
+            {
               path: out,
               url: public_url(site, out),
               width: image.width.to_i,
               height: image.height.to_i,
-              format: normalize_format(format),
+              format: format,
               size: size,
               axis: axis.to_s
             }
           end
         end
-
-        candidates
       end
 
       def reset_after_build(site)
@@ -227,10 +250,7 @@ module Jekyll
                     ResponsiveImage.parse_list(opts["formats"])
                   else
                     ResponsiveImage.parse_list(config["default_formats"])
-                  end
-
-        raise ArgumentError, "No image sizes configured for #{source_rel}. Provide widths=... or heights=..., or set responsive_image.default_widths/default_heights." if widths.empty? && heights.empty?
-        raise ArgumentError, "No output formats configured for #{source_rel}. Provide formats=... or set responsive_image.default_formats." if formats.empty?
+                  end.map { |f| ResponsiveImage.normalize_format(f) }
 
         axis = if !widths.empty? && !heights.empty?
                  raise ArgumentError, "Use either widths=... or heights=..., not both, for #{source_rel}."
@@ -241,32 +261,23 @@ module Jekyll
                end
 
         sizes = widths.empty? ? heights : widths
+
+        sources = ResponsiveImage.build_sources(site, source_path, source_rel, sizes, axis, formats)
+        source_tags = sources.map do |format, source|
+          srcset = source.map { |c| "#{c[:url]} #{c[:width]}w" }.join(", ")
+          %(<source type="#{escape_html(ResponsiveImage.mime_type(format))}" srcset="#{escape_html(srcset)}"/>)
+        end
+
+        fallback_src = ResponsiveImage.public_url(site, File.join(site.dest, source_rel))
+        img_attrs = [%(src="#{escape_html(fallback_src)}")]
+
         alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
+        img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
 
         css_class = opts["class"].to_s.strip
+        img_attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
 
-        candidates = ResponsiveImage.build_candidates(site, source_path, source_rel, sizes, axis, formats)
-        raise ArgumentError, "Image generation produced no files for #{source_rel}." if candidates.empty?
-
-        primary_format = ResponsiveImage.normalize_format(formats.first)
-        primary_candidates = candidates.select { |c| c[:format] == primary_format }
-        primary_candidates = candidates if primary_candidates.empty?
-
-        primary_candidates = primary_candidates.uniq { |c| c[:width] }
-        primary_candidates = primary_candidates.sort_by { |c| c[:width] }
-
-        src_candidate = primary_candidates.max_by { |c| c[:width] } || candidates.max_by { |c| c[:width] }
-        srcset = primary_candidates.map do |candidate|
-          "#{candidate[:url]} #{candidate[:width]}w"
-        end.join(", ")
-
-        attrs = []
-        attrs << %(srcset="#{escape_html(srcset)}") unless srcset.empty?
-        attrs << %(src="#{escape_html(src_candidate[:url])}")
-        attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
-        attrs << %(class="#{escape_html(css_class)}") unless css_class.empty?
-
-        %(<img #{attrs.join(' ')}/>)
+        %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)
       end
 
       private
