@@ -12,9 +12,6 @@ This project is based on the [Minimal Mistakes](https://github.com/mmistakes/min
 Copyright (c) 2013-2024 Michael Rose and contributors.  
 Minimal Mistakes is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates icons from [The Noun Project](https://thenounproject.com/) creators Garrett Knoll, Arthur Shlain, and tracy tam.  
-Icons are distributed under Creative Commons Attribution 3.0 United States (CC BY 3.0 US).
-
 Minimal Mistakes incorporates [Font Awesome](http://fontawesome.io/).  
 Copyright (c) 2017 Dave Gandy.  
 Font Awesome is distributed under the terms of the [SIL OFL 1.1](http://scripts.sil.org/OFL) 
