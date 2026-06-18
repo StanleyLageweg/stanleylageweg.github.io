@@ -14,7 +14,7 @@
                 target="_blank"
                 rel="noopener">
             {% endif %}
-            {% responsive_image item.image %}
+            {% responsive_image item.image sizes=site.data.variables.timeline_image_size %}
             {% if item.link %}
               </a>
             {% endif %}

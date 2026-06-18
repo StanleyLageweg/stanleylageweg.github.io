@@ -15,7 +15,7 @@
 
 {% if tag__image %}
   {% capture tag__icon %}
-    {% responsive_image tag__image %}
+    {% responsive_image tag__image widths="120, 240, 480" sizes_height="1.5em" %}
   {% endcapture %}
 {% else %}
   {% assign tag__icon = "" %}

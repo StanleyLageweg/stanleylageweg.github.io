@@ -33,7 +33,7 @@
       {% endif %}
     </div>
   {% else %}
-    {% responsive_image page.header.image class="page__hero-image" %}
+    {% responsive_image page.header.image class="page__hero-image" sizes="100vw" %}
   {% endif %}
   {% if page.header.caption %}
     <span class="page__hero-caption">{{ page.header.caption | markdownify | remove: "<p>" | remove: "</p>" }}</span>

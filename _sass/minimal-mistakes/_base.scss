@@ -185,6 +185,10 @@ li ol {
    Media and embeds
    ========================================================================== */
 
+img.opaque, video {
+  background-color: $lighter-gray;
+}
+
 /* Figures and images */
 
 figure {

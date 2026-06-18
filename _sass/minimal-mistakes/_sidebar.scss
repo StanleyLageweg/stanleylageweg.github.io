@@ -7,12 +7,12 @@
    ========================================================================== */
 
 .sidebar {
-  width: $right-sidebar-width;
+  width: $sidebar-width;
   flex-shrink: 0;
   align-self: stretch;
 
   @media (max-width: $x-large) {
-    width: $right-sidebar-width-narrow;
+    width: $sidebar-width-narrow;
   }
 
   @media (max-width: $large) {

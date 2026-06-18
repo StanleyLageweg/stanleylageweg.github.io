@@ -1,10 +1,6 @@
-# {% responsive_image /assets/images/mountain.jpg class="hero" %}
-# {% responsive_image /assets/images/mountain.jpg widths="360,720,1080" formats="webp,jpg" class="hero" %}
-# {% responsive_image /assets/images/mountain.jpg heights="300,600" formats="jpg" %}
-#
-# Notes:
-# - Generated files are written to site.dest only; they are not copied from source.
-# - `srcset` uses standard `w` descriptors, even when the image was generated from heights.
+# {% responsive_image "/assets/images/mountain.jpg" class="hero" %}
+# {% responsive_image "/assets/images/mountain.jpg" widths="360,720,1080" formats="webp,jpg" class="hero" %}
+# {% responsive_image "/assets/images/icon.png" widths="64,128" sizes="2em" %}
 
 require "cgi"
 require "fileutils"
@@ -19,11 +15,14 @@ require "vips"
 module Jekyll
   module ResponsiveImage
     DEFAULT_CONFIG = {
-      "default_widths" => [480, 960, 1280, 1920, 2560, 3840],
-      "default_heights" => [],
+      "default_widths" => [240, 480, 960, 1280, 1920, 2560, 3840],
       "default_formats" => ["webp", "jpg", "png"],
+      "default_oversample" => 1.5,
       "alt_map_data_file" => "responsive_image_alts"
     }.freeze
+
+    # Matches `key=value` (with quoted or unquoted values).
+    TAG_ATTRIBUTES = /(\w+)\s*=\s*(#{Liquid::QuotedFragment})/o
 
     class << self
       def registry_for(site)
@@ -48,16 +47,27 @@ module Jekyll
         source_match = text.to_s.strip.match(/\A(\S+)\s*(.*)/m)
         raise ArgumentError, "responsive_image tag requires a source path" if source_match.nil?
 
-        tokens = [{ key: "source", expr: Liquid::Expression.parse(source_match[1]) }]
-        source_match[2].scan(Liquid::TagAttributes) do |key, value|
-          tokens << { key: key, expr: Liquid::Expression.parse(value) }
+        tokens = [build_token("source", source_match[1])]
+        source_match[2].scan(TAG_ATTRIBUTES) do |key, value|
+          tokens << build_token(key, value)
         end
         tokens
       end
 
+      def build_token(key, value)
+        resolver = if value.start_with?('"', "'") && value.include?("{{")
+            template = Liquid::Template.parse(value[1..-2])
+            ->(context) { template.render(context) }
+          else
+            expr = Liquid::Expression.parse(value)
+            ->(context) { context.evaluate(expr) }
+          end
+        { key: key, resolve: resolver }
+      end
+
       def resolve_tokens(tokens, context)
         tokens.each_with_object({}) do |token, options|
-          options[token[:key]] = context.evaluate(token[:expr])
+          options[token[:key]] = token[:resolve].call(context)
         end
       end
 
@@ -103,12 +113,11 @@ module Jekyll
         return ""
       end
 
-      def get_output_path(site, source_rel, size, axis, format)
+      def get_output_path(site, source_rel, width, format)
         path = Pathname.new(source_rel)
         basename = path.basename(path.extname)
         ext = normalize_format(format)
-        size_suffix = "#{Integer(size)}#{axis}"
-        File.join(site.dest, path.dirname, "#{basename}-#{size_suffix}.#{ext}")
+        File.join(site.dest, path.dirname, "#{basename}-#{Integer(width)}w.#{ext}")
       end
 
       def normalize_format(format)
@@ -148,8 +157,8 @@ module Jekyll
         site.keep_files << path unless site.keep_files.include?(path)
       end
 
-      def generate_image(site, source_path, source_rel, size, axis, format)
-        output_path = get_output_path(site, source_rel, size, axis, format)
+      def generate_image(site, source_path, source_rel, width, format)
+        output_path = get_output_path(site, source_rel, width, format)
         rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
         source_mtime = File.mtime(source_path)
 
@@ -170,19 +179,17 @@ module Jekyll
           image = Vips::Image.new_from_file(source_path, access: :sequential)
           image = image.autorot if image.respond_to?(:autorot)
 
-          source_dimension = axis.to_s == "h" ? image.height.to_i : image.width.to_i
+          source_width = image.width.to_i
           source_format = normalize_format(File.extname(source_path))
 
-          source_width = image.width.to_f
-          source_height = image.height.to_f
-          target = Integer(size)
-          scale = axis.to_s == "h" ? target / source_height : target / source_width
+          target = Integer(width)
+          scale = target.to_f / source_width
 
           resized = scale == 1.0 ? image : image.resize(scale)
           resized.write_to_file(output_path)
 
           # If the generated file is larger than the source, use the source instead and create a marker file to skip regeneration next time.
-          if Integer(size) == source_dimension && format == source_format && File.size(source_path) <= File.size(output_path)
+          if target == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
             File.delete(output_path)
             FileUtils.touch(marker_path)
             Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
@@ -197,23 +204,22 @@ module Jekyll
         output_path
       end
 
-      def build_sources(site, source_path, source_rel, sizes, axis, formats)
+      def build_sources(site, source_path, source_rel, widths, formats)
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
-        source_dimension = axis.to_s == "h" ? source_image.height.to_i : source_image.width.to_i
-        source_format = normalize_format(File.extname(source_path))
+        source_width = source_image.width.to_i
 
-        effective_sizes = sizes.map { |s| Integer(s) }.select { |s| s < source_dimension }
-        effective_sizes = (effective_sizes << source_dimension).uniq.sort
+        effective_widths = widths.map { |w| Integer(w) }.select { |w| w < source_width }
+        effective_widths = (effective_widths << source_width).uniq.sort
 
         effective_formats = formats.uniq
         if has_transparency?(source_image)
           effective_formats = formats.reject { |f| f == "jpg" }
         end
 
-        effective_formats.each_with_object({}) do |format, groups|
-          groups[format] = effective_sizes.map do |size|
-            out = generate_image(site, source_path, source_rel, size, axis, format)
+        effective_formats.each_with_object({}) do |format, sources|
+          sources[format] = effective_widths.map do |width|
+            out = generate_image(site, source_path, source_rel, width, format)
             image = Vips::Image.new_from_file(out, access: :sequential)
             image = image.autorot if image.respond_to?(:autorot)
 
@@ -222,9 +228,7 @@ module Jekyll
               url: public_url(site, out),
               width: image.width.to_i,
               height: image.height.to_i,
-              format: format,
-              size: size,
-              axis: axis.to_s
+              format: format
             }
           end
         end
@@ -251,13 +255,41 @@ module Jekyll
         source_format = ResponsiveImage.normalize_format(File.extname(source_path))
 
         alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
-        reserved_keys = %w[source widths heights formats alt]
+        sizes_attr = opts["sizes"]
+        sizes_height = opts["sizes_height"]
+        raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_rel}." if sizes_attr && sizes_height
+
+        source_width = nil
+        source_height = nil
+        if source_format != "svg"
+          source_image = Vips::Image.new_from_file(source_path, access: :sequential)
+          source_image = source_image.autorot if source_image.respond_to?(:autorot)
+          source_width = source_image.width.to_i
+          source_height = source_image.height.to_i
+          unless ResponsiveImage.has_transparency?(source_image)
+            opts["class"] = [opts["class"], "opaque"].compact.reject(&:empty?).join(" ")
+          end
+        end
+
+        if sizes_height && source_width
+          aspect_ratio = (source_width.to_f / source_height.to_f).round(4)
+          sizes_attr = aspect_ratio == 1.0 ? sizes_height : "calc(#{sizes_height} * #{aspect_ratio})"
+        end
+
+        # Default to sizes="auto" + loading="lazy" when no size hint was provided. sizes="auto" requires lazy loading and intrinsic width/height to work.
+        if sizes_attr.nil? && source_format != "svg"
+          sizes_attr = "auto"
+          opts["loading"] ||= "lazy"
+        end
+
+        reserved_keys = %w[source widths formats alt sizes sizes_height oversample]
         extra_attrs = opts.reject { |k, _| reserved_keys.include?(k) }.map do |k, v|
           %(#{k}="#{escape_html(v)}")
         end
 
         img_attrs = [%(src="#{escape_html(ResponsiveImage.public_url(site, File.join(site.dest, source_rel)))}")]
         img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
+        img_attrs << %(width="#{source_width}") << %(height="#{source_height}") if source_width
         img_attrs.concat(extra_attrs)
 
         return %(<img #{img_attrs.join(' ')}/>) if source_format == "svg"
@@ -268,32 +300,20 @@ module Jekyll
                    ResponsiveImage.parse_int_list(config["default_widths"])
                  end
 
-        heights = if opts.key?("heights")
-                    ResponsiveImage.parse_int_list(opts["heights"])
-                  else
-                    ResponsiveImage.parse_int_list(config["default_heights"])
-                  end
-
         formats = if opts.key?("formats")
                     ResponsiveImage.parse_list(opts["formats"])
                   else
                     ResponsiveImage.parse_list(config["default_formats"])
                   end.map { |f| ResponsiveImage.normalize_format(f) }
 
-        axis = if !widths.empty? && !heights.empty?
-                 raise ArgumentError, "Use either widths=... or heights=..., not both, for #{source_rel}."
-               elsif !widths.empty?
-                 "w"
-               else
-                 "h"
-               end
+        oversample = Float(opts["oversample"] || config["default_oversample"])
 
-        sizes = widths.empty? ? heights : widths
-
-        sources = ResponsiveImage.build_sources(site, source_path, source_rel, sizes, axis, formats)
+        sources = ResponsiveImage.build_sources(site, source_path, source_rel, widths, formats)
         source_tags = sources.map do |format, source|
-          srcset = source.map { |c| "#{c[:url]} #{c[:width]}w" }.join(", ")
-          %(<source type="#{escape_html(ResponsiveImage.mime_type(format))}" srcset="#{escape_html(srcset)}"/>)
+          srcset = source.map { |c| "#{c[:url]} #{(c[:width] / oversample).round}w" }.join(", ")
+          source_parts = [%(type="#{escape_html(ResponsiveImage.mime_type(format))}"), %(srcset="#{escape_html(srcset)}")]
+          source_parts << %(sizes="#{escape_html(sizes_attr)}") if sizes_attr
+          %(<source #{source_parts.join(' ')}/>)
         end
 
         %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)
