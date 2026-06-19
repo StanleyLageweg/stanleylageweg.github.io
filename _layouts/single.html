@@ -36,7 +36,7 @@ layout: default
           </aside>
         {% endif %}
         {{ content }}
-        {% if page.link %}<div><a href="{{ page.link }}" class="btn btn--primary">Direct Link</a></div>{% endif %}
+        {% if page.link %}<div><a href="{{ page.link | relative_url }}" class="btn btn--primary">Direct Link</a></div>{% endif %}
       </section>
     </div>
   </article>

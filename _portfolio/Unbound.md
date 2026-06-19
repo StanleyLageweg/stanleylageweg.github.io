@@ -26,16 +26,16 @@ Since our movement system needed to be so varied and custom, I decided to use [U
 <div style="container-type: inline-size">
     <div class="video-grid__responsive">
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/platforming-optimized.mp4" type="video/mp4">
+            <source src="{{ '/assets/portfolio/unbound/platforming-optimized.mp4' | relative_url }}" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/climbing-optimized.mp4" type="video/mp4">
+            <source src="{{ '/assets/portfolio/unbound/climbing-optimized.mp4' | relative_url }}" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/sliding-optimized.mp4" type="video/mp4">
+            <source src="{{ '/assets/portfolio/unbound/sliding-optimized.mp4' | relative_url }}" type="video/mp4">
         </video>
         <video autoplay muted loop width="100%">
-            <source src="/assets/portfolio/unbound/swimming-optimized.mp4" type="video/mp4">
+            <source src="{{ '/assets/portfolio/unbound/swimming-optimized.mp4' | relative_url }}" type="video/mp4">
         </video>
     </div>
 </div>
@@ -53,7 +53,7 @@ This information is gathered into a `FMoverInputCmdContext`, along with button a
   While the game is paused, the player capsule is frozen in place. The headset movement is applied to the camera directly, allowing it to move away from the player capsule. When the player unpauses, their camera snaps back to where it was before pausing. This approach ensures that the player can't cheat certain gameplay challenges by using the pause menu, while preventing motion sickness by ensuring that the player's view still moves with their head.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-movement/pause-menu.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/camera-movement/pause-menu.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 ### Crouching
@@ -74,16 +74,16 @@ It would also be noticeable if the height correction moved you too far. That's w
 The height correction shouldn't be applied when a player is actively moving their head up and down, as this would disrupt the movement parity between their head and their view, which would be uncomfortable and lead to motion sickness. To prevent this, I simply check if the player is moving their head up or down faster than a generously small threshold of 10cm/s.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-movement/height-correction-with-text-cropped.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/camera-movement/height-correction-with-text-cropped.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 A problem I ran into was that, due to human anatomy, pitching your head up or down also moves the headset up or down. The height correction system was adjusting for this, which felt unnatural. To fix this, I measured how the headset moved as different people pitched their head up and down. From this data, I was able to construct a curve which maps the headset's pitch to an offset which estimates where the headset would have been without pitch. I was then able to use this offset to get a better estimate of the camera height, to eliminate the issue I described earlier. As an added bonus, I was also able to use this offset in other scenarios. If your height is being clamped, for example, you'll still be able to pitch your head without the clamping affecting that movement.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4' | relative_url }}" type="video/mp4">
 </video>
 
-![](/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png)
+![]({{ '/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png' | relative_url }})
 
 {% endcapture_markdown %}
 
@@ -95,7 +95,7 @@ A problem I ran into was that, due to human anatomy, pitching your head up or do
 
 {% capture_markdown camera_smoothing %}
 
-Comfort and motion sickness are important considerations for any VR game. Having the camera jitter up and down, as you're walking on uneven ground (especially stairs), leads to an uncomfortable game experience. For precisely this reason, our locomotion system from [Metro Awakening](/Metro-Awakening/) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine){:target="_blank"} as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth. Relying on level designers to manually place invisible colliders was not an option, as this would have been too much work, unreliable and hard to maintain and test. We needed a dynamic system which could reliably handle any situation.
+Comfort and motion sickness are important considerations for any VR game. Having the camera jitter up and down, as you're walking on uneven ground (especially stairs), leads to an uncomfortable game experience. For precisely this reason, our locomotion system from [Metro Awakening]({{ '/Metro-Awakening/' | relative_url }}) used the [NavMesh](https://dev.epicgames.com/documentation/en-us/unreal-engine/navigation-system-in-unreal-engine){:target="_blank"} as a reliably flat surface for the player to walk on. With the movement freedom required for this game however, we could no longer rely on the NavMesh being able to generate on every surface on which the player might find themselves. This locomotion system needed to be collision based, but ground collision is not smooth. Relying on level designers to manually place invisible colliders was not an option, as this would have been too much work, unreliable and hard to maintain and test. We needed a dynamic system which could reliably handle any situation.
 
 My solution consists of two steps:
 
@@ -103,7 +103,7 @@ My solution consists of two steps:
 2. While the player is walking around, any height changes are ignored by the camera. Then, after all the movement has been performed, a camera smoothing step is responsible for moving the camera back into alignment. Based on the ground plane estimate that was computed earlier, I can estimate where the player character will be in 2 meters. For this location, there is also a desired camera location. Then, it's as simple as moving the camera along the line between the previous camera location and the desired camera location. If the ground angle doesn't change, the camera will be realigned at the desired height after 2 meters.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/camera-smoothing/visual-log-cropped.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/camera-smoothing/visual-log-cropped.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 *The desired camera height (purple line) is drawn based on the 'ground plane estimate' (magenta circle). The camera is moved along the yellow line, so that it'll be at the desired height after 2 meters.*
@@ -115,13 +115,13 @@ Another advantage of this system is that it's stable when walking along a longer
     <div class="video-grid__responsive">
         <div style="width: 100%; text-align: center;">
             <video autoplay muted loop width="100%">
-                <source src="/assets/portfolio/unbound/camera-smoothing/disabled.mp4" type="video/mp4">
+                <source src="{{ '/assets/portfolio/unbound/camera-smoothing/disabled.mp4' | relative_url }}" type="video/mp4">
             </video>
             <em>Before</em>
         </div>
         <div style="width: 100%; text-align: center;">
             <video autoplay muted loop width="100%">
-                <source src="/assets/portfolio/unbound/camera-smoothing/enabled.mp4" type="video/mp4">
+                <source src="{{ '/assets/portfolio/unbound/camera-smoothing/enabled.mp4' | relative_url }}" type="video/mp4">
             </video>
             <em>After</em>
         </div>
@@ -141,14 +141,14 @@ Another advantage of this system is that it's stable when walking along a longer
 In the climbing mode, I simply apply the player's controller movement to the body, in the opposite direction. This causes the controller to realign with the visual hand and moves you in the way you'd expect. However, the player capsule's movement can be obstructed by level geometry, causing the controller to not align with the hand anymore. I solve this by not applying any controller movement which brings the controller closer to the visual hand. This way the hand parity is restored before the player moves again. The hand automatically releases if the distance between the controller and visual hand becomes large, causing the player to fall.  
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/climbing/obstructed-by-level-geometry.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/climbing/obstructed-by-level-geometry.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 While climbing, only 1 'active' hand is actually followed. This is always the last hand that grabbed a climbing hold. The other hand will still visually hold on, but the movement isn't actually being followed. This might sound strange, but it's actually the most intuitive. For most players, their focus is on what they grabbed last, so they expect their body to follow that hand. Players also tend to intuitively move both hands in sync, preventing hand parity loss.  
 If the player releases their active hand, then their other hand becomes the active hand. When this happens, the controller isn't aligned with the visual hand anymore. To fix this, I simply interpolate the body to resolve this offset. This quickly and smoothly realigns the controller and visual hand. The interpolation is also relevant when a player initially grabs a hold, as the body needs to move slightly due to the hand moving to grab the climbing hold.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/climbing/interpolation-to-resolve-hand-parity.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/climbing/interpolation-to-resolve-hand-parity.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 {% highlight C++ %}
@@ -201,7 +201,7 @@ The heights at which I check for mantle destinations also ensure that players wi
 The height checks also ensure that players will never mantle downwards. Instead, they can position themselves over the platform, dropping themselves onto it.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/mantling/dynamic-mantling-cropped.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/mantling/dynamic-mantling-cropped.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 {% endcapture_markdown %}
@@ -290,13 +290,13 @@ During a regular non-orbiting swing, the `AngularAcceleration` vector is perpend
     <div class="video-grid">
         <div style="width: 100%; text-align: center;">
             <video autoplay muted loop width="100%">
-                <source src="/assets/portfolio/unbound/rope-swinging/orbiting-before-cropped.mp4" type="video/mp4">
+                <source src="{{ '/assets/portfolio/unbound/rope-swinging/orbiting-before-cropped.mp4' | relative_url }}" type="video/mp4">
             </video>
             <em>Before</em>
         </div>
         <div style="width: 100%; text-align: center;">
             <video autoplay muted loop width="100%">
-                <source src="/assets/portfolio/unbound/rope-swinging/orbiting-after-cropped.mp4" type="video/mp4">
+                <source src="{{ '/assets/portfolio/unbound/rope-swinging/orbiting-after-cropped.mp4' | relative_url }}" type="video/mp4">
             </video>
             <em>After</em>
         </div>
@@ -565,7 +565,7 @@ Some of the tweaks/tricks include:
 The most important trick was to detect if the player was doing a breaststroke motion. Based on how much the movement looks like a breaststroke, I redirect the velocity change towards the camera direction. This makes it very intuitive for players to swim long distances, as they can simply swing their arms and look where they want to go. This solves a major issue where people would naturally lower their arms during their swing, causing them to push themselves upwards. At the same time, this system still gives players the freedom to move backwards, sideways or vertically by pushing in those directions.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/swimming/physical-swimming.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/swimming/physical-swimming.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 Another neat trick was to store the velocity from landing in the water separately. This allows me to split this part of the velocity off from the total velocity and to apply higher drag on it. This way I can tweak the drag so it feels good for swimming, while also being able to tweak a stronger drag that prevents you from hitting the bottom of the pool when you jump in.
@@ -611,7 +611,7 @@ The advantage of this approach is that it makes it simple to dynamically switch 
 The player can stop sliding by un-crouching. Or they can decelerate by pulling the joystick backwards, which will quickly stop and end the slide.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/sliding/horizontal-ground.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/sliding/horizontal-ground.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 ### Shallow Slope
@@ -623,7 +623,7 @@ The player is also still able to decelerate by pulling the joystick backwards, s
 Un-crouching doesn't end the slide, as we want standing slides on steep slopes to be able to smoothly transition into shallow slopes.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/sliding/shallow-slope.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/sliding/shallow-slope.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 ### Steep Slope
@@ -634,7 +634,7 @@ The player is still able to steer and jump, like on shallow slopes.
 Beyond 55°, the slope is too steep to slide on and the player will fall instead.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/sliding/steep-slope.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/sliding/steep-slope.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 ### Slope Visualization Tool
@@ -645,7 +645,7 @@ Shallow patches on a steep slope are especially problematic, as you don't notice
 That's why I created a custom shader, which you can enable with a button in the editor, to visualize the slope angles. Horizontal ground in green, shallow slopes in yellow, steep slopes in orange and beyond 55° in red.
 The shader is applied to the 'Player Collision' view mode to ensure that you see the actual slope value that'll be used in gameplay, instead of the approximation you'd get from applying the shader on the regular meshes.
 
-![](/assets/portfolio/unbound/sliding/slope-visualization-tool.png)
+![]({{ '/assets/portfolio/unbound/sliding/slope-visualization-tool.png' | relative_url }})
 
 {% endcapture_markdown %}
 
@@ -661,7 +661,7 @@ In Mover, 'input commands' and the system's state ('sync states') are stored in 
 I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine){:target="_blank"} integration. This allowed me to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
 
 <video autoplay muted loop width="100%">
-    <source src="/assets/portfolio/unbound/debug-tooling/visual-log-cropped.mp4" type="video/mp4">
+    <source src="{{ '/assets/portfolio/unbound/debug-tooling/visual-log-cropped.mp4' | relative_url }}" type="video/mp4">
 </video>
 
 {% highlight C++ %}
@@ -702,7 +702,7 @@ void FVGRopeSwingingSyncState::GrabDebugSnapshot(const UVGMoverComponent* MoverC
 Mover also has the `FMovementRecord` feature, where the name and translation of every movement is stored in a list. Epic wasn't really using this data yet, so I decided to also log it in the Visual Log. I log an indexed list of movements and draw indexed lines to show the movement. 
 If the player moved unexpectedly, this feature made it super easy to pinpoint exactly which movement step caused the issue.
 
-![](/assets/portfolio/unbound/debug-tooling/move-record-visualization.png)
+![]({{ '/assets/portfolio/unbound/debug-tooling/move-record-visualization.png' | relative_url }})
 
 {% endcapture_markdown %}
 
