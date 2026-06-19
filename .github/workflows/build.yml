@@ -1,0 +1,55 @@
+name: Build the site
+
+on:
+  workflow_call:
+    inputs:
+      baseurl:
+        description: Base URL passed to `jekyll build --baseurl`. Empty for root deploys.
+        required: false
+        type: string
+        default: ""
+      is_preview:
+        description: Whether this build is a PR preview build.
+        required: false
+        type: boolean
+        default: false
+      artifact_name:
+        description: Name to use for the uploaded `_site` artifact.
+        required: false
+        type: string
+        default: jekyll-site
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Node.js packages
+        run: npm ci
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build ${{ inputs.baseurl != '' && format('--baseurl "{0}"', inputs.baseurl) || '' }}
+        env:
+          JEKYLL_ENV: production
+          JEKYLL_IS_PREVIEW: ${{ inputs.is_preview && 'true' || '' }}
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: _site
+          if-no-files-found: error
+          retention-days: 1

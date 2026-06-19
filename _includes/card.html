@@ -60,7 +60,7 @@
 
 <div class="card__wrapper">
   {% if card__link %}
-  <a class="card__link" href="{{ card__link }}">
+  <a class="card__link" href="{{ card__link | relative_url }}">
     {{ card__card }}
   </a>
   {% elsif card__collapsed_content %}
