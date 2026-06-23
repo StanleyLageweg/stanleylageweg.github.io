@@ -69,6 +69,7 @@ jobs:
           umbrella-dir: pr-preview
           action: deploy
           comment: false
+          pages-base-url: ${{ github.repository_owner }}.github.io
 
   finish-deployment:
     needs: [start-deployment, build, deploy-preview]
