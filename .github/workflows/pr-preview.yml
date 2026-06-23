@@ -1,4 +1,4 @@
-name: Build and deploy the PR preview site to GitHub Pages
+name: Build the PR preview site and push it to the gh-pages branch
 
 on:
   pull_request:

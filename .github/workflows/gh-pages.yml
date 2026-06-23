@@ -1,4 +1,4 @@
-name: Build and deploy the site to GitHub Pages
+name: Build the site and push it to the gh-pages branch
 
 on:
   push:
