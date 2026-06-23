@@ -30,7 +30,7 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   border-radius: $border-radius;
   transition:
     box-shadow 0.2s ease,
-    border-radius var(--animatedDetails-duration-transition) ease-out;
+    border-radius var(--animatedDetails-duration-transition, 0.3s) ease-out;
 }
 
 .animated-details[open] > .animated-details__summary > .card {
