@@ -1,8 +1,12 @@
 name: Deploy gh-pages branch to GitHub Pages
 
 on:
-  push:
-    branches: ["gh-pages"]
+  workflow_run:
+    workflows:
+      - "Build and deploy the site to GitHub Pages"
+      - "Build and deploy the PR preview site to GitHub Pages"
+      - "Cleanup PR preview"
+    types: [completed]
 
 permissions:
   contents: read
@@ -15,13 +19,16 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout gh-pages
         uses: actions/checkout@v6
+        with:
+          ref: gh-pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
