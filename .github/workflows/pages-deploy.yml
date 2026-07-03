@@ -3,8 +3,8 @@ name: Deploy gh-pages branch to GitHub Pages
 on:
   workflow_run:
     workflows:
-      - "Build and deploy the site to GitHub Pages"
-      - "Build and deploy the PR preview site to GitHub Pages"
+      - "Build the site and push it to the gh-pages branch"
+      - "Build the PR preview site and push it to the gh-pages branch"
       - "Cleanup PR preview"
     types: [completed]
 
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
