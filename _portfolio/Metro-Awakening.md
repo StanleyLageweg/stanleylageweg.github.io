@@ -1,6 +1,8 @@
 ---
 title: Metro Awakening
 classes: wide centered
+header:
+  image: /assets/portfolio/impact/hero.png
 card:
   image: /assets/portfolio/impact/teaser.png
   title: Metro Awakening
