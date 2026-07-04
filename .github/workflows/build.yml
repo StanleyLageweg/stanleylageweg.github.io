@@ -1,18 +1,13 @@
-name: Deploy Jekyll site to GitHub Pages
+name: Build the site
 
 on:
-  push:
-    branches: ["master"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
+  workflow_call:
+    inputs:
+      upload_artifact:
+        description: Whether to upload the built site as a GitHub Pages artifact.
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   build:
@@ -41,27 +36,11 @@ jobs:
           # we only need the library
           sudo apt-get install --no-install-recommends libvips
 
-      - name: Configure GitHub Pages
-        id: pages
-        uses: actions/configure-pages@v6
-
       - name: Build Jekyll site
         run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
-          baseurl: ${{ steps.pages.outputs.base_path }}
 
-      - name: Upload artifact
+      - name: Upload pages artifact
+        if: ${{ inputs.upload_artifact }}
         uses: actions/upload-pages-artifact@v5
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5

@@ -23,7 +23,7 @@
 
 {% if tag__link %}
 
-<a class="tag" href="{{ tag__link }}" target="_blank" rel="noopener">
+<a class="tag" href="{{ tag__link | relative_url }}" target="_blank" rel="noopener">
   {{ tag__icon }}
   {{ tag__text }}
 </a>

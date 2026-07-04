@@ -28,7 +28,7 @@ summary.animated-details__summary::-webkit-details-marker {
 }
 
 .animated-details__rotate {
-  transition: transform var(--animatedDetails-duration-transition) ease-out;
+  transition: transform var(--animatedDetails-duration-transition, 0.3s) ease-out;
 }
 
 // Details animation, using new css features
@@ -41,9 +41,9 @@ summary.animated-details__summary::-webkit-details-marker {
         height: 0;
         opacity: 0;
         overflow: hidden;
-        transition: height var(--animatedDetails-duration-transition) ease-out,
-                    content-visibility var(--animatedDetails-duration-transition) ease-out,
-                    opacity var(--animatedDetails-duration-transition) ease-out;
+        transition: height var(--animatedDetails-duration-transition, 0.3s) ease-out,
+                    content-visibility var(--animatedDetails-duration-transition, 0.3s) ease-out,
+                    opacity var(--animatedDetails-duration-transition, 0.3s) ease-out;
         transition-behavior: allow-discrete;
       }
 
@@ -67,8 +67,8 @@ summary.animated-details__summary::-webkit-details-marker {
       grid-template-rows: 0fr;
       display: grid;
       opacity: 0;
-      transition: grid-template-rows var(--animatedDetails-duration-transition) ease-out, 
-                  opacity var(--animatedDetails-duration-transition) ease-out;
+      transition: grid-template-rows var(--animatedDetails-duration-transition, 0.3s) ease-out, 
+                  opacity var(--animatedDetails-duration-transition, 0.3s) ease-out;
     }
   }
 }

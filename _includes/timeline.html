@@ -9,7 +9,7 @@
           <div class="timeline__image">
             {% if item.link %}
               <a
-                href="{{ item.link }}"
+                href="{{ item.link | relative_url }}"
                 title="{{ item.title }}"
                 target="_blank"
                 rel="noopener">
@@ -24,7 +24,7 @@
           <p class="timeline__title">
             {% if item.link %}
               <a
-                href="{{ item.link }}"
+                href="{{ item.link | relative_url }}"
                 title="{{ item.title }}"
                 target="_blank"
                 rel="noopener">
