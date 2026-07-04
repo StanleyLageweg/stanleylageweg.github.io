@@ -3,21 +3,11 @@ name: Build the site
 on:
   workflow_call:
     inputs:
-      baseurl:
-        description: Base URL passed to `jekyll build --baseurl`. Empty for root deploys.
-        required: false
-        type: string
-        default: ""
-      is_preview:
-        description: Whether this build is a PR preview build.
+      upload_artifact:
+        description: Whether to upload the built site as a GitHub Pages artifact.
         required: false
         type: boolean
-        default: false
-      artifact_name:
-        description: Name to use for the uploaded `_site` artifact.
-        required: false
-        type: string
-        default: jekyll-site
+        default: true
 
 jobs:
   build:
@@ -41,15 +31,10 @@ jobs:
         run: npm ci
 
       - name: Build Jekyll site
-        run: bundle exec jekyll build ${{ inputs.baseurl != '' && format('--baseurl "{0}"', inputs.baseurl) || '' }}
+        run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
-          JEKYLL_IS_PREVIEW: ${{ inputs.is_preview && 'true' || '' }}
 
-      - name: Upload site artifact
-        uses: actions/upload-artifact@v7
-        with:
-          name: ${{ inputs.artifact_name }}
-          path: _site
-          if-no-files-found: error
-          retention-days: 1
+      - name: Upload pages artifact
+        if: ${{ inputs.upload_artifact }}
+        uses: actions/upload-pages-artifact@v5

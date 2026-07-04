@@ -1,0 +1,22 @@
+name: Build the site
+
+on:
+  pull_request:
+    branches: ["master"]
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-build-${{ github.event.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      upload_artifact: false
