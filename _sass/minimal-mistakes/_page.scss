@@ -106,6 +106,10 @@ body {
 		&:hover .header-link {
 			opacity: 1;
 		}
+
+		&:first-child {
+			margin-top: 0;
+		}
 	}
 
   p,

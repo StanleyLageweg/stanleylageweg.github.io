@@ -8,7 +8,7 @@ card:
   title: Unannounced Project
   from: Nov. 2024
   to: Jan. 2026
-  excerpt: For an unannounced VR action adventure game based on a AAA IP, I created an expansive locomotion system featuring running, jumping, sliding, climbing, swimming and more.
+  excerpt: An unannounced VR action adventure game based on a AAA IP, for which I created an expansive locomotion system featuring running, jumping, sliding, climbing, swimming and more.
   tags:
   - Unreal Engine 5
   - C++
