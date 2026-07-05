@@ -80,7 +80,3 @@ module Jekyll
     end
   end
 end
-
-Jekyll::Hooks.register :site, :post_render do |site|
-  Jekyll::ExcludeUnusedAssets.run(site)
-end
