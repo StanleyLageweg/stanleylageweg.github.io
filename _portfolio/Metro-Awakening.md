@@ -137,7 +137,7 @@ With these new inputs, I also wanted to add 3 new expressive poses: peace, flipp
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
     <video autoplay muted loop width="100%">
-      <source src="{{ '/assets/portfolio/impact/hand-animations/hand-animations-game.mp4' | relative_url }}" type="video/mp4">
+      <source src="{{ '/assets/portfolio/impact/hand-animations/hand-animations-game-cropped.webm' | relative_url }}" type="video/mp4">
     </video>
     <video autoplay muted loop width="100%">
       <source src="{{ '/assets/portfolio/impact/hand-animations/hand-animations-controller.mp4' | relative_url }}" type="video/mp4">
@@ -184,10 +184,10 @@ On very rare occasions, this fallback can also fail, especially if the player is
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
     <video autoplay muted loop width="100%">
-      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement.mp4' | relative_url }}" type="video/mp4">
+      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement-cropped.webm' | relative_url }}" type="video/mp4">
     </video>
     <video autoplay muted loop width="100%">
-      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement-vislog.mp4' | relative_url }}" type="video/mp4">
+      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement-vislog-cropped.mp4' | relative_url }}" type="video/mp4">
     </video>
   </div>
 </div>
@@ -391,7 +391,7 @@ I implemented the slope detection in a component and built the rest of the logic
 Another advantage of doing all the logic in control rig was that I could skip the ground traces if the foot was already planted on the floor. This fixed a bug where feet could jitter up and down when the trace grazed a ledge, while also saving us some performance for characters that were standing still.
 
 <video autoplay loop muted width="100%" onloadstart="this.playbackRate = 2.0;">
-  <source src="/assets/portfolio/impact/foot-ik/foot-ik.mp4" type="video/mp4">
+  <source src="/assets/portfolio/impact/foot-ik/foot-ik-cropped.webm" type="video/mp4">
 </video>
 
 {% endcapture_markdown %}
