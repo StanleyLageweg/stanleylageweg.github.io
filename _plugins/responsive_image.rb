@@ -171,17 +171,21 @@ module Jekyll
         site.keep_files << path unless site.keep_files.include?(path)
       end
 
-      def generate_image(site, source_path, source_rel, width, format)
+      def generate_image(site, source_path, source_rel, source_width, source_height, width, format)
         output_path = get_output_path(site, source_rel, width, format)
         rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
         source_mtime = File.mtime(source_path)
+
+        target_width = Integer(width)
+        scale = target_width.to_f / source_width
+        target_height = (source_height * scale).round
 
         # Check if there's a marker file indicating the source image should be used for this size/format
         marker_path = "#{output_path}.use-source"
         rel_marker_path = "#{rel_output_path}.use-source"
         if File.exist?(marker_path) && File.mtime(marker_path) >= source_mtime
           add_keep_file(site, rel_marker_path)
-          return source_path
+          return { path: source_path, width: source_width, height: source_height }
         end
 
         # Generate the variant if it doesn't exist or is outdated
@@ -193,35 +197,31 @@ module Jekyll
           image = Vips::Image.new_from_file(source_path, access: :sequential)
           image = image.autorot if image.respond_to?(:autorot)
 
-          source_width = image.width.to_i
-          source_format = normalize_format(File.extname(source_path))
-
-          target = Integer(width)
-          scale = target.to_f / source_width
-
           resized = scale == 1.0 ? image : image.resize(scale)
           resized.write_to_file(output_path)
 
           # If the generated file is larger than the source, use the source instead and create a marker file to skip regeneration next time.
-          if target == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
+          source_format = normalize_format(File.extname(source_path))
+          if target_width == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
             File.delete(output_path)
             FileUtils.touch(marker_path)
             Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
             add_keep_file(site, rel_marker_path)
-            return source_path
+            return { path: source_path, width: source_width, height: source_height }
           else
             Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
           end
         end
 
         add_keep_file(site, rel_output_path)
-        output_path
+        { path: output_path, width: target_width, height: target_height }
       end
 
       def build_sources(site, source_path, source_rel, widths, formats)
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
         source_width = source_image.width.to_i
+        source_height = source_image.height.to_i
 
         max_width = [widths.max, source_width].compact.min
         effective_widths = (widths << source_width).uniq.sort
@@ -234,17 +234,8 @@ module Jekyll
 
         effective_formats.each_with_object({}) do |format, sources|
           sources[format] = effective_widths.map do |width|
-            out = generate_image(site, source_path, source_rel, width, format)
-            image = Vips::Image.new_from_file(out, access: :sequential)
-            image = image.autorot if image.respond_to?(:autorot)
-
-            {
-              path: out,
-              url: public_url(site, out),
-              width: image.width.to_i,
-              height: image.height.to_i,
-              format: format
-            }
+            variant = generate_image(site, source_path, source_rel, source_width, source_height, width, format)
+            variant.merge(url: public_url(site, variant[:path]), format: format)
           end
         end
       end
