@@ -1,7 +1,6 @@
 require "cgi"
 require "fileutils"
 require "pathname"
-require "set"
 require "yaml"
 
 require "jekyll"
@@ -61,21 +60,6 @@ module Jekyll
     class << self
       def config_for(site)
         DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
-      end
-      def registry_for(site)
-        @registries ||= {}
-        @registries[site.object_id] ||= {
-          generated: Set.new,
-          warned_missing_alt: Set.new
-        }
-      end
-
-      def reset_registry_for(site)
-        @registries ||= {}
-        @registries[site.object_id] = {
-          generated: Set.new,
-          warned_missing_alt: Set.new
-        }
       end
 
       def parse_tag_text(text)
@@ -139,13 +123,8 @@ module Jekyll
           return result if result
         end
 
-        registry = registry_for(site)
-        unless registry[:warned_missing_alt].include?(source_rel)
-          registry[:warned_missing_alt] << source_rel
-          Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_rel}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
-        end
-
-        return ""
+        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_rel}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
+        ""
       end
 
       def get_output_path(site, source_rel, width, format)
@@ -268,10 +247,6 @@ module Jekyll
             }
           end
         end
-      end
-
-      def reset_after_build(site)
-        reset_registry_for(site)
       end
     end
   end

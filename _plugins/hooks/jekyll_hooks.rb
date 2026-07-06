@@ -6,11 +6,6 @@
 # :posts - Allows fine-grained control over all posts in the site without affecting documents in user-defined collections
 # :clean - Fine-grained control on the list of obsolete files determined to be deleted during the site's cleanup phase.
 
-# Just after the site initializes. Good for modifying the configuration of the site. Triggered once per build / serve session
-Jekyll::Hooks.register :site, :after_init do |site|
-  Jekyll::ResponsiveImage.reset_after_build(site)
-end
-
 # After all source files have been read and loaded from disk
 Jekyll::Hooks.register :site, :post_read do |site|
   Jekyll::BuildJs.exclude_source_files(site)
