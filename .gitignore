@@ -21,6 +21,9 @@ npm-debug.log*
 package-lock.json
 codekit-config.json
 
+# Windows
+Thumbs.db
+
 # macOS
 .DS_Store
 

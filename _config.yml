@@ -125,6 +125,7 @@ exclude:
   - package-lock.json
   - README.md
   - tmp
+  - "performance-profiling/*"
 keep_files:
   - .git
   - .svn
