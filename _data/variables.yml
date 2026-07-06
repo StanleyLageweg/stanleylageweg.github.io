@@ -1,0 +1,15 @@
+# Mirrors SASS
+
+# Breakpoints
+small: 37.5rem
+medium: 48rem
+medium_wide: 56.25rem
+large: 64rem
+x_large: 80rem
+
+# Sidebar widths
+sidebar_width: 300px
+sidebar_width_narrow: 200px
+
+# Timeline
+timeline_image_size: 3.5rem

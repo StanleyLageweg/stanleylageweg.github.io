@@ -15,7 +15,7 @@
 
 {% if tag__image %}
   {% capture tag__icon %}
-    <img src="{{ tag__image | relative_url }}" alt="{{ tag__text }} icon" />
+    {% responsive_image tag__image widths="120, 240, 480" sizes_height="1.5em" %}
   {% endcapture %}
 {% else %}
   {% assign tag__icon = "" %}
@@ -23,14 +23,14 @@
 
 {% if tag__link %}
 
-<a class="tag" href="{{ tag__link | relative_url }}" onclick="event.stopPropagation()" target="_blank" rel="noopener">
+<a class="tag" href="{{ tag__link | relative_url }}" target="_blank" rel="noopener">
   {{ tag__icon }}
   {{ tag__text }}
 </a>
 
 {% else %}
 
-<span class="tag" onclick="event.stopPropagation()">
+<span class="tag">
   {{ tag__icon }}
   {{ tag__text }}
 </span>

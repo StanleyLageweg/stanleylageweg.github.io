@@ -1,0 +1,46 @@
+/assets/images/stanley.jpg: A photo of Stanley Lageweg
+/assets/images/leiden-university.svg: Leiden University logo.
+/assets/images/tu-delft.svg: TU Delft logo.
+/assets/images/cpp.svg: C++ logo.
+/assets/images/steam.svg: Steam logo.
+/assets/images/the-game-awards.svg: The Game Awards logo.
+/assets/images/unreal-engine-2023-black.svg: Unreal Engine logo.
+/assets/images/unreal-engine-4.svg: Unreal Engine 4 logo.
+/assets/images/keoken-interactive.jfif: Keoken Interactive logo.
+/assets/images/vertigo-games.png: Vertigo Games logo.
+/assets/portfolio/deliver-us-mars/teaser.jpg: The key art for Deliver Us Mars, showing Kathy looking out over a martian mining base, with the Deliver Us Mars logo on the left.
+/assets/portfolio/impact/hero.png: The key art for Metro Awakening, showing Serdar walking in a metro tunnel.
+/assets/portfolio/impact/teaser.png: The key art for Metro Awakening, showing Serdar walking in a metro tunnel, with the Metro Awakening logo on the left.
+/assets/portfolio/impact/firearms/kalashnikov-knock-out-angular-velocity.png: A Blueprint snippet showing the angular velocity calculation for the Kalashnikov magazine knock-out.
+/assets/portfolio/impact/firearms/teaser.png: The player using a Kalashnikov rifle to shoot at a Nosalis enemy.
+/assets/portfolio/impact/foot-ik/teaser.png: A character in Unreal Engine's Control Rig view, with debug visuals for the foot IK system.
+/assets/portfolio/impact/hand-animations/3d-blend-space.png: A Blueprint snippet showing the logic for the 3D blend space used for the hand animations.
+/assets/portfolio/impact/hand-animations/teaser.png: The player giving a thumbs up gesture with their hand, with a crashed troller car, fire and a dead Nosalis enemy in the background.
+/assets/portfolio/impact/hand-interaction/teaser.png: The player rotating a valve with both hands, with burst pipes leaking steam in the background.
+/assets/portfolio/impact/hand-movement/teaser.png: Serdar waving to someone of camera, while sitting at a table in the home station.
+/assets/portfolio/impact/locomotion/locomotion-architecture-light.svg: A diagram showing the locomotion architecture for Metro Awakening.
+/assets/portfolio/impact/locomotion/teaser.png: Serdar climbing a ladder.
+/assets/portfolio/impact/performance-optimization/teaser.png: Unreal Insights, zoomed out.
+/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-before.png: Planks scaled along different axes, showing how scaling makes the rotated box colliders behave in unintuitive ways.
+/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-after.png: Planks scaled along different axes, showing how scaling behaves as expected when the box colliders are not rotated.
+/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-before.png: A performance graph showing the physics performance before a collision optimization.
+/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-after.png: A performance graph showing the physics performance after a collision optimization.
+/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-before.png: A tunnel mesh with convex colliders.
+/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-after.png: A tunnel mesh with box colliders.
+/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-before.png: Unreal Insights showing a large number of overlap events, before an overlap event optimization.
+/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-after.png: Unreal Insights showing a reduced number of overlap events, after an overlap event optimization.
+/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-before.png: A performance graph showing the game thread performance before an overlap event optimization.
+/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-after.png: A performance graph showing the game thread performance after an overlap event optimization.
+/assets/portfolio/unbound/hero.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
+/assets/portfolio/unbound/teaser.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
+/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: 3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value.
+/assets/portfolio/unbound/camera-movement/teaser.png: Unreal Engine's Quinn, wearing a VR headset, looking at the camera with her head tilted to the side.
+/assets/portfolio/unbound/camera-smoothing/teaser.png: Unreal Engine's Quinn, wearing a VR headset, walking up a staircase.
+/assets/portfolio/unbound/climbing/teaser.png: Unreal Engine's Quinn, wearing a VR headset, climbing on a wall.
+/assets/portfolio/unbound/debug-tooling/teaser.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge. Debug visuals are displayed on top, showing the player capsule, camera and trajectory.
+/assets/portfolio/unbound/mantling/teaser.png: Unreal Engine's Quinn, wearing a VR headset, mantling onto a ledge.
+/assets/portfolio/unbound/rope-swinging/teaser.png: Unreal Engine's Quinn, wearing a VR headset, swinging on a rope.
+/assets/portfolio/unbound/swimming/teaser.png: Unreal Engine's Quinn, wearing a VR headset, swimming in a pool.
+/assets/portfolio/unbound/sliding/teaser.png: Unreal Engine's Quinn, wearing a VR headset, sliding down a slope while seated.
+/assets/portfolio/unbound/sliding/slope-visualization-tool.png: A custom shader showing different colors based on the slope of the terrain.
+/assets/portfolio/unbound/debug-tooling/move-record-visualization.png: Lines drawn using Unreal Engine's Visual Logger, to show every individual move from a frame.

@@ -11,10 +11,10 @@ card:
   excerpt: A story-driven VR adventure game, for which I worked on nearly every player-facing gameplay mechanic.
   tags:
   - tag: VR Game of the Year
-    image: /assets/images/icons/steam.svg
+    image: /assets/images/steam.svg
     link: https://store.steampowered.com/steamawards/2024#VRGameoftheYear
   - tag: Best VR/AR - Nominee
-    image: /assets/images/icons/the_game_awards.svg
+    image: /assets/images/the-game-awards.svg
     link: https://thegameawards.com/
   - Unreal Engine 5
   - C++
@@ -54,10 +54,11 @@ To fix this, I simply allowed players to insert the magazine while another magaz
 </video>
 
 #### 3. Knocking the magazine out  
-The last way to eject the magazine is to knock it out of the firearm using another magazine. The goal for this interaction was for it to feel cool, but the way the magazine was initially spinning didn't look cool. It was spinning very quickly around its shortest axis, while I wanted it to spin end over end. To fix this, I calculated the angular velocity manually while clamping the impact point onto the axis I didn't want the magazine to spin around. This ensures that the resulting angular velocity won't rotate around that axis.  
-![](/assets/portfolio/impact/firearms/kalashnikov-knock-out-angular-velocity.png)  
+The last way to eject the magazine is to knock it out of the firearm using another magazine. The goal for this interaction was for it to feel cool, but the way the magazine was initially spinning didn't look cool. It was spinning very quickly around its shortest axis, while I wanted it to spin end over end. To fix this, I calculated the angular velocity manually while clamping the impact point onto the axis I didn't want the magazine to spin around. This ensures that the resulting angular velocity won't rotate around that axis.
 
-<div style="container-type: inline-size">
+{% responsive_image "/assets/portfolio/impact/firearms/kalashnikov-knock-out-angular-velocity.png" %}
+
+<div style="container-type: inline-size; margin-top: 1em">
   <div class="video-grid__responsive">
     <div style="width: 100%; text-align: center;">
       <video autoplay muted loop width="100%">
@@ -126,7 +127,7 @@ The grip button and trigger also report how far the button is pressed, allowing 
 In my specific case, I know the inputs form a unit cube as the inputs are all between 0 and 1. Every corner of the cube has an accompanying hand pose. I can then divide that unit cube into 5 tetrahedra. Given a 3D input point, it's very simple to determine if that point is inside a particular tetrahedron, as you can simply check the Manhattan distance from the respective corner of the unit cube. Once I've figured out the correct tetrahedron, I can use `FMath::ComputeBaryCentric3D` to find the 4D barycentric coordinate for the 3D input coordinate. The 4 values of the barycentric coordinate can then be used as the alpha values for the poses at the corners of the tetrahedron.  
 This mimics the behavior of 2D blend spaces, but with an extra dimension. 2D blend spaces are divided into triangles, where a 3D barycentric coordinate represents the alpha values for the 3 animations at the corners of the triangle.
 
-![](/assets/portfolio/impact/hand-animations/3d-blend-space.png)
+{% responsive_image "/assets/portfolio/impact/hand-animations/3d-blend-space.png" %}
 
 Later in production, the request came in to add support for the finger tracking from the Valve Index controller.  
 The first step is to convert the hand pose that OpenXR provides into 0 to 1 values that I can work with. I do this by summing the angles between all consecutive bones in a finger, to get a total `CurlAngle`. I then map this angle to a 0 to 1 range.  
@@ -306,7 +307,7 @@ The core of the locomotion system is the `LocomotionMovementComponent`. This com
 The `LocomotionMovementComponent` never decides to move on its own though. For that we have the `MovementController` components. Each component handles a different type of movement. The system is designed such that the `MovementControllers` do not reference each other, in order to make the system composable and to reduce coupling.  
 We do however need to prevent conflicts between the controllers. For example, you should not be able to use stick movement while a `Journey` is executing. Preventing these conflicts is the job of the `LocomotionSupervisor`. `MovementControllers` can attempt to 'start' a `GameplayTag` on the `LocomotionSupervisor`. We're able to configure what tags should be interrupted when a tag is started, or whether a running tag should block other tags from starting. This allows us to prioritize certain movements over others, without requiring the `MovementControllers` to reference each other.
 
-<img src="/assets/portfolio/impact/locomotion/locomotion-architecture-light.svg" width="100%">
+{% responsive_image "/assets/portfolio/impact/locomotion/locomotion-architecture-light.svg" %}
 
 ### Accessibility
 
@@ -417,11 +418,11 @@ A lot of these convex colliders were actually shaped like boxes. The artists had
 They had done this because boxes can be a bit finicky when meshes are scaled. When a box is rotated relative to its mesh, you'd intuitively expect that non-uniformly scaling said mesh would warp the box a bit. However, the physics system can't allow this, as boxes need to maintain their perfectly square corners. The way Unreal solves this problem is to simply scale the boxes along their local axes instead. This can lead to some unexpected results.
 
 <div style="display: flex">
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-before.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-before.png" %}
   </div>
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-after.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-after.png" %}
   </div>
 </div>
 
@@ -434,13 +435,13 @@ I informed the asset team and updated our documentation. However, at the time we
 Instead, I created a simple tool (Asset Action Utility) which automatically converts box-shaped convex colliders to actual box colliders. Running this tool allowed me to easily fix 11.363 assets in one go. This resulted in a 16% improvement in our average physics thread performance, and a 32% improvement in high load scenarios.
 
 <div style="display: flex">
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-before.png" width="100%">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-before.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-before.png" %}
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-before.png" %}
   </div>
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-after.png" width="100%">
-    <img src="/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-after.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-after.png" %}
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-after.png" %}
   </div>
 </div>
 
@@ -569,13 +570,13 @@ I was also able to optimize some of our triggers. For example, we had a trigger 
 These changes reduced the total number of overlap queries by 71%, which resulted in an overall performance improvement of 11% for our average game thread time.
 
 <div style="display: flex">
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-before.png" width="100%">
-    <img src="/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-before.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-before.png" %}
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-before.png" %}
   </div>
-  <div style="padding:5px">
-    <img src="/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-after.png" width="100%">
-    <img src="/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-after.png" width="100%">
+  <div style="flex: 1; padding: 5px">
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-after.png" %}
+    {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-after.png" %}
   </div>
 </div>
 

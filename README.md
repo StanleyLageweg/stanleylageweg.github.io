@@ -5,7 +5,8 @@
 Download the prerequisites, as per the [Jekyll documentation](https://jekyllrb.com/docs/installation/#requirements).  
 For Windows, install [Ruby+Devkit](https://rubyinstaller.org/downloads/), making sure to run the `ridk install` step to install MSYS2 and the MINGW development toolchain.
 
-In the cloned repo, run `npm install` and `bundle install`.
+In the cloned repo, run `npm install`.  
+In the cloned repo, run `bundle install`. If MSYS2 is installed in `C:\Program Files`, then `bundle install` needs to once run in an administrator terminal to be able to install `libvips`.
 
 Install [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).
 
@@ -15,24 +16,14 @@ As modifications are made to the site's source, the site will be rebuild and the
 
 ## Credits
 
-### Jekyll theme
-
 - [Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes) - [Michael Rose](https://mademistakes.com)
-
-### Icons + Demo Images:
-
-- [The Noun Project](https://thenounproject.com) - Garrett Knoll, Arthur Shlain, and [tracy tam](https://thenounproject.com/tracytam)
-- [Font Awesome](http://fontawesome.io/)
-- [Unsplash](https://unsplash.com/)
-
-### Other:
-
 - [Jekyll](http://jekyllrb.com/)
 - [jQuery](http://jquery.com/)
 - [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
 - [FitVids.JS](http://fitvidsjs.com/)
 - [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav)
 - [Gumshoe](https://github.com/cferdinandi/gumshoe)
+- [Font Awesome](http://fontawesome.io/)
 
 ## License
 

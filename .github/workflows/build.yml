@@ -30,6 +30,11 @@ jobs:
       - name: Install Node.js packages
         run: npm ci
 
+      - name: Install libvips
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends libvips libheif-plugin-aomenc
+
       - name: Build Jekyll site
         run: bundle exec jekyll build
         env:

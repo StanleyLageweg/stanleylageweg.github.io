@@ -10,7 +10,16 @@ module Jekyll
       units = %w[B KB MB GB TB]
       return "0 #{units[0]}" if bytes.zero?
       exp = [Math.log(bytes, 1024).to_i, units.length - 1].min
-      "#{(bytes.to_f / (1024 ** exp)).round(2)} #{units[exp]}"
+      value = (bytes.to_f / (1024 ** exp))
+
+      # If the displayed value would read as >= 1000, bump to the next unit
+      # so "1008.08 MB" becomes "0.98 GB" instead.
+      if value.round(2) >= 1000 && exp < units.length - 1
+        exp += 1
+        value = (bytes.to_f / (1024 ** exp))
+      end
+
+      "#{value.round(2)} #{units[exp]}"
     end
 
     def directory_size(path)
