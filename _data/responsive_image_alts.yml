@@ -8,8 +8,9 @@
 /assets/images/unreal-engine-4.svg: Unreal Engine 4 logo.
 /assets/images/keoken-interactive.jfif: Keoken Interactive logo.
 /assets/images/vertigo-games.png: Vertigo Games logo.
-/assets/portfolio/deliver-us-mars/teaser.jpg: The cover art for Deliver Us Mars, showing Kathy looking out over a martian mining base, with the Deliver Us Mars logo on the left.
-/assets/portfolio/impact/teaser.png: The cover art for Metro Awakening, showing Khan walking in a metro tunnel, with the Metro Awakening logo on the left.
+/assets/portfolio/deliver-us-mars/teaser.jpg: The key art for Deliver Us Mars, showing Kathy looking out over a martian mining base, with the Deliver Us Mars logo on the left.
+/assets/portfolio/impact/hero.png: The key art for Metro Awakening, showing Serdar walking in a metro tunnel.
+/assets/portfolio/impact/teaser.png: The key art for Metro Awakening, showing Serdar walking in a metro tunnel, with the Metro Awakening logo on the left.
 /assets/portfolio/unbound/hero.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
 /assets/portfolio/unbound/teaser.png: Unreal Engine's Quinn, wearing a VR headset, jumping from a ledge.
 /assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png: 3 curves, for the x, y and z offset of the camera, that estimate where the camera would be without head pitch given the pitch value.
