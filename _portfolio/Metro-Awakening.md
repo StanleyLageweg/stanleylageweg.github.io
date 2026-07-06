@@ -54,10 +54,11 @@ To fix this, I simply allowed players to insert the magazine while another magaz
 </video>
 
 #### 3. Knocking the magazine out  
-The last way to eject the magazine is to knock it out of the firearm using another magazine. The goal for this interaction was for it to feel cool, but the way the magazine was initially spinning didn't look cool. It was spinning very quickly around its shortest axis, while I wanted it to spin end over end. To fix this, I calculated the angular velocity manually while clamping the impact point onto the axis I didn't want the magazine to spin around. This ensures that the resulting angular velocity won't rotate around that axis.  
+The last way to eject the magazine is to knock it out of the firearm using another magazine. The goal for this interaction was for it to feel cool, but the way the magazine was initially spinning didn't look cool. It was spinning very quickly around its shortest axis, while I wanted it to spin end over end. To fix this, I calculated the angular velocity manually while clamping the impact point onto the axis I didn't want the magazine to spin around. This ensures that the resulting angular velocity won't rotate around that axis.
+
 {% responsive_image "/assets/portfolio/impact/firearms/kalashnikov-knock-out-angular-velocity.png" %}
 
-<div style="container-type: inline-size">
+<div style="container-type: inline-size; margin-top: 1em">
   <div class="video-grid__responsive">
     <div style="width: 100%; text-align: center;">
       <video autoplay muted loop width="100%">
@@ -417,10 +418,10 @@ A lot of these convex colliders were actually shaped like boxes. The artists had
 They had done this because boxes can be a bit finicky when meshes are scaled. When a box is rotated relative to its mesh, you'd intuitively expect that non-uniformly scaling said mesh would warp the box a bit. However, the physics system can't allow this, as boxes need to maintain their perfectly square corners. The way Unreal solves this problem is to simply scale the boxes along their local axes instead. This can lead to some unexpected results.
 
 <div style="display: flex">
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-before.png" %}
   </div>
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/collision-scaling-text-after.png" %}
   </div>
 </div>
@@ -434,11 +435,11 @@ I informed the asset team and updated our documentation. However, at the time we
 Instead, I created a simple tool (Asset Action Utility) which automatically converts box-shaped convex colliders to actual box colliders. Running this tool allowed me to easily fix 11.363 assets in one go. This resulted in a 16% improvement in our average physics thread performance, and a 32% improvement in high load scenarios.
 
 <div style="display: flex">
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-before.png" %}
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-before.png" %}
   </div>
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/tunnel-collision-after.png" %}
     {% responsive_image "/assets/portfolio/impact/performance-optimization/collision-optimization/physics-performance-after.png" %}
   </div>
@@ -569,11 +570,11 @@ I was also able to optimize some of our triggers. For example, we had a trigger 
 These changes reduced the total number of overlap queries by 71%, which resulted in an overall performance improvement of 11% for our average game thread time.
 
 <div style="display: flex">
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-before.png" %}
     {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-before.png" %}
   </div>
-  <div style="padding:5px">
+  <div style="flex: 1; padding: 5px">
     {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/performance-after.png" %}
     {% responsive_image "/assets/portfolio/impact/performance-optimization/overlap-event-optimization/insights-after.png" %}
   </div>
