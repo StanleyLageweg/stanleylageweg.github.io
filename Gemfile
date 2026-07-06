@@ -11,3 +11,9 @@ gem "bigdecimal"
 gem "bundler"
 gem "ruby-vips"
 gem "wdm", ">= 0.1.0"
+
+# Local gem whose only purpose is to install the MSYS2 libheif package (via RubyInstaller's
+# rubygems plugin) so that libvips can encode AVIF. Only relevant on Windows/RubyInstaller.
+platforms :windows do
+  gem "libvips-avif-dep", path: "vendor/libvips-avif-dep"
+end

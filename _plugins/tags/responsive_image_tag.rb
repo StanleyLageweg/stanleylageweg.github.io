@@ -10,13 +10,51 @@ require "yaml"
 
 require "jekyll"
 require "liquid"
-require "vips"
+
+# Require ruby-vips while capturing its startup chatter and routing it through Jekyll's logger.
+pipe_r, pipe_w = IO.pipe
+saved_stderr = STDERR.dup
+begin
+  # Point fd 2 at the pipe so libvips's C-level `g_warning()` output is captured instead of printed.
+  STDERR.reopen(pipe_w)
+  pipe_w.close
+  require "vips"
+ensure
+  # Restore fd 2. This drops the last reference to the pipe's write end, so reads below hit EOF.
+  STDERR.reopen(saved_stderr)
+  saved_stderr.close
+end
+
+# GLib log format: "(process:PID): DOMAIN-LEVEL **: TIME: MESSAGE"
+glib_log_line = /\A\([^)]+\):\s+\S+-(\w+)\s+\*\*:\s+[\d:.]+:\s+(.*)/
+
+pipe_r.each_line do |line|
+  # Expected noise: optional codec DLLs we don't ship (JPEG XL, openslide, poppler, ImageMagick).
+  next if line =~ /VIPS-WARNING.*unable to load.*vips-modules/
+
+  if (match = line.match(glib_log_line))
+    # Route recognized GLib log lines through Jekyll's logger so severity coloring kicks in.
+    level, message = match[1], match[2].chomp
+    case level
+    when "ERROR", "CRITICAL"
+      Jekyll.logger.error("libvips:", message)
+    when "WARNING"
+      Jekyll.logger.warn("libvips:", message)
+    else
+      Jekyll.logger.info("libvips:", message)
+    end
+  else
+    # Unrecognized output: pass through verbatim rather than swallow it.
+    STDERR.print(line)
+  end
+end
+pipe_r.close
 
 module Jekyll
   module ResponsiveImage
     DEFAULT_CONFIG = {
       "default_widths" => [240, 480, 960, 1280, 1920, 2560, 3840],
-      "default_formats" => ["webp", "jpg", "png"],
+      "default_formats" => ["avif", "webp", "jpg", "png"],
       "default_oversample" => 1.5,
       "alt_map_data_file" => "responsive_image_alts"
     }.freeze
