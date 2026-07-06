@@ -328,8 +328,4 @@ module Jekyll
   end
 end
 
-Jekyll::Hooks.register :site, :after_init do |site|
-  Jekyll::ResponsiveImage.reset_after_build(site)
-end
-
 Liquid::Template.register_tag("responsive_image", Jekyll::ResponsiveImage::ImageTag)
