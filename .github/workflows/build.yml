@@ -33,8 +33,7 @@ jobs:
       - name: Install libvips
         run: |
           sudo apt-get update
-          # we only need the library
-          sudo apt-get install --no-install-recommends libvips
+          sudo apt-get install --no-install-recommends libvips libheif-plugin-aomenc
 
       - name: Build Jekyll site
         run: bundle exec jekyll build
