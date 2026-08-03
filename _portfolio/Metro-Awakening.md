@@ -1,6 +1,7 @@
 ---
 title: Metro Awakening
 classes: wide centered
+team_size: 80+
 header:
   image: /assets/portfolio/impact/hero.png
 card:

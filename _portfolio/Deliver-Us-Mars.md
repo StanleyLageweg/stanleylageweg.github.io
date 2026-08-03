@@ -1,6 +1,7 @@
 ---
 title: Deliver Us Mars
 output: false
+team_size: 20+
 card:
   title: Deliver Us Mars
   image: /assets/portfolio/deliver-us-mars/teaser.jpg

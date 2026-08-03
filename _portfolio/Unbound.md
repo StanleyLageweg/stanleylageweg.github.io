@@ -1,6 +1,7 @@
 ---
 title: Unannounced Project
 classes: wide centered
+team_size: 40+
 header:
   image: /assets/portfolio/unbound/hero.png
 card:
