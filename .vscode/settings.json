@@ -2,4 +2,11 @@
     "liveServer.settings.root": "/_site",
     "liveServer.settings.host": "localhost",
     "liveServer.settings.port": 4000,
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "bash",
+            "icon": "terminal-bash",
+            "args": ["--login"]
+        }
+    }
 }

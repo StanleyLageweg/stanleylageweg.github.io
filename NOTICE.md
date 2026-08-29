@@ -17,10 +17,6 @@ Copyright (c) 2017 Dave Gandy.
 Font Awesome is distributed under the terms of the [SIL OFL 1.1](http://scripts.sil.org/OFL) 
 and [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates [FitVids.js](https://github.com/davatron5000/FitVids.js/).  
-Copyright (c) 2013 Dave Rubert and Chris Coyier.  
-FitVids is distributed under the terms of the [WTFPL License](http://www.wtfpl.net/).
-
 Minimal Mistakes incorporates [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/).  
 Copyright (c) 2014-2016 [Dmitry Semenov](http://dimsemenov.com/).  
 Magnific Popup is distributed under the terms of the MIT License.

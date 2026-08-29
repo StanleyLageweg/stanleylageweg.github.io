@@ -185,7 +185,7 @@ li ol {
    Media and embeds
    ========================================================================== */
 
-img.opaque, video {
+img.opaque, video, iframe {
   background-color: $lighter-gray;
 }
 
@@ -202,8 +202,7 @@ figure {
   margin: 2em 0;
 
   img,
-  iframe,
-  .fluid-width-video-wrapper {
+  iframe {
     margin-bottom: 1em;
   }
 
