@@ -20,7 +20,6 @@ As modifications are made to the site's source, the site will be rebuild and the
 - [Jekyll](http://jekyllrb.com/)
 - [jQuery](http://jquery.com/)
 - [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
-- [FitVids.JS](http://fitvidsjs.com/)
 - [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav)
 - [Gumshoe](https://github.com/cferdinandi/gumshoe)
 - [Font Awesome](http://fontawesome.io/)
