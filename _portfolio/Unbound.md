@@ -1,6 +1,11 @@
 ---
 title: Unannounced Project
 classes: wide centered
+header:
+  image: /assets/portfolio/unbound/hero.png
+  image_sources:
+  - source: /assets/portfolio/unbound/teaser.png
+    media: (width <= 697px)
 tag_groups:
 - name: Software
   image: /assets/images/code.svg
@@ -15,8 +20,6 @@ tag_groups:
   - Vertigo Games
   - tag: "Team Size: 40+"
     image: /assets/images/people.svg
-header:
-  image: /assets/portfolio/unbound/hero.png
 card:
   image: /assets/portfolio/unbound/teaser.png
   title: Unannounced Project

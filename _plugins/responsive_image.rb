@@ -73,6 +73,20 @@ module Jekyll
         tokens
       end
 
+      def parse_extra_source_options(value)
+        return [] if value.nil?
+        raise ArgumentError, "Extra source definitions must be provided as an array of hashes." unless value.is_a?(Array)
+
+        value.map do |entry|
+          raise ArgumentError, "Each extra source definition must be a hash." unless entry.is_a?(Hash)
+
+          source = entry["source"]
+          raise ArgumentError, "Extra source definitions must include a source path." if source.nil? || source.to_s.strip.empty?
+
+          entry
+        end
+      end
+
       def build_token(key, value)
         resolver = if value.start_with?('"', "'") && value.include?("{{")
             template = Liquid::Template.parse(value[1..-2])
