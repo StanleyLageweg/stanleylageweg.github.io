@@ -1,9 +1,43 @@
 ---
 title: Metro Awakening
 classes: wide centered
-team_size: 80+
 header:
   image: /assets/portfolio/impact/hero.png
+tag_groups:
+- name: Awards
+  image: /assets/images/trophy.svg
+  tags:
+  - tag: "Steam: VR Game of the Year - Winner"
+    image: /assets/images/steam-award-2024.png
+    link: https://store.steampowered.com/steamawards/2024#VRGameoftheYear
+  - tag: "The Game Awards: Best VR/AR - Nominee"
+    image: /assets/images/the-game-awards.svg
+    link: https://www.meta.com/blog/the-game-awards-2024-nominations-best-vr-ar-game/
+- name: Platforms
+  image: /assets/images/gamepad.svg
+  tags:
+  - tag: PCVR
+    image: /assets/images/steam.svg
+    link: https://store.steampowered.com/app/2669410
+  - tag: Meta Quest 2 & 3
+    image: /assets/images/meta.svg
+    link: https://www.meta.com/experiences/5096918017089406/
+  - tag: PlayStation VR2
+    image: /assets/images/playstation.svg
+    link: https://store.playstation.com/concept/10009509/
+- name: Software
+  image: /assets/images/code.svg
+  tags:
+  - Unreal Engine 5
+  - C++
+  - Perforce
+  - Jira
+- name: Company
+  image: /assets/images/company.svg
+  tags:
+  - Vertigo Games
+  - tag: "Team Size: 80+"
+    image: /assets/images/people.svg
 card:
   image: /assets/portfolio/impact/teaser.png
   title: Metro Awakening
@@ -13,10 +47,8 @@ card:
   tags:
   - tag: VR Game of the Year
     image: /assets/images/steam.svg
-    link: https://store.steampowered.com/steamawards/2024#VRGameoftheYear
   - tag: Best VR/AR - Nominee
     image: /assets/images/the-game-awards.svg
-    link: https://thegameawards.com/
   - Unreal Engine 5
   - C++
   - Vertigo Games

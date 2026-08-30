@@ -11,11 +11,21 @@
 }
 
 /*
-   em function
+   functions
    ========================================================================== */
 
 @function em($target, $context: $doc-font-size) {
   @return ($target / $context) * 1em;
+}
+
+// Helper function to convert # color codes to %23 for SVG Data URIs
+@function url-friendly-color($color) {
+  $color-string: inspect($color);
+  $index: str-index($color-string, '#');
+  @if $index {
+    @return '%23' + str-slice($color-string, 2);
+  }
+  @return $color-string;
 }
 
 

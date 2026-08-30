@@ -11,12 +11,20 @@
   vertical-align: middle;
   background: $lighter-gray;
 
-  img, svg {
+  img, picture, svg {
     height: 1.5em;
     width: auto;
+    flex: none;
+  }
+
+  picture {
+    min-width: 1.5em;
+    display: inline-flex;
+    justify-content: center;
   }
 }
 
 a.tag:hover {
   text-decoration: underline;
+  background: $lighter-gray-hover;
 }

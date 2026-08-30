@@ -1,0 +1,16 @@
+{% validate_fields include required="tag_groups" %}
+
+<div class="tag-groups">
+    {% for tag_group in include.tag_groups %}
+    {% validate_fields tag_group required="name, image, tags" %}
+    <div class="tag-group__title">
+        {% responsive_image tag_group.image widths="120, 240, 480" sizes_height="1.25em" class="tag-group__image" %}
+        {{ tag_group.name }}:
+    </div>
+    <div class="tag-group__tags">
+        {% for tag in tag_group.tags %}
+            {% include tag.html tag=tag %}
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
