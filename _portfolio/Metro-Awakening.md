@@ -3,6 +3,9 @@ title: Metro Awakening
 classes: wide centered
 header:
   image: /assets/portfolio/impact/hero.png
+  image_sources:
+  - source: /assets/portfolio/impact/hero-small.png
+    media: (width <= 697px)
 tag_groups:
 - name: Awards
   image: /assets/images/trophy.svg
