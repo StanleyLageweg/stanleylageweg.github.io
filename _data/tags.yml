@@ -1,9 +1,15 @@
 C++:
   image: /assets/images/cpp.svg
   link: https://isocpp.org/
+Jira:
+  image: /assets/images/jira.svg
+  link: https://www.atlassian.com/software/jira
 KeokeN Interactive:
   image: /assets/images/keoken-interactive.jfif
   link: https://keokeninteractive.com/
+Perforce:
+  image: /assets/images/p4.svg
+  link: https://www.perforce.com/
 Unreal Engine 4:
   image: /assets/images/unreal-engine-4.svg
   link: https://www.unrealengine.com/

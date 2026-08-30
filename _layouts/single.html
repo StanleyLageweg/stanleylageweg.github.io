@@ -17,6 +17,10 @@ layout: default
     {% if page.last_modified_at %}<meta itemprop="dateModified" content="{{ page.last_modified_at | date_to_xmlschema }}">{% endif %}
 
     <div class="page__inner-wrap">
+      {% if page.tag_groups %}
+        {% include tag-groups.html tag_groups=page.tag_groups %}
+      {% endif %}
+
       {% unless page.header.overlay_color or page.header.overlay_image %}
         <header>
           {% if page.title -%}

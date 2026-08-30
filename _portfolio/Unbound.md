@@ -1,7 +1,20 @@
 ---
 title: Unannounced Project
 classes: wide centered
-team_size: 40+
+tag_groups:
+- name: Software
+  image: /assets/images/code.svg
+  tags:
+  - Unreal Engine 5
+  - C++
+  - Perforce
+  - Jira
+- name: Company
+  image: /assets/images/company.svg
+  tags:
+  - Vertigo Games
+  - tag: "Team Size: 40+"
+    image: /assets/images/people.svg
 header:
   image: /assets/portfolio/unbound/hero.png
 card:

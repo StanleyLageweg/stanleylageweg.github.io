@@ -50,7 +50,6 @@ body {
 
   .page__inner-wrap {
     float: inline-start;
-    margin-top: 1em;
     margin-inline: 0;
     width: 100%;
     clear: both;
@@ -195,7 +194,7 @@ body {
 
 .page__hero {
   position: relative;
-  margin-bottom: 2em;
+  margin-bottom: 1.5em;
   @include clearfix;
   -webkit-animation: $intro-transition;
   animation: $intro-transition;

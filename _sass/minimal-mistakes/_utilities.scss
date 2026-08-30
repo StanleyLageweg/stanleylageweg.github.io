@@ -463,11 +463,27 @@ a.reversefootnote {
    Responsive Video Embed
    ========================================================================== */
 
-.responsive-video {
+.responsive-video__container {
+  overflow: hidden;
+  container-type: size;
   aspect-ratio: 16 / 9;
   width: 100%;
   height: auto;
+}
+
+.responsive-video {
+  width: 100%;
+  height: 100%;
   border-radius: $border-radius;
+}
+
+@container (max-width: 325px) {
+  .responsive-video {
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+    transform-origin: 0 0;
+  }
 }
 
 // full screen video fixes
