@@ -3,22 +3,23 @@
 # {% responsive_image "/assets/images/icon.png" widths="64,128" sizes="2em" %}
 
 require_relative "../responsive_image"
+require_relative "../utils"
 
 module Jekyll
   module ResponsiveImage
     class ImageTag < Liquid::Tag
       def initialize(tag_name, text, tokens)
         super
-        @tokens = ResponsiveImage.parse_tag_text(text)
+        @tokens = Utils.parse_attributes(text, default_attributes: ["source"])
       end
 
       def render(context)
         site = context.registers[:site]
         config = ResponsiveImage.config_for(site)
-        opts = ResponsiveImage.resolve_tokens(@tokens, context)
+        opts = Utils.resolve_attributes(@tokens, context)
 
         source_rel = opts.fetch("source")
-        source_path = ResponsiveImage.get_source_path(site, source_rel)
+        source_path = Utils.get_source_path(site, source_rel)
         source_format = ResponsiveImage.normalize_format(File.extname(source_path))
 
         alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
@@ -50,38 +51,36 @@ module Jekyll
         end
 
         reserved_keys = %w[source widths formats alt sizes sizes_height oversample sources]
-        extra_attrs = opts.reject { |k, _| reserved_keys.include?(k) }.map do |k, v|
-          %(#{k}="#{escape_html(v)}")
-        end
+        extra_attrs = Utils.parse_html_attributes(opts, excluded_keys: reserved_keys)
 
         img_attrs = []
-        img_attrs << %(alt="#{escape_html(alt)}") unless alt.empty?
+        img_attrs << %(alt="#{Utils.escape_html(alt)}") unless alt.empty?
         img_attrs << %(width="#{source_width}") << %(height="#{source_height}") if source_width
         img_attrs.concat(extra_attrs)
 
         if source_format == "svg"
-          src_url = ResponsiveImage.public_url(site, File.join(site.dest, source_rel))
-          img_attrs.unshift(%(src="#{escape_html(src_url)}"))
+          src_url = Utils.public_url(site, File.join(site.dest, source_rel))
+          img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)
         end
 
         widths = if opts.key?("widths")
-                   ResponsiveImage.parse_int_list(opts["widths"])
+                   Utils.parse_int_list(opts["widths"])
                  else
-                   ResponsiveImage.parse_int_list(config["default_widths"])
+                   Utils.parse_int_list(config["default_widths"])
                  end
 
         formats = if opts.key?("formats")
-                    ResponsiveImage.parse_list(opts["formats"])
+                    Utils.parse_list(opts["formats"])
                   else
-                    ResponsiveImage.parse_list(config["default_formats"])
+                    Utils.parse_list(config["default_formats"])
                   end.map { |f| ResponsiveImage.normalize_format(f) }
 
         oversample = Float(opts["oversample"] || config["default_oversample"])
 
         extra_source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
           extra_source_rel = extra_opts.fetch("source")
-          extra_source_path = ResponsiveImage.get_source_path(site, extra_source_rel)
+          extra_source_path = Utils.get_source_path(site, extra_source_rel)
           extra_sources = ResponsiveImage.build_sources(site, extra_source_path, extra_source_rel, widths, formats)
           source_tags_for(extra_sources, oversample, sizes_attr, media: extra_opts["media"])
         end
@@ -93,9 +92,9 @@ module Jekyll
         src_url = if sources["webp"] && !sources["webp"].empty?
                     sources["webp"].last[:url]
                   else
-                    ResponsiveImage.public_url(site, File.join(site.dest, source_rel))
+                    Utils.public_url(site, File.join(site.dest, source_rel))
                   end
-        img_attrs.unshift(%(src="#{escape_html(src_url)}"))
+        img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
 
         %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)
       end
@@ -105,15 +104,11 @@ module Jekyll
       def source_tags_for(variants, oversample, sizes_attr, media: nil)
         variants.map do |format, source|
           srcset = source.map { |c| "#{c[:url]} #{(c[:width] / oversample).round}w" }.join(", ")
-          source_parts = [%(type="#{escape_html(ResponsiveImage.mime_type(format))}"), %(srcset="#{escape_html(srcset)}")]
-          source_parts << %(sizes="#{escape_html(sizes_attr)}") if sizes_attr
-          source_parts << %(media="#{escape_html(media)}") if media && !media.empty?
+          source_parts = [%(type="#{Utils.escape_html(ResponsiveImage.mime_type(format))}"), %(srcset="#{Utils.escape_html(srcset)}")]
+          source_parts << %(sizes="#{Utils.escape_html(sizes_attr)}") if sizes_attr
+          source_parts << %(media="#{Utils.escape_html(media)}") if media && !media.empty?
           %(<source #{source_parts.join(' ')}/>)
         end
-      end
-
-      def escape_html(value)
-        CGI.escapeHTML(value.to_s)
       end
     end
   end

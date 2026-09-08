@@ -16,7 +16,7 @@ module Jekyll
       return source_rel if source_format == "svg"
 
       site = @context.registers[:site]
-      source_path = Jekyll::ResponsiveImage.get_source_path(site, source_rel)
+      source_path = Utils.get_source_path(site, source_rel)
       sources = Jekyll::ResponsiveImage.build_sources(site, source_path, source_rel, [OUTPUT_WIDTH], [OUTPUT_FORMAT])
       sources[OUTPUT_FORMAT].last[:url] || source_rel
     end

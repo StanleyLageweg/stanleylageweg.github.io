@@ -5,6 +5,7 @@ require "yaml"
 
 require "jekyll"
 require "liquid"
+require_relative "utils"
 
 # Require ruby-vips while capturing its startup chatter and routing it through Jekyll's logger.
 pipe_r, pipe_w = IO.pipe
@@ -54,23 +55,9 @@ module Jekyll
       "alt_map_data_file" => "responsive_image_alts"
     }.freeze
 
-    # Matches `key=value` (with quoted or unquoted values).
-    TAG_ATTRIBUTES = /(\w+)\s*=\s*(#{Liquid::QuotedFragment})/o
-
     class << self
       def config_for(site)
         DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
-      end
-
-      def parse_tag_text(text)
-        source_match = text.to_s.strip.match(/\A(\S+)\s*(.*)/m)
-        raise ArgumentError, "responsive_image tag requires a source path" if source_match.nil?
-
-        tokens = [build_token("source", source_match[1])]
-        source_match[2].scan(TAG_ATTRIBUTES) do |key, value|
-          tokens << build_token(key, value)
-        end
-        tokens
       end
 
       def parse_extra_source_options(value)
@@ -85,48 +72,6 @@ module Jekyll
 
           entry
         end
-      end
-
-      def build_token(key, value)
-        resolver = if value.start_with?('"', "'") && value.include?("{{")
-            template = Liquid::Template.parse(value[1..-2])
-            ->(context) { template.render(context) }
-          else
-            expr = Liquid::Expression.parse(value)
-            ->(context) { context.evaluate(expr) }
-          end
-        { key: key, resolve: resolver }
-      end
-
-      def resolve_tokens(tokens, context)
-        tokens.each_with_object({}) do |token, options|
-          options[token[:key]] = token[:resolve].call(context)
-        end
-      end
-
-      def parse_list(value)
-        case value
-        when nil
-          []
-        when Array
-          value.flatten.map(&:to_s).map(&:strip).reject(&:empty?)
-        else
-          value.to_s.split(",").map(&:strip).reject(&:empty?)
-        end
-      end
-
-      def parse_int_list(value)
-        parse_list(value).map do |item|
-          Integer(item)
-        rescue ArgumentError
-          raise ArgumentError, "Invalid size '#{item}'. Sizes must be integers."
-        end
-      end
-
-      def get_source_path(site, source_rel)
-        source_path = File.join(site.source, source_rel)
-        raise Liquid::Error, "Image source not found: #{source_rel}" unless File.exist?(source_path)
-        source_path
       end
 
       def get_alt_text(site, source_rel, config)
@@ -162,17 +107,6 @@ module Jekyll
         end
       end
 
-      def public_url(site, path)
-        dest = File.expand_path(site.dest)
-        rel = Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(dest)).to_s.tr(File::SEPARATOR, "/")
-        baseurl = site.config["baseurl"].to_s
-        baseurl = "" if baseurl == "/"
-        baseurl = "/#{baseurl}" unless baseurl.empty? || baseurl.start_with?("/")
-        baseurl = baseurl.chomp("/")
-        url = "#{baseurl}/#{rel}".gsub(%r{/+}, "/")
-        url.empty? ? "/#{rel}" : url
-      end
-
       def has_alpha?(image)
         image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
       end
@@ -181,14 +115,8 @@ module Jekyll
         has_alpha?(image) && image[image.bands - 1].min < 255
       end
 
-      def add_keep_file(site, path)
-        site.keep_files << path unless site.keep_files.include?(path)
-      end
-
       def generate_image(site, source_path, source_rel, source_width, source_height, width, format)
         output_path = get_output_path(site, source_rel, width, format)
-        rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
-        source_mtime = File.mtime(source_path)
 
         target_width = Integer(width)
         scale = target_width.to_f / source_width
@@ -196,14 +124,13 @@ module Jekyll
 
         # Check if there's a marker file indicating the source image should be used for this size/format
         marker_path = "#{output_path}.use-source"
-        rel_marker_path = "#{rel_output_path}.use-source"
-        if File.exist?(marker_path) && File.mtime(marker_path) >= source_mtime
-          add_keep_file(site, rel_marker_path)
+        if Utils.is_output_up_to_date?(source_path, marker_path)
+          Utils.add_keep_file(site, marker_path)
           return { path: source_path, width: source_width, height: source_height }
         end
 
         # Generate the variant if it doesn't exist or is outdated
-        unless File.exist?(output_path) && File.mtime(output_path) >= source_mtime
+        unless Utils.is_output_up_to_date?(source_path, output_path)
           started_at = Time.now
 
           FileUtils.mkdir_p(File.dirname(output_path))
@@ -219,15 +146,15 @@ module Jekyll
           if target_width == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
             File.delete(output_path)
             FileUtils.touch(marker_path)
-            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
-            add_keep_file(site, rel_marker_path)
+            Jekyll.logger.info("Responsive Image:", "generated #{Utils.to_relative_path(site, output_path)} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
+            Utils.add_keep_file(site, marker_path)
             return { path: source_path, width: source_width, height: source_height }
           else
-            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
+            Jekyll.logger.info("Responsive Image:", "generated #{Utils.to_relative_path(site, output_path)} in #{(Time.now - started_at).round(2)} seconds.")
           end
         end
 
-        add_keep_file(site, rel_output_path)
+        Utils.add_keep_file(site, output_path)
         { path: output_path, width: target_width, height: target_height }
       end
 
@@ -249,7 +176,7 @@ module Jekyll
         effective_formats.each_with_object({}) do |format, sources|
           sources[format] = effective_widths.map do |width|
             variant = generate_image(site, source_path, source_rel, source_width, source_height, width, format)
-            variant.merge(url: public_url(site, variant[:path]), format: format)
+            variant.merge(url: Utils.public_url(site, variant[:path]), format: format)
           end
         end
       end
