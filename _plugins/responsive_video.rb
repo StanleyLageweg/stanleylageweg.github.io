@@ -1,7 +1,7 @@
-require "json"
 require "open3"
 
 require "jekyll"
+require_relative "utils"
 
 module Jekyll
   module ResponsiveVideo
@@ -41,11 +41,11 @@ module Jekyll
     module_function
 
     def get_cache_key
-      JSON.generate(PROFILES)
+      Utils.cache_key(PROFILES)
     end
 
     def get_optional_cache_key
-      JSON.generate(CONFIG)
+      Utils.cache_key(CONFIG)
     end
 
     def parse_formats(formats)

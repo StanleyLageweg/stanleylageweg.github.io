@@ -17,6 +17,17 @@ module Jekyll
       CGI.escapeHTML(value.to_s)
     end
 
+    def cache_key(value)
+      case value
+      when Hash
+        "{" + value.sort_by { |key, _| key.to_s }.map { |key, item| "#{cache_key(key)}: #{cache_key(item)}" }.join("; ") + "}"
+      when Array
+        "[" + value.map { |item| cache_key(item) }.join("; ") + "]"
+      else
+        value.to_s
+      end
+    end
+
     def parse_html_attributes(attributes, excluded_keys: [])
       attributes
         .reject { |key, _| excluded_keys.include?(key) }

@@ -1,5 +1,4 @@
 require "cgi"
-require "json"
 require "yaml"
 
 require "jekyll"
@@ -60,7 +59,7 @@ module Jekyll
       end
 
       def get_optional_cache_key
-        JSON.generate(CONFIG.except(:oversample, :alt_map_data_file))
+        Utils.cache_key(CONFIG.except(:oversample, :alt_map_data_file))
       end
 
       def parse_extra_source_options(value)
