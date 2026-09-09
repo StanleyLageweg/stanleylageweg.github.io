@@ -30,7 +30,7 @@ jobs:
       - name: Install Node.js packages
         run: npm ci
 
-      - name: Install libvips
+      - name: Install apt packages
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends ffmpeg libvips libheif-plugin-aomenc
