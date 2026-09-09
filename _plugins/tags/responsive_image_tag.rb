@@ -18,14 +18,13 @@ module Jekyll
         config = ResponsiveImage.config_for(site)
         opts = Utils.resolve_attributes(@tokens, context)
 
-        source_rel = opts.fetch("source")
-        source_path = Utils.get_source_path(site, source_rel)
-        source_format = ResponsiveImage.normalize_format(File.extname(source_path))
+        source_path = Filepath.new(site, opts.fetch("source"))
+        source_format = source_path.extension(normalize: true)
 
-        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_rel, config)
+        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path, config)
         sizes_attr = opts["sizes"]
         sizes_height = opts["sizes_height"]
-        raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_rel}." if sizes_attr && sizes_height
+        raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_path.relative_path}." if sizes_attr && sizes_height
 
         source_width = nil
         source_height = nil
@@ -59,8 +58,7 @@ module Jekyll
         img_attrs.concat(extra_attrs)
 
         if source_format == "svg"
-          src_url = Utils.public_url(site, File.join(site.dest, source_rel))
-          img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
+          img_attrs.unshift(%(src="#{Utils.escape_html(OutputFilepath.new(source_path).public_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)
         end
 
@@ -74,25 +72,24 @@ module Jekyll
                     Utils.parse_list(opts["formats"])
                   else
                     Utils.parse_list(config["default_formats"])
-                  end.map { |f| ResponsiveImage.normalize_format(f) }
+                  end.map { |f| Filepath.normalize_extension(f) }
 
         oversample = Float(opts["oversample"] || config["default_oversample"])
 
         extra_source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
-          extra_source_rel = extra_opts.fetch("source")
-          extra_source_path = Utils.get_source_path(site, extra_source_rel)
-          extra_sources = ResponsiveImage.build_sources(site, extra_source_path, extra_source_rel, widths, formats)
+          extra_source_path = Filepath.new(site, extra_opts.fetch("source"))
+          extra_sources = ResponsiveImage.build_sources(extra_source_path, widths, formats)
           source_tags_for(extra_sources, oversample, sizes_attr, media: extra_opts["media"])
         end
 
-        sources = ResponsiveImage.build_sources(site, source_path, source_rel, widths, formats)
+        sources = ResponsiveImage.build_sources(source_path, widths, formats)
         source_tags = extra_source_tags + source_tags_for(sources, oversample, sizes_attr)
 
         # Use the largest webp variant as the img src, falling back to the source file when webp isn't generated.
         src_url = if sources["webp"] && !sources["webp"].empty?
-                    sources["webp"].last[:url]
+                    sources["webp"].last[:path].public_url
                   else
-                    Utils.public_url(site, File.join(site.dest, source_rel))
+                    OutputFilepath.new(source_path).public_url
                   end
         img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
 
@@ -103,7 +100,7 @@ module Jekyll
 
       def source_tags_for(variants, oversample, sizes_attr, media: nil)
         variants.map do |format, source|
-          srcset = source.map { |c| "#{c[:url]} #{(c[:width] / oversample).round}w" }.join(", ")
+          srcset = source.map { |c| "#{c[:path].public_url} #{(c[:width] / oversample).round}w" }.join(", ")
           source_parts = [%(type="#{Utils.escape_html(ResponsiveImage.mime_type(format))}"), %(srcset="#{Utils.escape_html(srcset)}")]
           source_parts << %(sizes="#{Utils.escape_html(sizes_attr)}") if sizes_attr
           source_parts << %(media="#{Utils.escape_html(media)}") if media && !media.empty?

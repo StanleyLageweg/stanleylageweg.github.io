@@ -1,6 +1,4 @@
 require "cgi"
-require "fileutils"
-require "pathname"
 require "yaml"
 
 require "jekyll"
@@ -74,30 +72,16 @@ module Jekyll
         end
       end
 
-      def get_alt_text(site, source_rel, config)
+      def get_alt_text(site, source_path, config)
         alt_file = config["alt_map_data_file"].to_s
         data = site.data[alt_file] || site.data[alt_file.to_sym]
         if data.respond_to?(:[])
-          result = data[source_rel]
+          result = data[source_path.relative_path]
           return result if result
         end
 
-        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_rel}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
+        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_path.relative_path}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
         ""
-      end
-
-      def get_output_path(site, source_rel, width, format)
-        path = Pathname.new(source_rel)
-        basename = path.basename(path.extname)
-        ext = normalize_format(format)
-        File.join(site.dest, path.dirname, "#{basename}-#{Integer(width)}w.#{ext}")
-      end
-
-      def normalize_format(format)
-        # Remove the '.' at the start of the string
-        ext = format.to_s.downcase.sub(%r{\A\.}, "")
-        ext = "jpg" if ext == "jpeg"
-        ext
       end
 
       def mime_type(format)
@@ -115,50 +99,7 @@ module Jekyll
         has_alpha?(image) && image[image.bands - 1].min < 255
       end
 
-      def generate_image(site, source_path, source_rel, source_width, source_height, width, format)
-        output_path = get_output_path(site, source_rel, width, format)
-
-        target_width = Integer(width)
-        scale = target_width.to_f / source_width
-        target_height = (source_height * scale).round
-
-        # Check if there's a marker file indicating the source image should be used for this size/format
-        marker_path = "#{output_path}.use-source"
-        if Utils.is_output_up_to_date?(source_path, marker_path)
-          Utils.add_keep_file(site, marker_path)
-          return { path: source_path, width: source_width, height: source_height }
-        end
-
-        # Generate the variant if it doesn't exist or is outdated
-        unless Utils.is_output_up_to_date?(source_path, output_path)
-          started_at = Time.now
-
-          FileUtils.mkdir_p(File.dirname(output_path))
-
-          image = Vips::Image.new_from_file(source_path, access: :sequential)
-          image = image.autorot if image.respond_to?(:autorot)
-
-          resized = scale == 1.0 ? image : image.resize(scale)
-          resized.write_to_file(output_path)
-
-          # If the generated file is larger than the source, use the source instead and create a marker file to skip regeneration next time.
-          source_format = normalize_format(File.extname(source_path))
-          if target_width == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
-            File.delete(output_path)
-            FileUtils.touch(marker_path)
-            Jekyll.logger.info("Responsive Image:", "generated #{Utils.to_relative_path(site, output_path)} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
-            Utils.add_keep_file(site, marker_path)
-            return { path: source_path, width: source_width, height: source_height }
-          else
-            Jekyll.logger.info("Responsive Image:", "generated #{Utils.to_relative_path(site, output_path)} in #{(Time.now - started_at).round(2)} seconds.")
-          end
-        end
-
-        Utils.add_keep_file(site, output_path)
-        { path: output_path, width: target_width, height: target_height }
-      end
-
-      def build_sources(site, source_path, source_rel, widths, formats)
+      def build_sources(source_path, widths, formats)
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
         source_width = source_image.width.to_i
@@ -173,12 +114,36 @@ module Jekyll
           effective_formats = formats.reject { |f| f == "jpg" }
         end
 
-        effective_formats.each_with_object({}) do |format, sources|
-          sources[format] = effective_widths.map do |width|
-            variant = generate_image(site, source_path, source_rel, source_width, source_height, width, format)
-            variant.merge(url: Utils.public_url(site, variant[:path]), format: format)
+        sources = {}
+        generated_variants = []
+        Utils.log_duration("Responsive Image:") do
+          effective_formats.each do |format|
+            sources[format] = effective_widths.map do |width|
+              output_path = OutputFilepath.new(source_path, suffix: "-#{width}w", extension: format)
+
+              target_width = Integer(width)
+              scale = target_width.to_f / source_width
+              target_height = (source_height * scale).round
+
+              # Generate the variant if it doesn't exist or is outdated
+              unless output_path.up_to_date?
+                image = Vips::Image.new_from_file(source_path, access: :sequential)
+                image = image.autorot if image.respond_to?(:autorot)
+                image = image.resize(scale) unless scale == 1.0
+
+                output_path.make_directory
+                image.write_to_file(output_path)
+                generated_variants << "#{target_width}w.#{format}"
+              end
+
+              output_path.add_keep_file
+              { path: output_path, width: target_width, height: target_height, format: format }
+            end
           end
+          "generated #{source_path.relative_path} [#{generated_variants.join(", ")}]" if generated_variants.any?
         end
+
+        sources
       end
     end
   end

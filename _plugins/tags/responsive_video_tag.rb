@@ -18,12 +18,11 @@ module Jekyll
         site = context.registers[:site]
         config = ResponsiveVideo.config_for(site)
         options = Utils.resolve_attributes(@tokens, context)
-        source_rel = options.fetch("source")
-        source_path = Utils.get_source_path(site, source_rel)
+        source_path = Filepath.new(site, options.fetch("source"))
         options["muted"] = "muted" if options.key?("autoplay")
         muted = options.key?("muted")
         formats = ResponsiveVideo.parse_formats(options["formats"] || config["default_formats"])
-        sources = ResponsiveVideo.build_sources(site, source_path, source_rel, formats, config, muted: muted)
+        sources = ResponsiveVideo.build_sources(source_path, formats, config, muted: muted)
 
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
         attributes << %(width="#{sources[:dimensions][:width]}") unless options.key?("width")
@@ -31,8 +30,8 @@ module Jekyll
 
         source_tags = sources[:variants].map do |variant|
           source_attributes = [
-            %(src="#{Utils.escape_html(Utils.public_url(site, variant[:path]))}"),
-            %(type="#{Utils.escape_html(variant[:mime_type])}")
+            %(src="#{Utils.escape_html(variant[:path].public_url)}"),
+            %(type="#{Utils.escape_html(variant[:path].mime_type)}")
           ]
           %(<source #{source_attributes.join(' ')}/>)
         end

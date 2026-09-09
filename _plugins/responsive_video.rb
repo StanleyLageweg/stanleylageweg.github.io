@@ -1,7 +1,5 @@
-require "fileutils"
 require "json"
 require "open3"
-require "pathname"
 
 require "jekyll"
 
@@ -63,71 +61,64 @@ module Jekyll
         "-of", "json",
         source_path
       )
-      raise Liquid::Error, "ffprobe failed for '#{source_path}': #{stderr.strip}" unless status.success?
+      raise Liquid::Error, "ffprobe failed for '#{source_path.relative_path}': #{stderr.strip}" unless status.success?
 
       stream = JSON.parse(stdout).fetch("streams").first
       { width: Integer(stream.fetch("width")), height: Integer(stream.fetch("height")) }
     rescue Errno::ENOENT
       raise Liquid::Error, "Unable to run ffprobe. Install FFmpeg and make sure ffprobe is available on PATH."
     rescue JSON::ParserError, KeyError, TypeError, ArgumentError => error
-      raise Liquid::Error, "Unable to read video metadata for '#{source_path}': #{error.message}"
+      raise Liquid::Error, "Unable to read video metadata for '#{source_path.relative_path}': #{error.message}"
     end
 
-    def build_sources(site, source_path, source_rel, formats, config, muted: false)
+    def build_sources(source_path, formats, config, muted: false)
       dimensions = get_dimensions(source_path)
       scale = dimensions[:width] > 1920 ? 1920.0 / dimensions[:width] : 1.0
 
       # Determine which variants we need
       variants = formats.map do |format|
+        path_suffix = "-#{format}"
+        path_suffix += "-muted" if muted
+        extension = PROFILES.fetch(format)[:extension]
         {
           format: format,
-          extension: PROFILES.fetch(format)[:extension],
-          path: get_output_path(site, source_rel, format, muted: muted)
+          path: OutputFilepath.new(source_path, suffix: path_suffix, extension: extension)
         }
       end
 
       # Determine which variants need to be generated
-      variants_to_generate = variants.reject { |variant| Utils.is_output_up_to_date?(source_path, variant[:path]) }
-      variants_to_generate.each { |variant| FileUtils.mkdir_p(File.dirname(variant[:path])) }
+      variants_to_generate = variants.reject { |variant| variant[:path].up_to_date? }
+      variants_to_generate.each { |variant| variant[:path].make_directory }
 
       # Generate the variants using ffmpeg
       unless variants_to_generate.empty?
-        started_at = Time.now
-        command = build_ffmpeg_command(source_path, variants_to_generate, config, muted: muted, scale: scale)
-        _stdout, stderr, status = Open3.capture3(*command)
-        unless status.success?
-          variants_to_generate.each { |variant| File.delete(variant[:path]) if File.exist?(variant[:path]) }
-          raise Liquid::Error, "ffmpeg failed for '#{source_rel}': #{stderr.strip}"
-        end
+        Utils.log_duration("Responsive Video:") do
+          command = build_ffmpeg_command(source_path, variants_to_generate, config, muted: muted, scale: scale)
+          _stdout, stderr, status = Open3.capture3(*command)
+          unless status.success?
+            variants_to_generate.each { |variant| variant[:path].delete }
+            raise Liquid::Error, "ffmpeg failed for '#{source_path.relative_path}': #{stderr.strip}"
+          end
 
-        # Check if all requested files were created
-        unless variants_to_generate.all? { |variant| File.file?(variant[:path]) }
-          raise Liquid::Error, "ffmpeg did not create all requested outputs for '#{source_rel}'."
-        end
+          # Check if all requested files were created
+          unless variants_to_generate.all? { |variant| variant[:path].exist? }
+            raise Liquid::Error, "ffmpeg did not create all requested outputs for '#{source_path.relative_path}'."
+          end
 
-        # Log which variants we generated
-        variant_summary = variants_to_generate.map { |variant| "#{variant[:format]}" }.join(", ")
-        filename = Pathname.new(source_rel).basename
-        duration = (Time.now - started_at).round(2)
-        Jekyll.logger.info("Responsive Video:", "generated #{filename} (#{variant_summary}) in #{duration} seconds.")
+          # Log which variants we generated
+          variant_summary = variants_to_generate.map { |variant| "#{variant[:format]}" }.join(", ")
+          "generated #{source_path.relative_path} [#{variant_summary}]"
+        end
       end
 
       # Add the variants to the keep_files list and return them
-      variants.each { |variant| Utils.add_keep_file(site, variant[:path]) }
+      variants.each { |variant| variant[:path].add_keep_file }
       {
         dimensions: dimensions,
         variants: variants
       }
     rescue Errno::ENOENT
       raise Liquid::Error, "Unable to run ffmpeg. Install FFmpeg and make sure ffmpeg is available on PATH."
-    end
-
-    def get_output_path(site, source_rel, format, muted: false)
-      source = Pathname.new(source_rel)
-      profile = PROFILES.fetch(format)
-      basename = source.basename(source.extname)
-      audio_suffix = muted ? "-muted" : ""
-      File.join(site.dest, source.dirname, "#{basename}-#{format}#{audio_suffix}.#{profile[:extension]}")
     end
 
     def build_ffmpeg_command(source_path, variants, config, muted: false, scale: 1.0)
