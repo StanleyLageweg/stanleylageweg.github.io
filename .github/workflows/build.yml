@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -35,19 +37,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends ffmpeg libvips libheif-plugin-aomenc
 
+      - name: Restore Git repository mtimes
+        run: bundle exec ruby scripts/fix_mtimes.rb git
+
       - name: Get responsive image cache key
         id: responsive-image-cache-key
         run: |
           echo "key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_image"; print Jekyll::ResponsiveImage.get_cache_key')" >> "$GITHUB_OUTPUT"
           echo "optional_key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_image"; print Jekyll::ResponsiveImage.get_optional_cache_key')" >> "$GITHUB_OUTPUT"
 
-      - name: Get responsive video cache key
-        id: responsive-video-cache-key
-        run: |
-          echo "key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_cache_key')" >> "$GITHUB_OUTPUT"
-          echo "optional_key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_optional_cache_key')" >> "$GITHUB_OUTPUT"
-
       - name: Restore responsive image cache
+        id: restore-image-cache
         uses: actions/cache/restore@v6
         with:
           path: |
@@ -60,7 +60,20 @@ jobs:
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-
 
+      - name: Restore responsive image mtimes
+        if: steps.restore-image-cache.outputs.cache-matched-key != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bundle exec ruby scripts/fix_mtimes.rb cache "${{ steps.restore-image-cache.outputs.cache-matched-key }}" "_site" "avif,webp,png,jpg"
+
+      - name: Get responsive video cache key
+        id: responsive-video-cache-key
+        run: |
+          echo "key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_cache_key')" >> "$GITHUB_OUTPUT"
+          echo "optional_key=$(bundle exec ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_optional_cache_key')" >> "$GITHUB_OUTPUT"
+
       - name: Restore responsive video cache
+        id: restore-video-cache
         uses: actions/cache/restore@v6
         with:
           path: |
@@ -70,6 +83,12 @@ jobs:
           restore-keys: |
             responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-
             responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-
+
+      - name: Restore responsive video mtimes
+        if: steps.restore-video-cache.outputs.cache-matched-key != ''
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bundle exec ruby scripts/fix_mtimes.rb cache "${{ steps.restore-video-cache.outputs.cache-matched-key }}" "_site" "mp4,webm"
 
       - name: Build Jekyll site
         run: bundle exec jekyll build

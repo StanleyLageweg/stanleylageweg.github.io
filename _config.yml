@@ -125,6 +125,7 @@ exclude:
   - README.md
   - tmp
   - "performance-profiling/*"
+  - "scripts/*"
 keep_files:
   - .git
   - .svn
