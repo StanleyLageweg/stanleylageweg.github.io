@@ -15,13 +15,12 @@ module Jekyll
 
       def render(context)
         site = context.registers[:site]
-        config = ResponsiveImage.config_for(site)
         opts = Utils.resolve_attributes(@tokens, context)
 
         source_path = Filepath.new(site, opts.fetch("source"))
         source_format = source_path.extension(normalize: true)
 
-        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path, config)
+        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
         sizes_attr = opts["sizes"]
         sizes_height = opts["sizes_height"]
         raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_path.relative_path}." if sizes_attr && sizes_height
@@ -65,16 +64,16 @@ module Jekyll
         widths = if opts.key?("widths")
                    Utils.parse_int_list(opts["widths"])
                  else
-                   Utils.parse_int_list(config["default_widths"])
+                   Utils.parse_int_list(ResponsiveImage::CONFIG[:widths])
                  end
 
         formats = if opts.key?("formats")
                     Utils.parse_list(opts["formats"])
                   else
-                    Utils.parse_list(config["default_formats"])
+                    Utils.parse_list(ResponsiveImage::CONFIG[:formats])
                   end.map { |f| Filepath.normalize_extension(f) }
 
-        oversample = Float(opts["oversample"] || config["default_oversample"])
+        oversample = Float(opts["oversample"] || ResponsiveImage::CONFIG[:oversample])
 
         extra_source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
           extra_source_path = Filepath.new(site, extra_opts.fetch("source"))

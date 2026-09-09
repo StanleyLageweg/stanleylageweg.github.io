@@ -22,6 +22,42 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Get responsive image cache key
+        id: responsive-image-cache-key
+        run: |
+          echo "key=$(ruby -e 'require_relative "_plugins/responsive_image"; print Jekyll::ResponsiveImage.get_cache_key')" >> "$GITHUB_OUTPUT"
+          echo "optional_key=$(ruby -e 'require_relative "_plugins/responsive_image"; print Jekyll::ResponsiveImage.get_optional_cache_key')" >> "$GITHUB_OUTPUT"
+
+      - name: Get responsive video cache key
+        id: responsive-video-cache-key
+        run: |
+          echo "key=$(ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_cache_key')" >> "$GITHUB_OUTPUT"
+          echo "optional_key=$(ruby -e 'require_relative "_plugins/responsive_video"; print Jekyll::ResponsiveVideo.get_optional_cache_key')" >> "$GITHUB_OUTPUT"
+
+      - name: Restore responsive image cache
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            _site/**/*.avif
+            _site/**/*.webp
+            _site/**/*.png
+            _site/**/*.jpg
+          key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic') }}
+          restore-keys: |
+            responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-
+            responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-
+
+      - name: Restore responsive video cache
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            _site/**/*.mp4
+            _site/**/*.webm
+          key: responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.mp4', 'assets/**/*.webm', 'assets/**/*.mov', 'assets/**/*.m4v', 'assets/**/*.mkv', 'assets/**/*.avi') }}
+          restore-keys: |
+            responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-
+            responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -39,6 +75,24 @@ jobs:
         run: bundle exec jekyll build
         env:
           JEKYLL_ENV: production
+
+      - name: Save responsive image cache
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            _site/**/*.avif
+            _site/**/*.webp
+            _site/**/*.png
+            _site/**/*.jpg
+          key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic') }}
+
+      - name: Save responsive video cache
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            _site/**/*.mp4
+            _site/**/*.webm
+          key: responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.mp4', 'assets/**/*.webm', 'assets/**/*.mov', 'assets/**/*.m4v', 'assets/**/*.mkv', 'assets/**/*.avi') }}
 
       - name: Upload pages artifact
         if: ${{ inputs.upload_artifact }}

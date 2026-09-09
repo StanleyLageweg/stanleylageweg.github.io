@@ -5,8 +5,8 @@ require "jekyll"
 
 module Jekyll
   module ResponsiveVideo
-    DEFAULT_CONFIG = {
-      "default_formats" => ["av1", "vp9", "h264"]
+    CONFIG = {
+      formats: ["av1", "vp9", "h264"]
     }.freeze
 
     # crf = Constant Rate Factor, tradeff between quality and file size. Lower values increase both quality and file size.
@@ -40,15 +40,19 @@ module Jekyll
 
     module_function
 
-    def config_for(site)
-      DEFAULT_CONFIG.merge(site.config.fetch("responsive_video", {}))
+    def get_cache_key
+      JSON.generate(PROFILES)
     end
 
-    def parse_formats(value)
-      formats = Utils.parse_list(value).map(&:downcase).uniq
+    def get_optional_cache_key
+      JSON.generate(CONFIG)
+    end
+
+    def parse_formats(formats)
+      formats = formats.map(&:downcase).uniq
+      formats = CONFIG[:formats] if formats.empty?
       invalid = formats - PROFILES.keys
       raise ArgumentError, "Unsupported video format(s): #{invalid.join(', ')}." unless invalid.empty?
-      raise ArgumentError, "At least one video format is required." if formats.empty?
       formats
     end
 
@@ -71,11 +75,12 @@ module Jekyll
       raise Liquid::Error, "Unable to read video metadata for '#{source_path.relative_path}': #{error.message}"
     end
 
-    def build_sources(source_path, formats, config, muted: false)
+    def build_sources(source_path, formats, muted: false)
       dimensions = get_dimensions(source_path)
       scale = dimensions[:width] > 1920 ? 1920.0 / dimensions[:width] : 1.0
 
       # Determine which variants we need
+      formats = parse_formats(formats)
       variants = formats.map do |format|
         path_suffix = "-#{format}"
         path_suffix += "-muted" if muted
@@ -93,7 +98,7 @@ module Jekyll
       # Generate the variants using ffmpeg
       unless variants_to_generate.empty?
         Utils.log_duration("Responsive Video:") do
-          command = build_ffmpeg_command(source_path, variants_to_generate, config, muted: muted, scale: scale)
+          command = build_ffmpeg_command(source_path, variants_to_generate, muted: muted, scale: scale)
           _stdout, stderr, status = Open3.capture3(*command)
           unless status.success?
             variants_to_generate.each { |variant| variant[:path].delete }
@@ -121,7 +126,7 @@ module Jekyll
       raise Liquid::Error, "Unable to run ffmpeg. Install FFmpeg and make sure ffmpeg is available on PATH."
     end
 
-    def build_ffmpeg_command(source_path, variants, config, muted: false, scale: 1.0)
+    def build_ffmpeg_command(source_path, variants, muted: false, scale: 1.0)
       raise ArgumentError, "No variants to generate." if variants.empty?
 
       command = ["ffmpeg", "-y", "-i", source_path]

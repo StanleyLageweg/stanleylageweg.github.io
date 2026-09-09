@@ -16,13 +16,12 @@ module Jekyll
 
       def render(context)
         site = context.registers[:site]
-        config = ResponsiveVideo.config_for(site)
         options = Utils.resolve_attributes(@tokens, context)
         source_path = Filepath.new(site, options.fetch("source"))
         options["muted"] = "muted" if options.key?("autoplay")
         muted = options.key?("muted")
-        formats = ResponsiveVideo.parse_formats(options["formats"] || config["default_formats"])
-        sources = ResponsiveVideo.build_sources(source_path, formats, config, muted: muted)
+        formats = Utils.parse_list(options["formats"])
+        sources = ResponsiveVideo.build_sources(source_path, formats, muted: muted)
 
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
         attributes << %(width="#{sources[:dimensions][:width]}") unless options.key?("width")

@@ -10,7 +10,7 @@ module Jekyll
       started_at = Time.now
       message = func.call
       elapsed = (Time.now - started_at).round(2)
-      Jekyll.logger.info(topic, "#{message} (#{elapsed} seconds)")
+      Jekyll.logger.info(topic, "#{message} (#{elapsed} seconds)") if message
     end
 
     def escape_html(value)

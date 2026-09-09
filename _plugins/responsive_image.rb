@@ -1,4 +1,5 @@
 require "cgi"
+require "json"
 require "yaml"
 
 require "jekyll"
@@ -46,16 +47,20 @@ pipe_r.close
 
 module Jekyll
   module ResponsiveImage
-    DEFAULT_CONFIG = {
-      "default_widths" => [480, 960, 1280, 1920, 2560, 3840],
-      "default_formats" => ["avif", "webp"],
-      "default_oversample" => 1.5,
-      "alt_map_data_file" => "responsive_image_alts"
+    CONFIG = {
+      widths: [480, 960, 1280, 1920, 2560, 3840],
+      formats: ["avif", "webp"],
+      oversample: 1.5,
+      alt_map_data_file: "responsive_image_alts"
     }.freeze
 
     class << self
-      def config_for(site)
-        DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
+      def get_cache_key
+        "_"
+      end
+
+      def get_optional_cache_key
+        JSON.generate(CONFIG.except(:oversample, :alt_map_data_file))
       end
 
       def parse_extra_source_options(value)
@@ -72,15 +77,15 @@ module Jekyll
         end
       end
 
-      def get_alt_text(site, source_path, config)
-        alt_file = config["alt_map_data_file"].to_s
+      def get_alt_text(site, source_path)
+        alt_file = CONFIG[:alt_map_data_file].to_s
         data = site.data[alt_file] || site.data[alt_file.to_sym]
         if data.respond_to?(:[])
           result = data[source_path.relative_path]
           return result if result
         end
 
-        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_path.relative_path}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
+        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_path.relative_path}'. Add it to _data/#{CONFIG[:alt_map_data_file]}.yml or pass alt=\"...\" in the tag.")
         ""
       end
 

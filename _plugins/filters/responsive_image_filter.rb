@@ -25,7 +25,7 @@ module Jekyll
 
       site = @context.registers[:site]
       source_path = Filepath.new(@context.registers[:site], input.to_s)
-      Jekyll::ResponsiveImage.get_alt_text(site, source_path, Jekyll::ResponsiveImage.config_for(site))
+      Jekyll::ResponsiveImage.get_alt_text(site, source_path)
     end
   end
 end
