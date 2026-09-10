@@ -23,6 +23,11 @@ module Jekyll
       $stdout.reopen orig_stdout
     end
 
+    def fast_npx(package, *args)
+      # Open3.capture3("npx", "--no-install", package, *args)
+      Open3.capture3(File.join("./node_modules/.bin", package), *args)
+    end
+
     def escape_html(value)
       CGI.escapeHTML(value.to_s)
     end

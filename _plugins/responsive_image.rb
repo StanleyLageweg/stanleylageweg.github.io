@@ -114,15 +114,17 @@ module Jekyll
         effective_widths = effective_widths.map { |w| Integer(w) }.select { |w| w <= max_width }
 
         effective_formats = formats.uniq
-        if has_transparency?(source_image)
-          effective_formats = formats.reject { |f| f == "jpg" }
+
+        transparent = LazyValue.new { has_transparency(source_image) }
+        if formats.include?("jpg")
+          effective_formats.delete("jpg") if transparent
         end
 
-        sources = {}
+        variants = {}
         generated_variants = []
         Utils.log_duration("Responsive Image:") do
           effective_formats.each do |format|
-            sources[format] = effective_widths.map do |width|
+            variants[format] = effective_widths.map do |width|
               output_path = OutputFilepath.new(source_path, suffix: "-#{width}w", extension: format)
 
               target_width = Integer(width)
@@ -147,7 +149,12 @@ module Jekyll
           "generated #{source_path.relative_path} [#{generated_variants.join(", ")}]" if generated_variants.any?
         end
 
-        sources
+        {
+          width: source_width,
+          height: source_height,
+          transparent: transparent,
+          variants: variants,
+        }
       end
     end
   end

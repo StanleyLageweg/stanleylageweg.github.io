@@ -1,5 +1,3 @@
-require 'open3'
-
 module Jekyll
   module BuildHtml
     module_function
@@ -8,7 +6,8 @@ module Jekyll
       return unless file.output && file.output_ext == '.html'
 
       Utils.log_duration("HTML Minify:") do
-        stdout, stderr, status = Open3.capture3('npx', 'html-minifier-terser',
+        stdout, stderr, status = Utils.fast_npx(
+          'html-minifier-terser',
           '--collapse-boolean-attributes',
           '--collapse-whitespace',
           '--conservative-collapse',

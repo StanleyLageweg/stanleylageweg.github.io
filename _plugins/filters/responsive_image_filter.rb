@@ -17,7 +17,7 @@ module Jekyll
 
       
       sources = Jekyll::ResponsiveImage.build_sources(source_path, [OUTPUT_WIDTH], [OUTPUT_FORMAT])
-      Utils.escape_html(sources[OUTPUT_FORMAT].last[:path].public_url || source_path.public_url)
+      Utils.escape_html(sources[:variants][OUTPUT_FORMAT].last[:path].public_url || source_path.public_url)
     end
 
     def responsive_image_alt(input)

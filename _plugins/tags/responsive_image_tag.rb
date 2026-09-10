@@ -7,6 +7,8 @@ require_relative "../utils"
 
 module Jekyll
   module ResponsiveImage
+    RESERVED_KEYS = %w[source widths formats alt sizes sizes_height oversample sources].freeze
+
     class ImageTag < Liquid::Tag
       def initialize(tag_name, text, tokens)
         super
@@ -20,73 +22,57 @@ module Jekyll
         source_path = Filepath.new(site, opts.fetch("source"))
         source_format = source_path.extension(normalize: true)
 
-        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
-        sizes_attr = opts["sizes"]
-        sizes_height = opts["sizes_height"]
-        raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_path.relative_path}." if sizes_attr && sizes_height
-
-        source_width = nil
-        source_height = nil
-        if source_format != "svg"
-          source_image = Vips::Image.new_from_file(source_path, access: :sequential)
-          source_image = source_image.autorot if source_image.respond_to?(:autorot)
-          source_width = source_image.width.to_i
-          source_height = source_image.height.to_i
-          unless ResponsiveImage.has_transparency?(source_image)
-            opts["class"] = [opts["class"], "opaque"].compact.reject(&:empty?).join(" ")
-          end
-        end
-
-        if sizes_height && source_width
-          aspect_ratio = (source_width.to_f / source_height.to_f).round(4)
-          sizes_attr = aspect_ratio == 1.0 ? sizes_height : "calc(#{sizes_height} * #{aspect_ratio})"
-        end
-
-        # Default to sizes="auto" + loading="lazy" when no size hint was provided. sizes="auto" requires lazy loading and intrinsic width/height to work.
-        if sizes_attr.nil? && source_format != "svg"
-          sizes_attr = "auto"
-          opts["loading"] ||= "lazy"
-        end
-
-        reserved_keys = %w[source widths formats alt sizes sizes_height oversample sources]
-        extra_attrs = Utils.parse_html_attributes(opts, excluded_keys: reserved_keys)
-
+        # Get the alt text
         img_attrs = []
+        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
         img_attrs << %(alt="#{Utils.escape_html(alt)}") unless alt.empty?
-        img_attrs << %(width="#{source_width}") << %(height="#{source_height}") if source_width
-        img_attrs.concat(extra_attrs)
 
+        # Early return for SVG images
         if source_format == "svg"
+          img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
           img_attrs.unshift(%(src="#{Utils.escape_html(OutputFilepath.new(source_path).public_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)
         end
 
-        widths = if opts.key?("widths")
-                   Utils.parse_int_list(opts["widths"])
-                 else
-                   Utils.parse_int_list(ResponsiveImage::CONFIG[:widths])
-                 end
+        # Build the sources
+        widths = Utils.parse_int_list(opts.key?("widths") ? opts["widths"] : ResponsiveImage::CONFIG[:widths])
+        formats = Utils.parse_list(opts.key?("formats") ? opts["formats"] : ResponsiveImage::CONFIG[:formats])
+          .map { |f| Filepath.normalize_extension(f) }
+        sources = ResponsiveImage.build_sources(source_path, widths, formats)
 
-        formats = if opts.key?("formats")
-                    Utils.parse_list(opts["formats"])
-                  else
-                    Utils.parse_list(ResponsiveImage::CONFIG[:formats])
-                  end.map { |f| Filepath.normalize_extension(f) }
-
+        # Determine the 'sizes' attribute
+        sizes_attr = opts["sizes"]
+        sizes_height = opts["sizes_height"]
+        if !sizes_attr.nil?
+          raise ArgumentError, "Use either sizes=... or sizes_height=..., not both, for #{source_path.relative_path}." if sizes_height
+        elsif sizes_height
+          # Determine the width from the height
+          aspect_ratio = (sources[:width].to_f / sources[:height].to_f).round(4)
+          sizes_attr = aspect_ratio == 1.0 ? sizes_height : "calc(#{sizes_height} * #{aspect_ratio})"
+        else
+          # Default to sizes="auto" + loading="lazy" when no size hint was provided. sizes="auto" requires lazy loading and intrinsic width/height to work.
+          sizes_attr = "auto"
+          opts["loading"] ||= "lazy"
+        end
         oversample = Float(opts["oversample"] || ResponsiveImage::CONFIG[:oversample])
 
-        extra_source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
+        # Build the <source> tags, including the extra sources with media attributes
+        source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
           extra_source_path = Filepath.new(site, extra_opts.fetch("source"))
           extra_sources = ResponsiveImage.build_sources(extra_source_path, widths, formats)
-          source_tags_for(extra_sources, oversample, sizes_attr, media: extra_opts["media"])
+          source_tags_for(extra_sources[:variants], oversample, sizes_attr, media: extra_opts["media"])
+        end + source_tags_for(sources[:variants], oversample, sizes_attr)
+
+        # Parse the attributes and assign the opaque class
+        unless sources[:transparent]
+          opts["class"] = [opts["class"], "opaque"].compact.reject(&:empty?).join(" ")
         end
+        img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
+        img_attrs << %(width="#{sources[:width]}") << %(height="#{sources[:height]}")
 
-        sources = ResponsiveImage.build_sources(source_path, widths, formats)
-        source_tags = extra_source_tags + source_tags_for(sources, oversample, sizes_attr)
-
-        # Use the largest webp variant as the img src, falling back to the source file when webp isn't generated.
-        src_url = if sources["webp"] && !sources["webp"].empty?
-                    sources["webp"].last[:path].public_url
+        # Use the largest webp variant as the <img> src, falling back to the source file when webp isn't generated.
+        src_url = if sources[:variants]["webp"] && !sources[:variants]["webp"].empty?
+                    sources[:variants]["webp"].last[:path].public_url
                   else
                     OutputFilepath.new(source_path).public_url
                   end

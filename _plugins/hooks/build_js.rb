@@ -1,5 +1,3 @@
-require 'open3'
-
 module Jekyll
   module BuildJs
 
@@ -47,8 +45,8 @@ module Jekyll
         Utils.log_duration("Javascript Minify:") do
           FileUtils.mkdir_p(File.dirname(target_file))
 
-          stdout, stderr, status = Open3.capture3(
-            "npx", "uglifyjs",
+          stdout, stderr, status = Utils.fast_npx(
+            "uglifyjs",
             "-c",
             "--source-map",
             "-m",

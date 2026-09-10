@@ -1,3 +1,5 @@
+require_relative "utils"
+
 class Filepath
   attr_reader :site, :path, :relative_path
   protected :site
@@ -60,15 +62,13 @@ class Filepath
   end
 
   def mime_type
-    stdout, stderr, status = Open3.capture3("npx", "--no-install", "ffmime", @path)
+    stdout, stderr, status = Jekyll::Utils.fast_npx("ffmime", @path)
     raise Liquid::Error, "ffmime failed for '#{@path}': #{stderr.strip}" unless status.success?
 
     mime_type = stdout.strip
     raise Liquid::Error, "ffmime returned no MIME type for '#{@path}'." if mime_type.empty?
 
     mime_type
-  rescue Errno::ENOENT
-    raise Liquid::Error, "Unable to run ffmime. Install Node packages with npm install."
   end
 
   def ==(other)
