@@ -8,6 +8,7 @@
 
 # After all source files have been read and loaded from disk
 Jekyll::Hooks.register :site, :post_read do |site|
+  Jekyll::JekyllRubyProf.start(site)
   Jekyll::BuildJs.exclude_source_files(site)
 end
 
@@ -39,4 +40,5 @@ end
 # After writing all of the rendered files to disk
 Jekyll::Hooks.register :site, :post_write do |site|
   Jekyll::LogOutputSize.run(site)
+  Jekyll::JekyllRubyProf.stop(site)
 end

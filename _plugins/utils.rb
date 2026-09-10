@@ -1,3 +1,4 @@
+require "benchmark"
 require "liquid"
 
 module Jekyll
@@ -7,10 +8,19 @@ module Jekyll
     module_function
 
     def log_duration(topic, &func)
-      started_at = Time.now
-      message = func.call
-      elapsed = (Time.now - started_at).round(2)
-      Jekyll.logger.info(topic, "#{message} (#{elapsed} seconds)") if message
+      message = ""
+      elapsed = Benchmark.realtime do
+        message = func.call
+      end
+      Jekyll.logger.info(topic, "#{message} (#{elapsed.round(2)} seconds)") if message
+    end
+
+    def silence_output
+      orig_stdout = $stdout.clone
+      $stdout.reopen File::NULL, 'w'
+      yield
+    ensure
+      $stdout.reopen orig_stdout
     end
 
     def escape_html(value)

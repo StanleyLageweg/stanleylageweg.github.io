@@ -33,3 +33,6 @@ Thumbs.db
 .sass-cache
 _asset_bundler_cache
 _site
+
+# Ruby-prof generated files
+ruby-prof

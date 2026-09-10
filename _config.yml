@@ -126,6 +126,7 @@ exclude:
   - tmp
   - "performance-profiling/*"
   - "scripts/*"
+  - "ruby-prof/*"
 keep_files:
   - .git
   - .svn
