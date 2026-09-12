@@ -6,6 +6,17 @@
 # :posts - Allows fine-grained control over all posts in the site without affecting documents in user-defined collections
 # :clean - Fine-grained control on the list of obsolete files determined to be deleted during the site's cleanup phase.
 
+#Just after the site initializes. Good for modifying the configuration of the site. Triggered once per build / serve session
+Jekyll::Hooks.register :site, :after_init do |site|
+  MAX_KEY_LENGTH = 512
+
+  image_cache_key = "#{Jekyll::ResponsiveImage.get_cache_key}-#{Jekyll::ResponsiveImage.get_optional_cache_key}-#{"_sha256_" * 8}"
+  raise "Image cache key too long (#{image_cache_key.length}/#{MAX_KEY_LENGTH}): '#{image_cache_key}'" if image_cache_key.length > MAX_KEY_LENGTH
+
+  video_cache_key = "#{Jekyll::ResponsiveVideo.get_cache_key}-#{Jekyll::ResponsiveVideo.get_optional_cache_key}-#{"_sha256_" * 8}"
+  raise "Video cache key too long (#{video_cache_key.length}/#{MAX_KEY_LENGTH}): '#{video_cache_key}'" if video_cache_key.length > MAX_KEY_LENGTH
+end
+
 # After all source files have been read and loaded from disk
 Jekyll::Hooks.register :site, :post_read do |site|
   Jekyll::JekyllRubyProf.start(site)

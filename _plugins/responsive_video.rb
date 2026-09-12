@@ -60,6 +60,12 @@ module Jekyll
     def get_cache_key
       profiles = Marshal.load(Marshal.dump(PROFILES))
       profiles["vp9"][:video_options].delete("row-mt")
+      profiles.transform_values! do |profile|
+        profile = profile.dup
+        video = profile.delete(:video_options) || {}
+        audio = profile.delete(:audio_options) || {}
+        (profile.merge(video).merge(audio))
+      end
       Utils.cache_key(profiles)
     end
 
