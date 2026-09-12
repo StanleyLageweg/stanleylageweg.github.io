@@ -1,4 +1,10 @@
 # {% responsive_video "/assets/videos/demo.mp4" formats="h264,vp9,av1" controls="controls" class="responsive-video" %}
+# {% responsive_video "/assets/videos/demo.mp4" start_time="10s" %}
+# {% responsive_video "/assets/videos/demo.mp4" end_time="10000ms" %}
+# {% responsive_video "/assets/videos/demo.mp4" duration="10000000us" %}
+# {% responsive_video "/assets/videos/demo.mp4" speed="2" %}
+# {% responsive_video "/assets/videos/demo.mp4" fps="60" %} (default fps = 30)
+# {% responsive_video "/assets/videos/demo.mp4" crop="960:540:480:270" %} (crop="width:height:topLeftXCoordinate:topLeftYCoordinate")
 
 require "cgi"
 require_relative "../responsive_video"
@@ -7,7 +13,7 @@ require_relative "../utils"
 module Jekyll
   module ResponsiveVideo
     class VideoTag < Liquid::Tag
-      RESERVED_ATTRIBUTES = %w[source formats].freeze
+      RESERVED_ATTRIBUTES = %w[source formats start_time end_time duration speed fps crop].freeze
 
       def initialize(tag_name, text, tokens)
         super
@@ -17,15 +23,22 @@ module Jekyll
       def render(context)
         site = context.registers[:site]
         options = Utils.resolve_attributes(@tokens, context)
-        source_path = Filepath.new(site, options.fetch("source"))
         options["muted"] = "muted" if options.key?("autoplay")
-        muted = options.key?("muted")
-        formats = Utils.parse_list(options["formats"])
-        sources = ResponsiveVideo.build_sources(source_path, formats, muted: muted)
+        sources = ResponsiveVideo.build_sources(
+          Filepath.new(site, options.fetch("source")),
+          Utils.parse_list(options["formats"]),
+          muted: options.key?("muted"),
+          start_time: options["start_time"],
+          end_time: options["end_time"],
+          duration: options["duration"],
+          speed: options.key?("speed") ? Rational(options["speed"]) : nil,
+          fps: options.key?("fps") ? Rational(options["fps"]) : 30r,
+          crop: options["crop"],
+        )
 
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
-        attributes << %(width="#{sources[:dimensions][:width]}") unless options.key?("width")
-        attributes << %(height="#{sources[:dimensions][:height]}") unless options.key?("height")
+        attributes << %(width="#{sources[:data][:width]}") unless options.key?("width")
+        attributes << %(height="#{sources[:data][:height]}") unless options.key?("height")
 
         source_tags = sources[:variants].map do |variant|
           source_attributes = [

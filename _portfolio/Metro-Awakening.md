@@ -159,7 +159,7 @@ With these new inputs, I also wanted to add 3 new expressive poses: peace, flipp
 
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
-    {% responsive_video "/assets/portfolio/impact/hand-animations/hand-animations-game-cropped.webm" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-animations/hand-animations-game.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1600:900:240:130" %}
     {% responsive_video "/assets/portfolio/impact/hand-animations/hand-animations-controller.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
   </div>
 </div>
@@ -202,8 +202,8 @@ On very rare occasions, this fallback can also fail, especially if the player is
 
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
-    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement-cropped.webm" autoplay="autoplay" loop="loop" loading="lazy" %}
-    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement-vislog-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement.mp4" autoplay="autoplay" loop="loop" loading="lazy" start_time="868ms" duration="33006ms" crop="1920:992:0:88" %}
+    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement-vislog.mp4" autoplay="autoplay" loop="loop" loading="lazy" start_time="1307ms" duration="43527ms" speed="38774/29402" crop="1920:992:0:20" %}
   </div>
 </div>
 
@@ -381,7 +381,7 @@ As our NavMesh was static, I was also able to cache and reuse the calculated slo
 I implemented the slope detection in a component and built the rest of the logic in control rig. This made it easy to test the system by dragging the ground planes around, allowing me to more easily iterate on things like the pelvis height and the pole vectors.
 Another advantage of doing all the logic in control rig was that I could skip the ground traces if the foot was already planted on the floor. This fixed a bug where feet could jitter up and down when the trace grazed a ledge, while also saving us some performance for characters that were standing still.
 
-{% responsive_video "/assets/portfolio/impact/foot-ik/foot-ik-cropped.webm" autoplay="autoplay" loop="loop" loading="lazy" onloadstart="this.playbackRate = 2.0;" %}
+{% responsive_video "/assets/portfolio/impact/foot-ik/foot-ik.mp4" autoplay="true" loop="false" loading="lazy" speed="2" crop="1582:1256:486:108" %}
 
 {% endcapture_markdown %}
 

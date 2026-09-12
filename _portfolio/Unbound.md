@@ -80,11 +80,11 @@ It would also be noticeable if the height correction moved you too far. That's w
 
 The height correction shouldn't be applied when a player is actively moving their head up and down, as this would disrupt the movement parity between their head and their view, which would be uncomfortable and lead to motion sickness. To prevent this, I simply check if the player is moving their head up or down faster than a generously small threshold of 10cm/s.
 
-{% responsive_video "/assets/portfolio/unbound/camera-movement/height-correction-with-text-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+{% responsive_video "/assets/portfolio/unbound/camera-movement/height-correction-with-text.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1920:964:0:38" %}
 
 A problem I ran into was that, due to human anatomy, pitching your head up or down also moves the headset up or down. The height correction system was adjusting for this, which felt unnatural. To fix this, I measured how the headset moved as different people pitched their head up and down. From this data, I was able to construct a curve which maps the headset's pitch to an offset which estimates where the headset would have been without pitch. I was then able to use this offset to get a better estimate of the camera height, to eliminate the issue I described earlier. As an added bonus, I was also able to use this offset in other scenarios. If your height is being clamped, for example, you'll still be able to pitch your head without the clamping affecting that movement.
 
-{% responsive_video "/assets/portfolio/unbound/camera-movement/height-prediction-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+{% responsive_video "/assets/portfolio/unbound/camera-movement/height-prediction.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1920:1008:0:30" %}
 
 {% responsive_image "/assets/portfolio/unbound/camera-movement/pitch-to-camera-offset.png" %}
 
@@ -105,7 +105,7 @@ My solution consists of two steps:
 1. To know how to smoothen the camera movement, I need an estimate of the ground plane. The naive approach would have been to perform a bunch of traces around the player, to get sample points to estimate the ground plane. However, I decided to use the [Motion Matching](https://dev.epicgames.com/documentation/en-us/unreal-engine/motion-matching-in-unreal-engine){:target="_blank"} trajectory instead, as we're already generating that for the animation system anyway. This way the ground plane estimate is very cheap to compute. Another advantage is that the system only looks at actually relevant ground collision: where the player was and where they're going. I wrote an algorithm which takes all the trajectory points, filters them and uses them to calculate a weighted average up-vector for the ground plane estimate.
 2. While the player is walking around, any height changes are ignored by the camera. Then, after all the movement has been performed, a camera smoothing step is responsible for moving the camera back into alignment. Based on the ground plane estimate that was computed earlier, I can estimate where the player character will be in 2 meters. For this location, there is also a desired camera location. Then, it's as simple as moving the camera along the line between the previous camera location and the desired camera location. If the ground angle doesn't change, the camera will be realigned at the desired height after 2 meters.
 
-{% responsive_video "/assets/portfolio/unbound/camera-smoothing/visual-log-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+{% responsive_video "/assets/portfolio/unbound/camera-smoothing/visual-log.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1920:1008:0:30" %}
 
 *The desired camera height (purple line) is drawn based on the 'ground plane estimate' (magenta circle). The camera is moved along the yellow line, so that it'll be at the desired height after 2 meters.*
 
@@ -193,7 +193,7 @@ This system has proven to be very reliable. It's also very intuitive for players
 The heights at which I check for mantle destinations also ensure that players will only mantle onto ledges below their eye height, giving them the option to drop down instead by simply moving themselves below the ledge.  
 The height checks also ensure that players will never mantle downwards. Instead, they can position themselves over the platform, dropping themselves onto it.
 
-{% responsive_video "/assets/portfolio/unbound/mantling/dynamic-mantling-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+{% responsive_video "/assets/portfolio/unbound/mantling/dynamic-mantling.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1920:1008:0:30" %}
 
 {% endcapture_markdown %}
 
@@ -280,11 +280,11 @@ During a regular non-orbiting swing, the `AngularAcceleration` vector is perpend
 <div style="container-type: inline-size">
     <div class="video-grid">
         <div style="width: 100%; text-align: center;">
-            {% responsive_video "/assets/portfolio/unbound/rope-swinging/orbiting-before-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+            {% responsive_video "/assets/portfolio/unbound/rope-swinging/orbiting-before.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="948:948:446:0" %}
             <em>Before</em>
         </div>
         <div style="width: 100%; text-align: center;">
-            {% responsive_video "/assets/portfolio/unbound/rope-swinging/orbiting-after-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+            {% responsive_video "/assets/portfolio/unbound/rope-swinging/orbiting-after.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="948:948:446:0" %}
             <em>After</em>
         </div>
     </div>
@@ -639,7 +639,7 @@ The shader is applied to the 'Player Collision' view mode to ensure that you see
 In Mover, 'input commands' and the system's state ('sync states') are stored in structs of type `FMoverDataStructBase`. This way the entire state of the system is described by these data structs, making it easy to replicate over the network.  
 I decided to leverage this for our debugging workflow, by creating an inherited `FVGMoverDataStructBase` type with [Visual Logger](https://dev.epicgames.com/documentation/en-us/unreal-engine/visual-logger-in-unreal-engine){:target="_blank"} integration. This allowed me to render useful visualizations and log the complete state of the system every frame. This was an incredibly useful tool, to quickly diagnose and debug problems with the locomotion system.
 
-{% responsive_video "/assets/portfolio/unbound/debug-tooling/visual-log-cropped.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+{% responsive_video "/assets/portfolio/unbound/debug-tooling/visual-log.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1920:1038:0:0" %}
 
 {% highlight C++ %}
 void FVGRopeSwingingSyncState::DebugDraw(const UVGMoverComponent* MoverComponent) const
