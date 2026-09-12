@@ -42,21 +42,22 @@ module Jekyll
         source_files.any? { |file| File.mtime(file) > [target_mtime, target_map_mtime].min }
 
       if needs_rebuild
-        started_at = Time.now
-        Jekyll.logger.info("Javascript Minify:", "starting.")
+        Utils.log_duration("Javascript Minify:") do
+          FileUtils.mkdir_p(File.dirname(target_file))
 
-        FileUtils.mkdir_p(File.dirname(target_file))
+          stdout, stderr, status = Utils.fast_npx(
+            "uglifyjs",
+            "-c",
+            "--source-map",
+            "-m",
+            "-o", target_file,
+            *source_files
+          )
+          
+          raise "JavaScript build failed: #{stderr.strip}" unless status.success?
 
-        system(
-          "npx", "uglifyjs",
-          "-c",
-          "--source-map",
-          "-m",
-          "-o", target_file,
-          *source_files
-        ) or raise "JavaScript build failed"
-
-        Jekyll.logger.info("Javascript Minify:", "done in #{(Time.now - started_at).round(2)} seconds.")
+          "finished"
+        end
       else
         Jekyll.logger.info("Javascript Minify:", "skipped, no changes detected.")
       end

@@ -1,10 +1,9 @@
 require "cgi"
-require "fileutils"
-require "pathname"
 require "yaml"
 
 require "jekyll"
 require "liquid"
+require_relative "utils"
 
 # Require ruby-vips while capturing its startup chatter and routing it through Jekyll's logger.
 pipe_r, pipe_w = IO.pipe
@@ -47,30 +46,20 @@ pipe_r.close
 
 module Jekyll
   module ResponsiveImage
-    DEFAULT_CONFIG = {
-      "default_widths" => [480, 960, 1280, 1920, 2560, 3840],
-      "default_formats" => ["avif", "webp"],
-      "default_oversample" => 1.5,
-      "alt_map_data_file" => "responsive_image_alts"
+    CONFIG = {
+      widths: [480, 960, 1280, 1920, 2560, 3840],
+      formats: ["avif", "webp"],
+      oversample: 1.5,
+      alt_map_data_file: "responsive_image_alts"
     }.freeze
 
-    # Matches `key=value` (with quoted or unquoted values).
-    TAG_ATTRIBUTES = /(\w+)\s*=\s*(#{Liquid::QuotedFragment})/o
-
     class << self
-      def config_for(site)
-        DEFAULT_CONFIG.merge(site.config.fetch("responsive_image", {}))
+      def get_cache_key
+        "_"
       end
 
-      def parse_tag_text(text)
-        source_match = text.to_s.strip.match(/\A(\S+)\s*(.*)/m)
-        raise ArgumentError, "responsive_image tag requires a source path" if source_match.nil?
-
-        tokens = [build_token("source", source_match[1])]
-        source_match[2].scan(TAG_ATTRIBUTES) do |key, value|
-          tokens << build_token(key, value)
-        end
-        tokens
+      def get_optional_cache_key
+        Utils.cache_key(CONFIG.except(:oversample, :alt_map_data_file))
       end
 
       def parse_extra_source_options(value)
@@ -87,72 +76,16 @@ module Jekyll
         end
       end
 
-      def build_token(key, value)
-        resolver = if value.start_with?('"', "'") && value.include?("{{")
-            template = Liquid::Template.parse(value[1..-2])
-            ->(context) { template.render(context) }
-          else
-            expr = Liquid::Expression.parse(value)
-            ->(context) { context.evaluate(expr) }
-          end
-        { key: key, resolve: resolver }
-      end
-
-      def resolve_tokens(tokens, context)
-        tokens.each_with_object({}) do |token, options|
-          options[token[:key]] = token[:resolve].call(context)
-        end
-      end
-
-      def parse_list(value)
-        case value
-        when nil
-          []
-        when Array
-          value.flatten.map(&:to_s).map(&:strip).reject(&:empty?)
-        else
-          value.to_s.split(",").map(&:strip).reject(&:empty?)
-        end
-      end
-
-      def parse_int_list(value)
-        parse_list(value).map do |item|
-          Integer(item)
-        rescue ArgumentError
-          raise ArgumentError, "Invalid size '#{item}'. Sizes must be integers."
-        end
-      end
-
-      def get_source_path(site, source_rel)
-        source_path = File.join(site.source, source_rel)
-        raise Liquid::Error, "Image source not found: #{source_rel}" unless File.exist?(source_path)
-        source_path
-      end
-
-      def get_alt_text(site, source_rel, config)
-        alt_file = config["alt_map_data_file"].to_s
+      def get_alt_text(site, source_path)
+        alt_file = CONFIG[:alt_map_data_file].to_s
         data = site.data[alt_file] || site.data[alt_file.to_sym]
         if data.respond_to?(:[])
-          result = data[source_rel]
+          result = data[source_path.relative_path]
           return result if result
         end
 
-        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_rel}'. Add it to _data/#{config["alt_map_data_file"]}.yml or pass alt=\"...\" in the tag.")
+        Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_path.relative_path}'. Add it to _data/#{CONFIG[:alt_map_data_file]}.yml or pass alt=\"...\" in the tag.")
         ""
-      end
-
-      def get_output_path(site, source_rel, width, format)
-        path = Pathname.new(source_rel)
-        basename = path.basename(path.extname)
-        ext = normalize_format(format)
-        File.join(site.dest, path.dirname, "#{basename}-#{Integer(width)}w.#{ext}")
-      end
-
-      def normalize_format(format)
-        # Remove the '.' at the start of the string
-        ext = format.to_s.downcase.sub(%r{\A\.}, "")
-        ext = "jpg" if ext == "jpeg"
-        ext
       end
 
       def mime_type(format)
@@ -160,17 +93,6 @@ module Jekyll
         when "jpg" then "image/jpeg"
         else "image/#{format}"
         end
-      end
-
-      def public_url(site, path)
-        dest = File.expand_path(site.dest)
-        rel = Pathname.new(File.expand_path(path)).relative_path_from(Pathname.new(dest)).to_s.tr(File::SEPARATOR, "/")
-        baseurl = site.config["baseurl"].to_s
-        baseurl = "" if baseurl == "/"
-        baseurl = "/#{baseurl}" unless baseurl.empty? || baseurl.start_with?("/")
-        baseurl = baseurl.chomp("/")
-        url = "#{baseurl}/#{rel}".gsub(%r{/+}, "/")
-        url.empty? ? "/#{rel}" : url
       end
 
       def has_alpha?(image)
@@ -181,57 +103,7 @@ module Jekyll
         has_alpha?(image) && image[image.bands - 1].min < 255
       end
 
-      def add_keep_file(site, path)
-        site.keep_files << path unless site.keep_files.include?(path)
-      end
-
-      def generate_image(site, source_path, source_rel, source_width, source_height, width, format)
-        output_path = get_output_path(site, source_rel, width, format)
-        rel_output_path = Pathname.new(output_path).relative_path_from(Pathname.new(site.dest)).to_s
-        source_mtime = File.mtime(source_path)
-
-        target_width = Integer(width)
-        scale = target_width.to_f / source_width
-        target_height = (source_height * scale).round
-
-        # Check if there's a marker file indicating the source image should be used for this size/format
-        marker_path = "#{output_path}.use-source"
-        rel_marker_path = "#{rel_output_path}.use-source"
-        if File.exist?(marker_path) && File.mtime(marker_path) >= source_mtime
-          add_keep_file(site, rel_marker_path)
-          return { path: source_path, width: source_width, height: source_height }
-        end
-
-        # Generate the variant if it doesn't exist or is outdated
-        unless File.exist?(output_path) && File.mtime(output_path) >= source_mtime
-          started_at = Time.now
-
-          FileUtils.mkdir_p(File.dirname(output_path))
-
-          image = Vips::Image.new_from_file(source_path, access: :sequential)
-          image = image.autorot if image.respond_to?(:autorot)
-
-          resized = scale == 1.0 ? image : image.resize(scale)
-          resized.write_to_file(output_path)
-
-          # If the generated file is larger than the source, use the source instead and create a marker file to skip regeneration next time.
-          source_format = normalize_format(File.extname(source_path))
-          if target_width == source_width && format == source_format && File.size(source_path) <= File.size(output_path)
-            File.delete(output_path)
-            FileUtils.touch(marker_path)
-            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds, but using source image because it's smaller.")
-            add_keep_file(site, rel_marker_path)
-            return { path: source_path, width: source_width, height: source_height }
-          else
-            Jekyll.logger.info("Responsive Image:", "generated #{rel_output_path} in #{(Time.now - started_at).round(2)} seconds.")
-          end
-        end
-
-        add_keep_file(site, rel_output_path)
-        { path: output_path, width: target_width, height: target_height }
-      end
-
-      def build_sources(site, source_path, source_rel, widths, formats)
+      def build_sources(source_path, widths, formats)
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
         source_width = source_image.width.to_i
@@ -242,16 +114,47 @@ module Jekyll
         effective_widths = effective_widths.map { |w| Integer(w) }.select { |w| w <= max_width }
 
         effective_formats = formats.uniq
-        if has_transparency?(source_image)
-          effective_formats = formats.reject { |f| f == "jpg" }
+
+        transparent = LazyValue.new { has_transparency(source_image) }
+        if formats.include?("jpg")
+          effective_formats.delete("jpg") if transparent
         end
 
-        effective_formats.each_with_object({}) do |format, sources|
-          sources[format] = effective_widths.map do |width|
-            variant = generate_image(site, source_path, source_rel, source_width, source_height, width, format)
-            variant.merge(url: public_url(site, variant[:path]), format: format)
+        variants = {}
+        generated_variants = []
+        Utils.log_duration("Responsive Image:") do
+          effective_formats.each do |format|
+            variants[format] = effective_widths.map do |width|
+              output_path = OutputFilepath.new(source_path, suffix: "-#{width}w", extension: format)
+
+              target_width = Integer(width)
+              scale = target_width.to_f / source_width
+              target_height = (source_height * scale).round
+
+              # Generate the variant if it doesn't exist or is outdated
+              unless output_path.up_to_date?
+                image = Vips::Image.new_from_file(source_path, access: :sequential)
+                image = image.autorot if image.respond_to?(:autorot)
+                image = image.resize(scale) unless scale == 1.0
+
+                output_path.make_directory
+                image.write_to_file(output_path)
+                generated_variants << "#{target_width}w.#{format}"
+              end
+
+              output_path.add_keep_file
+              { path: output_path, width: target_width, height: target_height, format: format }
+            end
           end
+          "generated #{source_path.relative_path} [#{generated_variants.join(", ")}]" if generated_variants.any?
         end
+
+        {
+          width: source_width,
+          height: source_height,
+          transparent: transparent,
+          variants: variants,
+        }
       end
     end
   end
