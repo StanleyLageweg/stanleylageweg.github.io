@@ -38,7 +38,7 @@ module Jekyll
         widths = Utils.parse_int_list(opts.key?("widths") ? opts["widths"] : ResponsiveImage::CONFIG[:widths])
         formats = Utils.parse_list(opts.key?("formats") ? opts["formats"] : ResponsiveImage::CONFIG[:formats])
           .map { |f| Filepath.normalize_extension(f) }
-        sources = ResponsiveImage.build_sources(source_path, widths, formats)
+        sources = ResponsiveImage.build_sources(site, source_path, widths, formats)
 
         # Determine the 'sizes' attribute
         sizes_attr = opts["sizes"]
@@ -59,7 +59,7 @@ module Jekyll
         # Build the <source> tags, including the extra sources with media attributes
         source_tags = ResponsiveImage.parse_extra_source_options(opts["sources"]).flat_map do |extra_opts|
           extra_source_path = Filepath.new(site, extra_opts.fetch("source"))
-          extra_sources = ResponsiveImage.build_sources(extra_source_path, widths, formats)
+          extra_sources = ResponsiveImage.build_sources(site, extra_source_path, widths, formats)
           source_tags_for(extra_sources[:variants], oversample, sizes_attr, media: extra_opts["media"])
         end + source_tags_for(sources[:variants], oversample, sizes_attr)
 

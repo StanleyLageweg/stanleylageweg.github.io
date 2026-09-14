@@ -127,6 +127,8 @@ exclude:
   - "performance-profiling/*"
   - "scripts/*"
   - "ruby-prof/*"
+  - ".responsive-image-cache/*"
+  - ".responsive-video-cache/*"
 keep_files:
   - .git
   - .svn

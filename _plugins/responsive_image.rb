@@ -103,7 +103,7 @@ module Jekyll
         has_alpha?(image) && image[image.bands - 1].min < 255
       end
 
-      def build_sources(source_path, widths, formats)
+      def build_sources(site, source_path, widths, formats)
         source_image = Vips::Image.new_from_file(source_path, access: :sequential)
         source_image = source_image.autorot if source_image.respond_to?(:autorot)
         source_width = source_image.width.to_i
@@ -120,35 +120,34 @@ module Jekyll
           effective_formats.delete("jpg") if transparent
         end
 
-        variants = {}
-        generated_variants = []
-        Utils.log_duration("Responsive Image:") do
-          effective_formats.each do |format|
-            variants[format] = effective_widths.map do |width|
-              output_path = OutputFilepath.new(source_path, suffix: "-#{width}w", extension: format)
-
-              target_width = Integer(width)
-              scale = target_width.to_f / source_width
-              target_height = (source_height * scale).round
-
-              # Generate the variant if it doesn't exist or is outdated
-              unless output_path.up_to_date?
-                image = Vips::Image.new_from_file(source_path, access: :sequential)
-                image = image.autorot if image.respond_to?(:autorot)
-                image = image.resize(scale) unless scale == 1.0
-
-                output_path.make_directory
-                image.write_to_file(output_path)
-                generated_variants << "#{target_width}w.#{format}"
-              end
-
-              output_path.add_keep_file
-              { path: output_path, width: target_width, height: target_height, format: format }
-            end
-          end
-          "generated #{source_path.relative_path} [#{generated_variants.join(", ")}]" if generated_variants.any?
+        configs = effective_formats.product(effective_widths).map do |pair|
+          {
+            extension: "#{pair[0]}",
+            width: Integer(pair[1]),
+          }
         end
 
+        outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
+          Utils.log_duration("Responsive Image:") do
+            to_generate.each do |output|
+              image = Vips::Image.new_from_file(source_path, access: :sequential)
+              image = image.autorot if image.respond_to?(:autorot)
+              scale = output[:config][:width].to_f / source_width
+              image = image.resize(scale) unless scale == 1.0
+              image.write_to_file(output[:path])
+            end
+
+            generated_outputs = to_generate.map { |output| "#{output[:config][:width]}w.#{output[:config][:extension]}" }
+            "generated #{source_path.relative_path} [#{generated_outputs.join(", ")}]"
+          end
+        end
+
+        variants = {}
+        outputs.each do |output|
+          format = output[:config][:extension]
+          variants[format] ||= []
+          variants[format] << {path: output[:path], width: output[:config][:width]}
+        end
         {
           width: source_width,
           height: source_height,

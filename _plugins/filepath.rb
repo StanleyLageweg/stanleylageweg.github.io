@@ -7,9 +7,9 @@ class Filepath
   def initialize(site, path)
     raise ArgumentError, "Site must be a Jekyll::Site instance." unless site.is_a?(Jekyll::Site)
     @site = site
-    if [site.dest, site.source].any? { |base| path.start_with?(base) }
+    if (base = [site.dest, site.source].find { |b| path.start_with?(b) })
       @path = path
-      @relative_path = path.sub("#{base}/", "")
+      @relative_path = path.sub("#{base}", "")
     else
       @path = File.join(site.source, path)
       @relative_path = path
@@ -29,21 +29,21 @@ class Filepath
     ext
   end
 
-  # /folder/subfolder/file.ext -> file
-  def basename
-    File.basename(@path, extension)
+  # /folder/subfolder/file.ext -> file.ext
+  def basename(with_extension: true)
+    with_extension ? File.basename(@path) : File.basename(@path, ".*")
   end
 
   # /folder/subfolder/file.ext -> /folder/subfolder
-  def dirname
-    File.dirname(@path)
+  def dirname(relative: false)
+    relative ? File.dirname(@relative_path) : File.dirname(@path)
   end
 
   def exist?
     File.exist?(@path)
   end
 
-  def make_directory
+  def mkdir_p
     FileUtils.mkdir_p(dirname)
   end
 
@@ -94,7 +94,7 @@ class OutputFilepath < Filepath
     @site = source_path.site
     @source_path = source_path.path
     ext = extension || source_path.extension(normalize: true)
-    @relative_path = File.join(File.dirname(source_path.relative_path), "#{source_path.basename}#{suffix}.#{ext}")
+    @relative_path = File.join(File.dirname(source_path.relative_path), "#{source_path.basename(with_extension: false)}#{suffix}.#{ext}")
     @path = File.join(@site.dest, @relative_path)
   end
 

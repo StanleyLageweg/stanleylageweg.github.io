@@ -59,6 +59,7 @@ jobs:
           restore-keys: |
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-
+            responsive-images-
 
       - name: Restore responsive image mtimes
         if: steps.restore-image-cache.outputs.cache-matched-key != ''
@@ -83,6 +84,7 @@ jobs:
           restore-keys: |
             responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-
             responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-
+            responsive-videos-
 
       - name: Restore responsive video mtimes
         if: steps.restore-video-cache.outputs.cache-matched-key != ''
@@ -103,6 +105,7 @@ jobs:
             _site/**/*.webp
             _site/**/*.png
             _site/**/*.jpg
+            .responsive-image-cache
           key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic') }}
 
       - name: Save responsive video cache
@@ -111,6 +114,7 @@ jobs:
           path: |
             _site/**/*.mp4
             _site/**/*.webm
+            .responsive-video-cache
           key: responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.mp4', 'assets/**/*.webm', 'assets/**/*.mov', 'assets/**/*.m4v', 'assets/**/*.mkv', 'assets/**/*.avi') }}
 
       - name: Upload pages artifact

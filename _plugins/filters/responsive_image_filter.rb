@@ -11,12 +11,13 @@ module Jekyll
     def responsive_image(input)
       return input if input.nil? || input.to_s.empty?
 
-      source_path = Filepath.new(@context.registers[:site], input.to_s)
+      site = @context.registers[:site]
+      source_path = Filepath.new(site, input.to_s)
       source_format = source_path.extension(normalize: true)
       return Utils.escape_html(source_path.public_url) if source_format == "svg"
 
       
-      sources = Jekyll::ResponsiveImage.build_sources(source_path, [OUTPUT_WIDTH], [OUTPUT_FORMAT])
+      sources = Jekyll::ResponsiveImage.build_sources(site, source_path, [OUTPUT_WIDTH], [OUTPUT_FORMAT])
       Utils.escape_html(sources[:variants][OUTPUT_FORMAT].last[:path].public_url || source_path.public_url)
     end
 

@@ -104,7 +104,7 @@ module Jekyll
       raise Liquid::Error, "Unable to read video metadata for '#{source_path.relative_path}': #{error.message}"
     end
 
-    def build_sources(source_path, formats, muted: false, start_time: nil, end_time: nil, duration: nil, speed: nil, fps: nil, crop: nil)
+    def build_sources(site, source_path, formats, muted: false, start_time: nil, end_time: nil, duration: nil, speed: nil, fps: nil, crop: nil)
       raise ArgumentError, "end_time and duration are mutualy exclusive (#{source_path.relative_path})" if end_time && duration
       data = get_data(source_path)
       scale = 1r
@@ -123,84 +123,62 @@ module Jekyll
         end
       end
 
+      input_options = {}
+      input_options["ss"] = start_time if start_time
+      input_options["to"] = end_time if end_time
+      input_options["t"] = duration if duration
+
+      video_filters = []
+      video_filters << "setpts=#{1/speed}*PTS" if speed
+      video_filters << "fps=#{data[:fps]}" if fps
+      video_filters << "crop=#{crop}" if crop
+      video_filters << "scale=#{data[:width]}:#{data[:height]}" unless scale == 1r
+
+      audio_filters = []
+      audio_filters << "atempo=#{speed}" if speed
+
       # Determine which variants we need
       formats = parse_formats(formats)
-      variants = formats.map do |format|
-        path_suffix = "-#{format}"
-        path_suffix += "-muted" if muted
-        path_suffix += "-ss-#{start_time.gsub("/[.:]/", "-")}" if start_time
-        path_suffix += "-to-#{end_time.gsub("/[.:]/", "-")}" if end_time
-        path_suffix += "-t-#{duration.gsub("/[.:]/", "-")}" if duration
-        path_suffix += "-crop-#{crop.gsub(":", "-")}" if crop
-        path_suffix += "-speed-#{speed.to_f.round(3).to_s.gsub(".", "-")}" if speed
-        path_suffix += "-fps-#{data[:fps].to_f.round(3).to_s.gsub(".", "-")}" if fps
-        extension = PROFILES.fetch(format)[:extension]
-        {
+      configs = formats.map do |format|
+        PROFILES.fetch(format).merge({
           format: format,
-          path: OutputFilepath.new(source_path, suffix: path_suffix, extension: extension)
-        }
+          input_options: input_options,
+          video_filters: video_filters,
+          audio_filters: audio_filters,
+          muted: muted,
+        })
       end
 
-      # Determine which variants need to be generated
-      variants_to_generate = variants.reject { |variant| variant[:path].up_to_date? }
-      variants_to_generate.each { |variant| variant[:path].make_directory }
-
-      # Generate the variants using ffmpeg
-      unless variants_to_generate.empty?
+      outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::VIDEO_CACHE, configs) do |to_generate|
         Utils.log_duration("Responsive Video:") do
-          input_options = {}
-          input_options["ss"] = start_time if start_time
-          input_options["to"] = end_time if end_time
-          input_options["t"] = duration if duration
           command_builder = FFmpegBuilder.new(source_path.path, input_options: input_options)
-
-          variants_to_generate.each do |variant|
-            video_filters = []
-            video_filters << "setpts=#{1/speed}*PTS" if speed
-            video_filters << "fps=#{data[:fps]}" if fps
-            video_filters << "crop=#{crop}" if crop
-            video_filters << "scale=#{data[:width]}:#{data[:height]}" unless scale == 1r
-
-            audio_filters = []
-            audio_filters << "atempo=#{speed}" if speed
-
-            profile = PROFILES.fetch(variant[:format])
-
-            command_builder.add_output(variant[:path],
-              video_codec: profile[:video_codec],
-              audio_codec: profile[:audio_codec],
-              video_filters: video_filters,
-              audio_filters: audio_filters,
-              video_options: profile[:video_options],
-              audio_options: profile[:audio_options],
-              muted: muted,
+          to_generate.each do |output|
+            raise "input_options changed" if output[:config][:input_options] != input_options
+            command_builder.add_output(output[:path],
+              video_codec: output[:config][:video_codec],
+              audio_codec: output[:config][:audio_codec],
+              video_filters: output[:config][:video_filters],
+              audio_filters: output[:config][:audio_filters],
+              video_options: output[:config][:video_options],
+              audio_options: output[:config][:audio_options],
+              muted: output[:config][:muted],
             )
-
-            variant[:path].make_directory
           end
 
           _stdout, stderr, status = Open3.capture3(*command_builder.generate)
           unless status.success?
-            variants_to_generate.each { |variant| variant[:path].delete }
+            to_generate.each { |output| output[:path].delete }
             raise Liquid::Error, "ffmpeg failed for '#{source_path.relative_path}': #{stderr.strip}"
           end
 
-          # Check if all requested files were created
-          unless variants_to_generate.all? { |variant| variant[:path].exist? }
-            raise Liquid::Error, "ffmpeg did not create all requested outputs for '#{source_path.relative_path}'."
-          end
-
-          # Log which variants we generated
-          variant_summary = variants_to_generate.map { |variant| "#{variant[:format]}" }.join(", ")
-          "generated #{source_path.relative_path} [#{variant_summary}]"
+          generated_outputs = to_generate.map { |output| "#{output[:config][:format]}" }
+          "generated #{source_path.relative_path} [#{generated_outputs.join(", ")}]"
         end
       end
 
-      # Add the variants to the keep_files list and return them
-      variants.each { |variant| variant[:path].add_keep_file }
       {
         data: data,
-        variants: variants
+        paths: outputs.map { |output| output[:path] }
       }
     end
   end

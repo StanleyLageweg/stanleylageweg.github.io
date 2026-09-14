@@ -36,3 +36,7 @@ _site
 
 # Ruby-prof generated files
 ruby-prof
+
+# Caching
+.responsive-image-cache
+.responsive-video-cache
