@@ -85,21 +85,3 @@ class Filepath
   end
   alias to_str to_s
 end
-
-class OutputFilepath < Filepath
-  attr_reader :source_path
-
-  def initialize(source_path, suffix: "", extension: nil)
-    raise ArgumentError, "Source path must be a Filepath instance." unless source_path.is_a?(Filepath)
-    @site = source_path.site
-    @source_path = source_path.path
-    ext = extension || source_path.extension(normalize: true)
-    @relative_path = File.join(File.dirname(source_path.relative_path), "#{source_path.basename(with_extension: false)}#{suffix}.#{ext}")
-    @path = File.join(@site.dest, @relative_path)
-  end
-
-  def up_to_date?
-    raise ArgumentError, "Source file not found: #{@source_path}" unless File.exist?(@source_path)
-    exist? && File.mtime(@path) >= File.mtime(@source_path)
-  end
-end

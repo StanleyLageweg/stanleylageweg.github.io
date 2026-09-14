@@ -30,7 +30,7 @@ module Jekyll
         # Early return for SVG images
         if source_format == "svg"
           img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
-          img_attrs.unshift(%(src="#{Utils.escape_html(OutputFilepath.new(source_path).public_url)}"))
+          img_attrs.unshift(%(src="#{Utils.escape_html(source_path.public_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)
         end
 
@@ -74,7 +74,7 @@ module Jekyll
         src_url = if sources[:variants]["webp"] && !sources[:variants]["webp"].empty?
                     sources[:variants]["webp"].last[:path].public_url
                   else
-                    OutputFilepath.new(source_path).public_url
+                    source_path.public_url
                   end
         img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
 
