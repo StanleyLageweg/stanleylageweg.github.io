@@ -14,6 +14,8 @@ To test the site, run `bundle exec jekyll build --watch` and click `Go Live` in 
 As modifications are made to the site's source, the site will be rebuild and the browser will refresh on its own.  
 (`bundle exec jekyll serve --livereload` should work the same, but has issues with loading videos.)
 
+To profile a build, run `bundle exec jekyll build --ruby-prof`.
+
 ## Credits
 
 - [Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes) - [Michael Rose](https://mademistakes.com)

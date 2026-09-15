@@ -77,17 +77,13 @@ To alleviate this issue, I changed the system to allow players to hold the magaz
 Holding the weapon this way does not apply the lower 2-handed recoil though, to signify that this not the intended way to hold the weapon.  
 Another benefit of this change was that the required physical pulling motion made the interaction feel more tactile.
 
-<video autoplay loop muted width="100%" loading="lazy">
-  <source src="/assets/portfolio/impact/firearms/kalashnikov-reload.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/firearms/kalashnikov-reload.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 #### 2. Inserting while a magazine is loaded  
 During development, a lot of playtesters would incorrectly grab a magazine from their inventory, without ejecting the loaded magazine first. Without a free hand to eject the magazine, they would usually end up fumbling around and accidentally dropping their full magazine. This was clearly not as frictionless as it needed to be.  
 To fix this, I simply allowed players to insert the magazine while another magazine was already loaded. The hand plays an animation where the thumb hits the magazine release latch, after which the old magazine ejects and the new one is inserted.
 
-<video autoplay loop muted width="100%" loading="lazy">
-  <source src="/assets/portfolio/impact/firearms/kalashnikov-reload-filled-chamber.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/firearms/kalashnikov-reload-filled-chamber.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 #### 3. Knocking the magazine out  
 The last way to eject the magazine is to knock it out of the firearm using another magazine. The goal for this interaction was for it to feel cool, but the way the magazine was initially spinning didn't look cool. It was spinning very quickly around its shortest axis, while I wanted it to spin end over end. To fix this, I calculated the angular velocity manually while clamping the impact point onto the axis I didn't want the magazine to spin around. This ensures that the resulting angular velocity won't rotate around that axis.
@@ -97,15 +93,11 @@ The last way to eject the magazine is to knock it out of the firearm using anoth
 <div style="container-type: inline-size; margin-top: 1em">
   <div class="video-grid__responsive">
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/firearms/kalashnikov-reload-knock-out-before.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/firearms/kalashnikov-reload-knock-out-before.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>Before</em>
     </div>
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/firearms/kalashnikov-reload-knock-out-after.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/firearms/kalashnikov-reload-knock-out-after.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>After</em>
     </div>
   </div>
@@ -119,17 +111,13 @@ The chambering of the Tokarev is rather detailed. There are 3 moving parts: the 
 When the player fires the weapon, the slide moves backwards to eject a bullet and push the hammer backwards. On the return, the slide chambers another bullet. Unless there are no more bullets, in which case the slide latch engages to hold the slide in place. At this point the player can insert a new magazine. After that they can disengage the slide latch by pressing a button, or by grabbing the slide with their other hand.  
 In real life, firing a weapon requires the hammer to strike the bullet's primer. This adds a small delay, which I wanted to avoid. So I made the weapon fire instantly instead. The hammer still moves forwards, but quickly hits the backwards-moving slide. Visually you can't tell the difference, but you do feel that slight bit of extra responsiveness in the gameplay.
 
-<video autoplay loop muted width="100%" loading="lazy">
-    <source src="/assets/portfolio/impact/firearms/tokarev-slide.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/firearms/tokarev-slide.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 This realistic chambering approach did end up causing some issues. Since the weapon literally can't fire if a bullet hasn't been chambered yet, we ran into some timing issues where the Kalashnikov's RPM was inconsistent and it could even jam.  
 The first thing I did was to make sure that the chambering was reliable, allowing the slide to move back and forth within a single frame.  
 I then dove into our firing code, modifying it to make it shoot at a reliable RPM regardless of framerate. This even includes support for firing multiple bullets within a single frame, if necessary.
 
-<video autoplay loop muted width="100%" loading="lazy">
-    <source src="/assets/portfolio/impact/firearms/kalashnikov-10x.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/firearms/kalashnikov-10x.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 *Example of reliably firing an average of 2,2 bullets per frame, at 10x game speed.*
 
@@ -143,9 +131,7 @@ We wanted the cylinder to spin, while it's swung open, to add some extra realism
 
 We also added two ways of closing the cylinder, to make it more realistic and accessible. You can use your other hand to push the cylinder closed, or you can flick your wrist to close the cylinder.
 
-<video autoplay loop muted width="100%" loading="lazy">
-    <source src="/assets/portfolio/impact/firearms/helsing-reload.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/firearms/helsing-reload.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 {% endcapture_markdown %}
 
@@ -173,12 +159,8 @@ With these new inputs, I also wanted to add 3 new expressive poses: peace, flipp
 
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-animations/hand-animations-game-cropped.webm' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-animations/hand-animations-controller.mp4' | relative_url }}" type="video/mp4">
-    </video>
+    {% responsive_video "/assets/portfolio/impact/hand-animations/hand-animations-game.mp4" autoplay="autoplay" loop="loop" loading="lazy" crop="1600:900:240:130" %}
+    {% responsive_video "/assets/portfolio/impact/hand-animations/hand-animations-controller.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
   </div>
 </div>
 
@@ -220,12 +202,8 @@ On very rare occasions, this fallback can also fail, especially if the player is
 
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement-cropped.webm' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-movement/hand-movement-vislog-cropped.mp4' | relative_url }}" type="video/mp4">
-    </video>
+    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement.mp4" autoplay="autoplay" loop="loop" loading="lazy" start_time="868ms" duration="33006ms" crop="1920:992:0:88" %}
+    {% responsive_video "/assets/portfolio/impact/hand-movement/hand-movement-vislog.mp4" autoplay="autoplay" loop="loop" loading="lazy" start_time="1307ms" duration="43527ms" speed="38774/29402" crop="1920:992:0:20" %}
   </div>
 </div>
 
@@ -245,15 +223,11 @@ For hand interactions, you often see VR games use one of two approaches. They ei
 We wanted the flexibility of an IK system, with the quality of dedicated poses. That's why we created the `InteractionSocketComponent`. This component allows us to assign multiple hand poses to a single object. The system then dynamically picks the best hand pose, based on the difference in location and rotation between the controller and the pose.  
 The system also supports rotating poses and poses along a line. The resulting pose coverage makes it feel like you can really grab an object anywhere.
 
-<video autoplay loop muted width="100%" loading="lazy">
-  <source src="/assets/portfolio/impact/hand-interaction/socket.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/hand-interaction/socket.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 Additionally, the rotating poses can be configured to rotate while the player is holding the object.
 
-<video autoplay loop muted width="100%" loading="lazy">
-  <source src="/assets/portfolio/impact/hand-interaction/valve.mp4" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/hand-interaction/valve.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
 
 This system was a joint effort between me and [Hilko Janssen](https://hilkojj.nl/){:target="_blank"}, who I was mentoring at the time.
 
@@ -265,24 +239,12 @@ The `FrictionInteractionConstraint` is derived from the `PhysicsConstraintCompon
 
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/planks.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/supply-boxes.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/levers.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/valve-door.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/doors.mp4' | relative_url }}" type="video/mp4">
-    </video>
-    <video autoplay muted loop width="100%" loading="lazy">
-      <source src="{{ '/assets/portfolio/impact/hand-interaction/pry-door.mp4' | relative_url }}" type="video/mp4">
-    </video>
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/planks.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/supply-boxes.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/levers.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/valve-door.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/doors.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
+    {% responsive_video "/assets/portfolio/impact/hand-interaction/pry-door.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
   </div>
 </div>
 
@@ -318,15 +280,11 @@ Meanwhile, stick locomotion also runs the same `JourneyCalculator` logic, to all
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/locomotion/stick.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/locomotion/stick.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>Stick Locomotion</em>
     </div>
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/locomotion/teleport.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/locomotion/teleport.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>Teleport Locomotion</em>
     </div>
   </div>
@@ -410,15 +368,11 @@ As our NavMesh was static, I was also able to cache and reuse the calculated slo
 <div style="container-type: inline-size">
   <div class="video-grid__responsive">
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/foot-ik/before.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/foot-ik/before.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>Before</em>
     </div>
     <div style="width: 100%; text-align: center;">
-      <video autoplay muted loop width="100%" loading="lazy">
-        <source src="{{ '/assets/portfolio/impact/foot-ik/after-debug.mp4' | relative_url }}" type="video/mp4">
-      </video>
+      {% responsive_video "/assets/portfolio/impact/foot-ik/after-debug.mp4" autoplay="autoplay" loop="loop" loading="lazy" %}
       <em>After</em>
     </div>
   </div>
@@ -427,9 +381,7 @@ As our NavMesh was static, I was also able to cache and reuse the calculated slo
 I implemented the slope detection in a component and built the rest of the logic in control rig. This made it easy to test the system by dragging the ground planes around, allowing me to more easily iterate on things like the pelvis height and the pole vectors.
 Another advantage of doing all the logic in control rig was that I could skip the ground traces if the foot was already planted on the floor. This fixed a bug where feet could jitter up and down when the trace grazed a ledge, while also saving us some performance for characters that were standing still.
 
-<video autoplay loop muted width="100%" loading="lazy" onloadstart="this.playbackRate = 2.0;">
-  <source src="/assets/portfolio/impact/foot-ik/foot-ik-cropped.webm" type="video/mp4">
-</video>
+{% responsive_video "/assets/portfolio/impact/foot-ik/foot-ik.mp4" autoplay="true" loop="false" loading="lazy" speed="2" crop="1582:1256:486:108" %}
 
 {% endcapture_markdown %}
 
