@@ -25,14 +25,26 @@
         {% if author.location %}
           <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
             <a href="https://www.google.com/maps/place/{{ author.location | cgi_escape }}" itemprop="sameAs" rel="noopener me" target="_blank">
-              <i class="fas fa-fw fa-location-dot" aria-hidden="true"></i> <span itemprop="name" class="p-locality">{{ author.location }}</span>
+              <div class="icon-label">
+                {% responsive_image "/assets/images/location.svg" widths="120, 240, 480" sizes_height="1.25em" %}
+                <span itemprop="name" class="p-locality">{{ author.location }}</span>
+              </div>
             </a>
           </li>
         {% endif %}
 
         {% for link in author.links %}
           {% if link.label and link.url %}
-            <li><a href="{{ link.url | relative_url }}" rel="noopener me" target="_blank" {% if link.url contains 'http' %} itemprop="sameAs"{% endif %}><i class="{{ link.icon | default: 'fas fa-link' }}" aria-hidden="true"></i><span class="label">{{ link.label }}</span></a></li>
+            <li>
+              <a href="{{ link.url | relative_url }}" rel="noopener me" target="_blank" {% if link.url contains 'http' %} itemprop="sameAs"{% endif %}>
+                <div class="icon-label">
+                  {% if link.icon %}
+                    {% responsive_image link.icon widths="120, 240, 480" sizes_height="1.25em" %}
+                  {% endif %}
+                  {{ link.label }}
+                </div>
+              </a>
+            </li>
           {% endif %}
         {% endfor %}
       </ul>

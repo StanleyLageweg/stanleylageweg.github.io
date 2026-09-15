@@ -24,7 +24,6 @@ To profile a build, run `bundle exec jekyll build --ruby-prof`.
 - [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
 - [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav)
 - [Gumshoe](https://github.com/cferdinandi/gumshoe)
-- [Font Awesome](http://fontawesome.io/)
 
 ## License
 
