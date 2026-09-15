@@ -28,7 +28,6 @@ teaser                   : # path of fallback teaser image, e.g. "/assets/images
 logo                     : # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
 masthead_title           : # overrides the website title displayed in the masthead, use " " for no title
 words_per_minute         : 200
-enable_copy_code_button  : # true, false (default)
 copyright                : "Stanley Lageweg" # "copyright" name, defaults to site.title
 copyright_url            : "https://github.com/StanleyLageweg/stanleylageweg.github.io/blob/master/LICENSE" # "copyright" URL, defaults to site.url
 # SEO Related
@@ -70,41 +69,14 @@ author:
   # fediverse      : "@you@instance.social"  # used for fediverse:creator meta tag
   links:
     - label: "LinkedIn"
-      icon: "fab fa-fw fa-linkedin"
+      icon: /assets/images/linkedin.svg
       url: "https://www.linkedin.com/in/stanley-lageweg"
     - label: "GitHub"
-      icon: "fab fa-fw fa-github"
+      icon: /assets/images/github.svg
       url: "https://github.com/StanleyLageweg"
     - label: "Resume"
-      icon: "fa-regular fa-file"
+      icon: /assets/images/file.svg
       url: "/assets/files/resume.pdf"
-    - label: "Email"
-      icon: "fas fa-fw fa-square-envelope"
-      # url: "mailto:your.name@email.com"
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      # url: "https://your-website.com"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-square-x-twitter"
-      # url: "https://twitter.com/"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-square-facebook"
-      # url: "https://facebook.com/"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      # url: "https://instagram.com/"
-    - label: "GitLab"
-      icon: "fab fa-fw fa-gitlab"
-      # url: "https://gitlab.com/"
-    - label: "Stack Overflow"
-      icon: "fab fa-fw fa-stack-overflow"
-      # url: "https://stackoverflow.com/"
-    - label: "CodePen"
-      icon: "fab fa-fw fa-codepen"
-      # url: "https://codepen.io/"
-    - label: "steam"
-      icon: "fab fa-fw fa-steam"
-      # url: "https://steamcommunity.com/"
     
 
 
@@ -124,11 +96,10 @@ exclude:
   - package-lock.json
   - README.md
   - tmp
-  - "performance-profiling/*"
-  - "scripts/*"
-  - "ruby-prof/*"
-  - ".responsive-image-cache/*"
-  - ".responsive-video-cache/*"
+  - performance-profiling
+  - ruby-prof
+  - .responsive-image-cache
+  - .responsive-video-cache
 keep_files:
   - .git
   - .svn

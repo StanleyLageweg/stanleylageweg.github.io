@@ -12,11 +12,6 @@ This project is based on the [Minimal Mistakes](https://github.com/mmistakes/min
 Copyright (c) 2013-2024 Michael Rose and contributors.  
 Minimal Mistakes is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-Minimal Mistakes incorporates [Font Awesome](http://fontawesome.io/).  
-Copyright (c) 2017 Dave Gandy.  
-Font Awesome is distributed under the terms of the [SIL OFL 1.1](http://scripts.sil.org/OFL) 
-and [MIT License](http://opensource.org/licenses/MIT).
-
 Minimal Mistakes incorporates [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/).  
 Copyright (c) 2014-2016 [Dmitry Semenov](http://dimsemenov.com/).  
 Magnific Popup is distributed under the terms of the MIT License.

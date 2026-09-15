@@ -23,7 +23,10 @@ module Jekyll
       def render(context)
         site = context.registers[:site]
         options = Utils.resolve_attributes(@tokens, context)
-        options["muted"] = "muted" if options.key?("autoplay")
+        if options.key?("autoplay")
+          options["muted"] = "muted"
+          options["loop"] = "loop"
+        end
         sources = ResponsiveVideo.build_sources(site,
           Filepath.new(site, options.fetch("source")),
           Utils.parse_list(options["formats"]),
@@ -39,6 +42,7 @@ module Jekyll
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
         attributes << %(width="#{sources[:data][:width]}") unless options.key?("width")
         attributes << %(height="#{sources[:data][:height]}") unless options.key?("height")
+        attributes << %(playsinline)
 
         source_tags = sources[:paths].map do |path|
           source_attributes = [

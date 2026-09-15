@@ -29,6 +29,9 @@ module Jekyll
 
         # Early return for SVG images
         if source_format == "svg"
+          source_image = Vips::Image.new_from_file(source_path, access: :sequential)
+          source_image = source_image.autorot if source_image.respond_to?(:autorot)
+          img_attrs << %(width="#{source_image.width.to_i}") << %(height="#{source_image.height.to_i}")
           img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
           img_attrs.unshift(%(src="#{Utils.escape_html(source_path.public_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)

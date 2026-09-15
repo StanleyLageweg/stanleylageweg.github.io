@@ -1,0 +1,16 @@
+.icon-label {
+  display: grid;
+  grid-template-columns: 1.25em 1fr;
+  grid-template-rows: 1.25em;
+  align-items: center;
+  gap: 0.5em;
+  line-height: 1.25;
+
+  img, picture, svg {
+    max-height: 100%;
+    max-width: 100%;
+    height: 100%;
+    width: 100%;
+    justify-self: center;
+  }
+}
