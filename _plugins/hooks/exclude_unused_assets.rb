@@ -59,23 +59,17 @@ module Jekyll
     # Removes every watched file that isn't referenced anywhere in the site's rendered output,
     # so those files never get copied to the destination.
     def run(site)
-      started_at = Time.now
-      haystack = build_haystack(site)
+      Utils.log_duration("Unused Assets:") do
+        haystack = build_haystack(site)
 
-      unused = get_watched_files(site).reject { |file| is_used?(file, haystack) }
-      unused.each { |file| site.static_files.delete(file) }
+        unused = get_watched_files(site).reject { |file| is_used?(file, haystack) }
+        unused.each { |file| site.static_files.delete(file) }
 
-      elapsed = (Time.now - started_at).round(2)
-      if unused.any?
-        Jekyll.logger.info(
-          "Unused Assets:",
-          "excluded #{unused.length} unused file(s) in #{elapsed} seconds:"
-        )
-      else
-        Jekyll.logger.info(
-          "Unused Assets:",
-          "no unused files found (checked in #{elapsed} seconds)."
-        )
+        if unused.any?
+          "excluded #{unused.count} unused file#{'s' if unused.count != 1}"
+        else
+          "no unused files found"
+        end
       end
     end
   end

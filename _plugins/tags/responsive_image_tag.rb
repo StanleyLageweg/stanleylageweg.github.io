@@ -22,14 +22,26 @@ module Jekyll
         source_path = Filepath.new(site, opts.fetch("source"))
         source_format = source_path.extension(normalize: true)
 
-        # Get the alt text
-        img_attrs = []
-        alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
-        img_attrs << %(alt="#{Utils.escape_html(alt)}") unless alt.empty?
+        # attributes
+        img_attrs = Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS)
+        add_alt_attr = -> do
+          alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
+          img_attrs << %(alt="#{Utils.escape_html(alt)}") unless alt.empty?
+        end
 
         # Early return for SVG images
         if source_format == "svg"
-          img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
+          if ResponsiveImage.should_inline_svg(site, source_path)
+            stdout, stderr, status = Utils.fast_npx('svgo', source_path, '-o', '-', '-q', '--config', './svgo-inline.config.mjs')
+            raise "SVGO failed for #{source_path}: #{stderr.strip}" unless status.success?
+            return stdout.sub("<svg", "<svg #{img_attrs.join(' ')}")
+          end
+
+          source_image = Vips::Image.new_from_file(source_path, access: :sequential)
+          source_image = source_image.autorot if source_image.respond_to?(:autorot)
+          img_attrs << %(width="#{source_image.width}") << %(height="#{source_image.height}")
+
+          add_alt_attr.call
           img_attrs.unshift(%(src="#{Utils.escape_html(source_path.public_url)}"))
           return %(<img #{img_attrs.join(' ')}/>)
         end
@@ -67,8 +79,8 @@ module Jekyll
         unless sources[:transparent]
           opts["class"] = [opts["class"], "opaque"].compact.reject(&:empty?).join(" ")
         end
-        img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
         img_attrs << %(width="#{sources[:width]}") << %(height="#{sources[:height]}")
+        add_alt_attr.call
 
         # Use the largest webp variant as the <img> src, falling back to the source file when webp isn't generated.
         src_url = if sources[:variants]["webp"] && !sources[:variants]["webp"].empty?
