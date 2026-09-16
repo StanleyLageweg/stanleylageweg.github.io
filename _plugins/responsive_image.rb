@@ -50,7 +50,8 @@ module Jekyll
       widths: [480, 960, 1280, 1920, 2560, 3840],
       formats: ["avif", "webp"],
       oversample: 1.5,
-      alt_map_data_file: "responsive_image_alts"
+      alt_map_data_file: "responsive_image_alts",
+      inlined_svgs_file: "inlined-svgs",
     }.freeze
 
     class << self
@@ -59,7 +60,7 @@ module Jekyll
       end
 
       def get_optional_cache_key
-        Utils.cache_key(CONFIG.except(:oversample, :alt_map_data_file))
+        Utils.cache_key(CONFIG.except(:oversample, :alt_map_data_file, :inlined_svgs_file))
       end
 
       def parse_extra_source_options(value)
@@ -86,6 +87,12 @@ module Jekyll
 
         Jekyll.logger.warn("Responsive Image:", "Missing alt text for '#{source_path.relative_path}'. Add it to _data/#{CONFIG[:alt_map_data_file]}.yml or pass alt=\"...\" in the tag.")
         ""
+      end
+
+      def should_inline_svg(site, source_path)
+        file = CONFIG[:inlined_svgs_file].to_s
+        data = site.data[file] || site.data[file.to_sym]
+        return data.include?(source_path.relative_path)
       end
 
       def mime_type(format)
