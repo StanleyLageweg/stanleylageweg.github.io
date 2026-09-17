@@ -20,8 +20,6 @@ To profile a build, run `bundle exec jekyll build --ruby-prof`.
 
 - [Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes) - [Michael Rose](https://mademistakes.com)
 - [Jekyll](http://jekyllrb.com/)
-- [jQuery](http://jquery.com/)
-- [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/)
 
 ## License
 

@@ -5,10 +5,7 @@ module Jekyll
 
     def js_files
       Dir[
-        "assets/js/vendor/jquery/jquery-3.6.0.js",
-        "assets/js/plugins/*.js",
-        "assets/js/custom/*.js",
-        "assets/js/_main.js"
+        "assets/js/**/*.js"
       ]
     end
 
