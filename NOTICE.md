@@ -15,15 +15,3 @@ Minimal Mistakes is distributed under the terms of the [MIT License](http://open
 Minimal Mistakes incorporates [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/).  
 Copyright (c) 2014-2016 [Dmitry Semenov](http://dimsemenov.com/).  
 Magnific Popup is distributed under the terms of the MIT License.
-
-Minimal Mistakes incorporates [Gumshoejs](http://github.com/cferdinandi/gumshoe).  
-Copyright (c) 2019 Chris Ferdinandi.  
-Gumshoejs is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-Minimal Mistakes incorporates [GreedyNav.js](https://github.com/lukejacksonn/GreedyNav).  
-Copyright (c) 2015 Luke Jackson.  
-GreedyNav.js is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-Minimal Mistakes incorporates [@allejo's Pure Liquid Jekyll Table of Contents](https://allejo.io/blog/a-jekyll-toc-in-liquid-only/).  
-Copyright (c) 2017 Vladimir Jimenez.  
-Pure Liquid Jekyll Table of Contents is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).

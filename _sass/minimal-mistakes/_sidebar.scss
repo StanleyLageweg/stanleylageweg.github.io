@@ -45,50 +45,6 @@
   }
 }
 
-.sidebar__right {
-  margin-bottom: 1em;
-
-  @media (min-width: $large) {
-    position: absolute;
-    inset-inline-end: 0;
-    width: $right-sidebar-width-narrow;
-    margin-inline-end: -1 * $right-sidebar-width-narrow;
-    padding-inline-start: 1em;
-    z-index: 10;
-
-    &.sticky {
-      @include clearfix();
-      position: -webkit-sticky;
-      position: sticky;
-      float: inline-end;
-
-      .toc {
-        .toc__menu {
-          overflow-y: auto;
-          max-height: calc(100vh - 7em);
-        }
-      }
-    }
-  }
-
-  @media (min-width: $x-large) {
-    width: $right-sidebar-width;
-    margin-inline-end: -1 * $right-sidebar-width;
-  }
-}
-
-.splash .sidebar__right {
-  @media (min-width: $large) {
-    position: relative;
-    float: inline-end;
-    margin-inline-end: 0;
-  }
-
-  @media (min-width: $x-large) {
-    margin-inline-end: 0;
-  }
-}
-
 
 /*
    Author profile and links
@@ -250,33 +206,5 @@
 
   @media (max-width: $large) {
     top: unset;
-  }
-}
-
-
-/*
-   Wide Pages
-   ========================================================================== */
-
-.wide .sidebar__right {
-  margin-bottom: 1em;
-
-  @media (min-width: $large) {
-    position: initial;
-    top: initial;
-    inset-inline-end: initial;
-    width: initial;
-    margin-inline-end: initial;
-    padding-inline-start: initial;
-    z-index: initial;
-
-    &.sticky {
-      float: none;
-    }
-  }
-
-  @media (min-width: $x-large) {
-    width: initial;
-    margin-inline-end: initial;
   }
 }
