@@ -11,7 +11,3 @@ No license or rights to use, reproduce, modify, distribute, or otherwise exploit
 This project is based on the [Minimal Mistakes](https://github.com/mmistakes/minimal-mistakes) Jekyll theme.  
 Copyright (c) 2013-2024 Michael Rose and contributors.  
 Minimal Mistakes is distributed under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
-Minimal Mistakes incorporates [Magnific Popup](http://dimsemenov.com/plugins/magnific-popup/).  
-Copyright (c) 2014-2016 [Dmitry Semenov](http://dimsemenov.com/).  
-Magnific Popup is distributed under the terms of the MIT License.
