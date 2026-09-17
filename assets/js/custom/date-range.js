@@ -1,4 +1,4 @@
-jQuery(function() {
+document.addEventListener("DOMContentLoaded", function() {
 
 function updateDateRangeDurations() {
 	const nodes = document.querySelectorAll(".date-range__duration");
