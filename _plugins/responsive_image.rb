@@ -122,10 +122,8 @@ module Jekyll
 
         effective_formats = formats.uniq
 
-        transparent = LazyValue.new { has_transparency(source_image) }
-        if formats.include?("jpg")
-          effective_formats.delete("jpg") if transparent
-        end
+        transparent = has_transparency?(source_image)
+        effective_formats.delete("jpg") if transparent
 
         configs = effective_formats.product(effective_widths).map do |pair|
           {

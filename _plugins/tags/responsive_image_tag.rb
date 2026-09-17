@@ -23,10 +23,17 @@ module Jekyll
         source_format = source_path.extension(normalize: true)
 
         # attributes
-        img_attrs = Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS)
-        add_alt_attr = -> do
-          alt = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
-          img_attrs << %(alt="#{Utils.escape_html(alt)}") unless alt.empty?
+        get_img_attrs = ->(src: nil, alt: true, width: nil, height: nil) do
+          img_attrs = []
+          img_attrs << %(src="#{Utils.escape_html(src.public_url)}") if src
+          if alt
+            alt_text = opts["alt"] || ResponsiveImage.get_alt_text(site, source_path)
+            img_attrs << %(alt="#{Utils.escape_html(alt_text)}") unless alt_text.empty?
+          end
+          img_attrs << %(width="#{width}") if width
+          img_attrs << %(height="#{height}") if height
+          img_attrs.concat(Utils.parse_html_attributes(opts, excluded_keys: RESERVED_KEYS))
+          img_attrs
         end
 
         # Early return for SVG images
@@ -34,15 +41,12 @@ module Jekyll
           if ResponsiveImage.should_inline_svg(site, source_path)
             stdout, stderr, status = Utils.fast_npx('svgo', source_path, '-o', '-', '-q', '--config', './svgo-inline.config.mjs')
             raise "SVGO failed for #{source_path}: #{stderr.strip}" unless status.success?
-            return stdout.sub("<svg", "<svg #{img_attrs.join(' ')}")
+            return stdout.sub("<svg", "<svg #{get_img_attrs.call(alt: false).join(' ')}")
           end
 
           source_image = Vips::Image.new_from_file(source_path, access: :sequential)
           source_image = source_image.autorot if source_image.respond_to?(:autorot)
-          img_attrs << %(width="#{source_image.width}") << %(height="#{source_image.height}")
-
-          add_alt_attr.call
-          img_attrs.unshift(%(src="#{Utils.escape_html(source_path.public_url)}"))
+          img_attrs = get_img_attrs.call(src: source_path, width: source_image.width, height: source_image.height)
           return %(<img #{img_attrs.join(' ')}/>)
         end
 
@@ -75,21 +79,15 @@ module Jekyll
           source_tags_for(extra_sources[:variants], oversample, sizes_attr, media: extra_opts["media"])
         end + source_tags_for(sources[:variants], oversample, sizes_attr)
 
-        # Parse the attributes and assign the opaque class
+        # Assign the opaque class
         unless sources[:transparent]
           opts["class"] = [opts["class"], "opaque"].compact.reject(&:empty?).join(" ")
         end
-        img_attrs << %(width="#{sources[:width]}") << %(height="#{sources[:height]}")
-        add_alt_attr.call
 
         # Use the largest webp variant as the <img> src, falling back to the source file when webp isn't generated.
-        src_url = if sources[:variants]["webp"] && !sources[:variants]["webp"].empty?
-                    sources[:variants]["webp"].last[:path].public_url
-                  else
-                    source_path.public_url
-                  end
-        img_attrs.unshift(%(src="#{Utils.escape_html(src_url)}"))
+        src = sources.dig(:variants, "webp", -1, :path) || source_path
 
+        img_attrs = get_img_attrs.call(src: src, width: sources[:width], height: sources[:height])
         %(<picture>#{source_tags.join}<img #{img_attrs.join(' ')}/></picture>)
       end
 
