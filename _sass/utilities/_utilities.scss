@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
 /* ==========================================================================
    UTILITY CLASSES
    ========================================================================== */
@@ -74,7 +78,7 @@ body:hover .visually-hidden button {
   position: fixed;
   z-index: 20;
   margin: 0;
-  font-family: $sans-serif;
+  font-family: v.$sans-serif;
   white-space: nowrap;
 }
 
@@ -145,7 +149,7 @@ $text-alignments: left, right, start, end, center, justify;
   display: block;
   margin-inline: auto;
 
-  @media (min-width: $small) {
+  @media (min-width: v.$small) {
     float: left;
     margin-right: 1em;
   }
@@ -157,7 +161,7 @@ $text-alignments: left, right, start, end, center, justify;
   display: block;
   margin-inline: auto;
 
-  @media (min-width: $small) {
+  @media (min-width: v.$small) {
     float: right;
     margin-left: 1em;
   }
@@ -175,8 +179,8 @@ $text-alignments: left, right, start, end, center, justify;
    ========================================================================== */
 
 .sticky {
-  @media (min-width: $large) {
-    @include clearfix();
+  @media (min-width: v.$large) {
+    @include mx.clearfix();
     position: -webkit-sticky;
     position: sticky;
     top: 1em;
@@ -197,7 +201,7 @@ $text-alignments: left, right, start, end, center, justify;
   margin-bottom: 20px;
   background-color: #f5f5f5;
   border: 1px solid #e3e3e3;
-  border-radius: $border-radius;
+  border-radius: v.$border-radius;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
@@ -236,9 +240,9 @@ $text-alignments: left, right, start, end, center, justify;
   min-height: 0;
   z-index: 9999;
   background: #fff;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  box-shadow: $box-shadow;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius;
+  box-shadow: v.$box-shadow;
 
   &__title {
     margin: 0;
@@ -251,7 +255,7 @@ $text-alignments: left, right, start, end, center, justify;
 
   &__actions {
     padding: 0.5em 1em;
-    border-top: 1px solid $border-color;
+    border-top: 1px solid v.$border-color;
   }
 }
 
@@ -260,23 +264,23 @@ $text-alignments: left, right, start, end, center, justify;
    ========================================================================== */
 
 .footnote {
-  color: mix(#fff, $gray, 25%);
+  color: color.mix(#fff, v.$gray, 25%);
   text-decoration: none;
 }
 
 .footnotes {
-  color: mix(#fff, $gray, 25%);
+  color: color.mix(#fff, v.$gray, 25%);
 
   ol,
   li,
   p {
     margin-bottom: 0;
-    font-size: $type-size-6;
+    font-size: v.$type-size-6;
   }
 }
 
 a.reversefootnote {
-  color: $gray;
+  color: v.$gray;
   text-decoration: none;
 
   &:hover {
@@ -289,7 +293,7 @@ a.reversefootnote {
    ========================================================================== */
 
 .required {
-  color: $danger-color;
+  color: v.$danger-color;
   font-weight: bold;
 }
 
@@ -308,7 +312,7 @@ a.reversefootnote {
 .responsive-video {
   width: 100%;
   height: 100%;
-  border-radius: $border-radius;
+  border-radius: v.$border-radius;
 }
 
 @container (max-width: 325px) {

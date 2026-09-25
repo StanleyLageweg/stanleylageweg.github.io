@@ -1,3 +1,6 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
 /* ==========================================================================
    SIDEBAR
    ========================================================================== */
@@ -7,15 +10,15 @@
    ========================================================================== */
 
 .sidebar {
-  width: $sidebar-width;
+  width: v.$sidebar-width;
   flex-shrink: 0;
   align-self: stretch;
 
-  @media (max-width: $x-large) {
-    width: $sidebar-width-narrow;
+  @media (max-width: v.$x-large) {
+    width: v.$sidebar-width-narrow;
   }
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     width: unset;
   }
 
@@ -25,13 +28,13 @@
   h5,
   h6 {
     margin-bottom: 0;
-    font-family: $sans-serif-narrow;
+    font-family: v.$sans-serif-narrow;
   }
 
   p,
   li {
-    font-family: $sans-serif;
-    font-size: $type-size-6;
+    font-family: v.$sans-serif;
+    font-size: v.$type-size-6;
     line-height: 1.5;
   }
 
@@ -60,7 +63,7 @@
     text-decoration: none;
   }
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-areas:
@@ -73,7 +76,7 @@
 
 .author__header,
 .author__body {
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     display: contents;
   }
 }
@@ -82,7 +85,7 @@
   aspect-ratio: 1 / 1;
   flex-shrink: 0;
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     grid-area: avatar;
     width: 9em;
     height: 9em;
@@ -90,17 +93,17 @@
 
   img {
     width: 100%;
-    border-radius: $border-radius;
+    border-radius: v.$border-radius;
   }
 }
 
 .author__name {
   margin: 1em 0 0 0;
   grid-area: name;
-  font-family: $sans-serif;
-  font-size: $type-size-5;
+  font-family: v.$sans-serif;
+  font-size: v.$type-size-5;
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     margin-top: 0.25rem;
   }
 }
@@ -115,7 +118,7 @@
 }
 
 .author__urls-wrapper {
-  font-family: $sans-serif;
+  font-family: v.$sans-serif;
   grid-area: urls;
 
   li:last-child {
@@ -142,14 +145,14 @@
     padding-block: 2px;
     padding-inline-end: 5px;
     color: inherit;
-    font-size: $type-size-5;
+    font-size: v.$type-size-5;
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
     }
 
-    @media (max-width: $large) {
+    @media (max-width: v.$large) {
       padding-block: 0;
     }
   }
@@ -165,17 +168,17 @@
   top: 0;
 
   // Add a background, with a fade at the bottom, to hide the author__body scrolling underneath
-  background: $page-background;
+  background: v.$page-background;
   $fade-distance: 1em;
   padding-bottom: $fade-distance;
-  @include ease-in-gradient(to bottom, #000, calc(100% - #{$fade-distance}), transparent, 100%);
+  @include mx.ease-in-gradient(to bottom, #000, calc(100% - #{$fade-distance}), transparent, 100%);
   z-index: 2;
   
   // Add padding to hide the author__body above the header, while it scrolls up
-  padding-top: $page-margin-top;
-  margin-top: -$page-margin-top;
+  padding-top: v.$page-margin-top;
+  margin-top: -(v.$page-margin-top);
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     position: unset;
     top: unset;
     background: unset;
@@ -192,7 +195,7 @@
   top: var(--author-header-height, 0px);
   z-index: 1;
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     position: unset;
     top: unset;
     z-index: unset;
@@ -202,9 +205,9 @@
 .sidebar.is-tall .author__body {
   // Body is too tall to fit in the viewport.
   // Scroll with the page until the bottom of the body is visible, then stick in place.
-  top: calc(100vh - #{$page-margin-bottom} - var(--author-body-height, 0px));
+  top: calc(100vh - #{v.$page-margin-bottom} - var(--author-body-height, 0px));
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     top: unset;
   }
 }

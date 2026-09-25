@@ -1,13 +1,16 @@
+@use "sass:math";
+@use "../abstracts/variables" as v;
+
 /* ==========================================================================
    ARCHIVE
    ========================================================================== */
 
 .archive {
   width: 100%;
-  padding-right: $right-sidebar-width;
+  padding-right: v.$right-sidebar-width;
 
-  @media (max-width: $large) {
-    padding-right: $right-sidebar-width-narrow;
+  @media (max-width: v.$large) {
+    padding-right: v.$right-sidebar-width-narrow;
   }
 }
 
@@ -26,7 +29,7 @@
 
 .archive__item-title {
   margin-bottom: 0.25em;
-  font-family: $sans-serif-narrow;
+  font-family: v.$sans-serif-narrow;
   line-height: initial;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -52,7 +55,7 @@
 
 .archive__item-excerpt {
   margin-top: 0;
-  font-size: $type-size-6;
+  font-size: v.$type-size-6;
 
   & + p {
     text-indent: 0;
@@ -65,7 +68,7 @@
 
 .archive__item-teaser {
   position: relative;
-  border-radius: $border-radius;
+  border-radius: v.$border-radius;
   overflow: hidden;
 
   img {
@@ -80,15 +83,15 @@
   margin: 0 auto;
   padding: 5px 10px;
   color: #fff;
-  font-family: $caption-font-family;
-  font-size: $type-size-8;
+  font-family: v.$caption-font-family;
+  font-size: v.$type-size-8;
   background: #000;
   text-align: end;
   z-index: 5;
   opacity: 0.5;
-  border-radius: $border-radius 0 0 0;
+  border-radius: v.$border-radius 0 0 0;
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     padding: 2px 5px;
   }
 
@@ -111,20 +114,20 @@
     gap: 2em;
     padding-bottom: 2em;
     margin-bottom: 2em;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid v.$border-color;
 
     .archive__item-title {
       margin-bottom: 0;
     }
   }
 
-  @media (min-width: $small) {
+  @media (min-width: v.$small) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .feature__item {
-  @media (min-width: $small) {
+  @media (min-width: v.$small) {
     .feature__item-teaser {
       max-height: 200px;
       overflow: hidden;
@@ -148,7 +151,7 @@
     }
   }
 
-  @media (min-width: $small) {
+  @media (min-width: v.$small) {
     &--left {
       .archive__item {
         display: grid;
@@ -184,11 +187,11 @@
       }
 
       .archive__item-teaser {
-        width: 5 / 12 * 100%;
+        width: math.div(5, 12) * 100%;
       }
 
       .archive__item-body {
-        width: 7 / 12 * 100%;
+        width: math.div(7, 12) * 100%;
       }
     }
   }
@@ -220,7 +223,7 @@
   .archive {
     padding-right: 0;
 
-    @media (max-width: $large) {
+    @media (max-width: v.$large) {
       padding-right: 0;
     }
   }

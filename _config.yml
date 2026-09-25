@@ -12,7 +12,6 @@
 
 # theme                  : "minimal-mistakes-jekyll"
 # remote_theme           : "mmistakes/minimal-mistakes"
-minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise", "catppuccin_latte", "catppuccin_mocha"
 
 # Site Settings
 rtl                      : # true, false (default) # turns direction of the page into right to left for RTL languages
@@ -100,6 +99,8 @@ exclude:
   - ruby-prof
   - .responsive-image-cache
   - .responsive-video-cache
+  - svgo-inline.config.mjs
+  - svgo.config.mjs
 keep_files:
   - .git
   - .svn

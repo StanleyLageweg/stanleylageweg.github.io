@@ -1,3 +1,6 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
 /* ==========================================================================
    BASE ELEMENTS
    ========================================================================== */
@@ -14,9 +17,9 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background: $page-background;
-  color: $text-color;
-  font-family: $global-font-family;
+  background: v.$page-background;
+  color: v.$text-color;
+  font-family: v.$global-font-family;
   line-height: 1.5;
 }
 
@@ -27,39 +30,39 @@ h4,
 h5,
 h6 {
   margin: 2em 0 0.5em;
-  line-height: $h-line-height;
-  font-family: $header-font-family;
+  line-height: v.$h-line-height;
+  font-family: v.$header-font-family;
   font-weight: bold;
 }
 
 h1 {
   margin-top: 0;
-  font-size: $h-size-1;
+  font-size: v.$h-size-1;
 }
 
 h2 {
-  font-size: $h-size-2;
+  font-size: v.$h-size-2;
 }
 
 h3 {
-  font-size: $h-size-3;
+  font-size: v.$h-size-3;
 }
 
 h4 {
-  font-size: $h-size-4;
+  font-size: v.$h-size-4;
 }
 
 h5 {
-  font-size: $h-size-5;
+  font-size: v.$h-size-5;
 }
 
 h6 {
-  font-size: $h-size-6;
+  font-size: v.$h-size-6;
 }
 
 small,
 .small {
-  font-size: $type-size-6;
+  font-size: v.$type-size-6;
 }
 
 p {
@@ -69,7 +72,7 @@ p {
 u,
 ins {
   text-decoration: none;
-  border-bottom: 1px solid $text-color;
+  border-bottom: 1px solid v.$text-color;
   a {
     color: inherit;
   }
@@ -100,7 +103,7 @@ abbr[title],
 abbr[data-original-title] {
   text-decoration: none;
   cursor: help;
-  border-bottom: 1px dotted $text-color;
+  border-bottom: 1px dotted v.$text-color;
 }
 
 /* blockquotes */
@@ -110,7 +113,7 @@ blockquote {
   margin-inline-end: 1em;
   padding-inline: 1em;
   font-style: italic;
-  border-inline-start: 0.25em solid $primary-color;
+  border-inline-start: 0.25em solid v.$primary-color;
 
   cite {
     font-style: italic;
@@ -126,11 +129,11 @@ blockquote {
 
 a {
   &:visited {
-    color: $link-color-visited;
+    color: v.$link-color-visited;
   }
 
   &:hover {
-    color: $link-color-hover;
+    color: v.$link-color-hover;
     outline: 0;
   }
 }
@@ -148,7 +151,7 @@ code,
 kbd,
 samp,
 pre {
-  font-family: $monospace;
+  font-family: v.$monospace;
 }
 
 pre {
@@ -161,7 +164,7 @@ hr {
   display: block;
   margin: 1em 0;
   border: 0;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid v.$border-color;
 }
 
 /* lists */
@@ -181,8 +184,8 @@ li ol {
    ========================================================================== */
 
 img.opaque, video, iframe {
-  background-color: $lighter-gray;
-  $svg-color: url-friendly-color($light-gray);
+  background-color: v.$lighter-gray;
+  $svg-color: url-friendly-color(v.$light-gray);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='#{$svg-color}' stroke-width='8' stroke-dasharray='120 40' stroke-linecap='round' fill='none'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 50 50' to='360 50 50' dur='1s' repeatCount='indefinite' /%3E%3C/circle%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center center;
@@ -208,9 +211,9 @@ figure {
 
   img {
     width: 100%;
-    border-radius: $border-radius;
-    -webkit-transition: $global-transition;
-    transition: $global-transition;
+    border-radius: v.$border-radius;
+    -webkit-transition: v.$global-transition;
+    transition: v.$global-transition;
   }
 
   > a {
@@ -220,7 +223,7 @@ figure {
   &.half {
     > a,
     > img {
-      @media (min-width: $small) {
+      @media (min-width: v.$small) {
         width: calc(50% - 0.5em);
       }
     }
@@ -233,7 +236,7 @@ figure {
   &.third {
     > a,
     > img {
-      @media (min-width: $small) {
+      @media (min-width: v.$small) {
         width: calc(33.3333% - 0.5em);
       }
     }
@@ -248,16 +251,16 @@ figure {
 
 figcaption {
   margin-bottom: 0.5em;
-  color: $muted-text-color;
-  font-family: $caption-font-family;
-  font-size: $type-size-6;
+  color: v.$muted-text-color;
+  font-family: v.$caption-font-family;
+  font-size: v.$type-size-6;
 
   a {
-    -webkit-transition: $global-transition;
-    transition: $global-transition;
+    -webkit-transition: v.$global-transition;
+    transition: v.$global-transition;
 
     &:hover {
-      color: $link-color-hover;
+      color: v.$link-color-hover;
     }
   }
 }
@@ -288,6 +291,6 @@ input[type="submit"],
 .btn,
 .highlight,
 .archive__item-teaser {
-  -webkit-transition: $global-transition;
-  transition: $global-transition;
+  -webkit-transition: v.$global-transition;
+  transition: v.$global-transition;
 }

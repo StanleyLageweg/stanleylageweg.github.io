@@ -1,0 +1,7 @@
+@use "../abstracts/variables" as v;
+
+.date-range {
+  margin: 0;
+  color: v.$muted-text-color;
+  font-size: v.$type-size-6;
+}

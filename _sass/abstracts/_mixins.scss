@@ -1,12 +1,18 @@
+@use "sass:color";
+@use "sass:math";
+@use "sass:meta";
+@use "sass:string";
+@use "variables" as v;
+
 /* ==========================================================================
    MIXINS
    ========================================================================== */
 
 %tab-focus {
   /* Default*/
-  outline: thin dotted $focus-color;
+  outline: thin dotted v.$focus-color;
   /* Webkit*/
-  outline: 5px auto $focus-color;
+  outline: 5px auto v.$focus-color;
   outline-offset: -2px;
 }
 
@@ -15,13 +21,13 @@
    ========================================================================== */
 
 @function em($target, $context: $doc-font-size) {
-  @return ($target / $context) * 1em;
+  @return math.div($target, $context) * 1em;
 }
 
 // Helper function to convert # color codes to %23 for SVG Data URIs
 @function url-friendly-color($color) {
-  $color-string: inspect($color);
-  $index: str-index($color-string, '#');
+  $color-string: meta.inspect($color);
+  $index: string.index($color-string, '#');
   @if $index {
     @return '%23' + str-slice($color-string, 2);
   }
@@ -71,31 +77,31 @@
   $color,
   $threshold: $yiq-contrasted-threshold
 ) {
-  $red: red($color);
-  $green: green($color);
-  $blue: blue($color);
+  $red: color.channel($color, "red", $space: rgb);
+  $green: color.channel($color, "green", $space: rgb);
+  $blue: color.channel($color, "blue", $space: rgb);
 
-  $yiq: (($red*299)+($green*587)+($blue*114))/1000;
+  $yiq: math.div($red * 299 + $green * 587 + $blue * 114, 1000);
 
-  @if $yiq-debug { @debug $yiq, $threshold; }
+  @if v.$yiq-debug { @debug $yiq, $threshold; }
 
-  @return if($yiq >= $threshold, true, false);
+  @return if(sass($yiq >= $threshold): true; else: false);
 }
 
 @function yiq-contrast-color(
   $color,
-  $dark: $yiq-contrasted-dark-default,
-  $light: $yiq-contrasted-light-default,
-  $threshold: $yiq-contrasted-threshold
+  $dark: v.$yiq-contrasted-dark-default,
+  $light: v.$yiq-contrasted-light-default,
+  $threshold: v.$yiq-contrasted-threshold
 ) {
-  @return if(yiq-is-light($color, $threshold), $yiq-contrasted-dark-default, $yiq-contrasted-light-default);
+  @return if(sass(yiq-is-light($color, $threshold)): v.$yiq-contrasted-dark-default; else: v.$yiq-contrasted-light-default);
 }
 
 @mixin yiq-contrasted(
   $background-color,
-  $dark: $yiq-contrasted-dark-default,
-  $light: $yiq-contrasted-light-default,
-  $threshold: $yiq-contrasted-threshold
+  $dark: v.$yiq-contrasted-dark-default,
+  $light: v.$yiq-contrasted-light-default,
+  $threshold: v.$yiq-contrasted-threshold
 ) {
   background-color: $background-color;
   color: yiq-contrast-color($background-color, $dark, $light, $threshold);
@@ -132,14 +138,14 @@
   $stops: "#{$start-color} #{$start-distance}";
 
   @for $i from 1 through $samples {
-    $t: $i / ($samples + 1);
+    $t: math.div($i, $samples + 1);
     $one-minus-t: 1 - $t;
     $x: 3 * $one-minus-t * $one-minus-t * $t * 0.42
         + 3 * $one-minus-t * $t * $t
         + $t * $t * $t;
     $y: $t * $t * (3 - 2 * $t);
 
-    $color: mix($end-color, $start-color, percentage($y));
+    $color: color.mix($end-color, $start-color, math.percentage($y));
     $one-minus-x: 1 - $x;
     $position: calc(#{$start-distance} * #{$one-minus-x} + #{$end-distance} * #{$x});
 

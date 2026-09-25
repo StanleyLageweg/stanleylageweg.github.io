@@ -1,3 +1,7 @@
+@use "sass:color";
+@use "sass:selector";
+@use "../abstracts/variables" as v;
+
 /* ==========================================================================
    NOTICE TEXT BLOCKS
    ========================================================================== */
@@ -13,12 +17,12 @@
 @mixin notice($notice-color) {
   margin: 2em 0 !important;  /* override*/
   padding: 1em;
-  color: $text-color;
-  font-family: $global-font-family;
-  font-size: $type-size-6 !important;
+  color: v.$text-color;
+  font-family: v.$global-font-family;
+  font-size: v.$type-size-6 !important;
   text-indent: initial; /* override*/
-  background-color: mix($background-color, $notice-color, $notice-background-mix);
-  border-radius: $border-radius;
+  background-color: color.mix(v.$background-color, $notice-color, v.$notice-background-mix);
+  border-radius: v.$border-radius;
   box-shadow: 0 1px 1px rgba($notice-color, 0.25);
 
   h4 {
@@ -46,19 +50,19 @@
   }
 
   a {
-    color: mix(#000, $notice-color, 10%);
+    color: color.mix(#000, $notice-color, 10%);
 
     &:hover {
-      color: mix(#000, $notice-color, 50%);
+      color: color.mix(#000, $notice-color, 50%);
     }
   }
 
-  @at-root #{selector-unify(&, "blockquote")} {
-    border-inline-start-color: mix(#000, $notice-color, 10%);
+  @at-root #{selector.unify(&, "blockquote")} {
+    border-inline-start-color: color.mix(#000, $notice-color, 10%);
   }
 
   code {
-    background-color: mix($background-color, $notice-color, $code-notice-background-mix)
+    background-color: color.mix(v.$background-color, $notice-color, v.$code-notice-background-mix)
   }
 
 	pre code {
@@ -76,40 +80,40 @@
 
 .notice,
 .markdown-alert {
-  @include notice($light-gray);
+  @include notice(v.$light-gray);
 }
 
 /* Primary notice */
 
 .notice--primary,
 .markdown-alert-important {
-  @include notice($primary-color);
+  @include notice(v.$primary-color);
 }
 
 /* Info notice */
 
 .notice--info,
 .markdown-alert-note {
-  @include notice($info-color);
+  @include notice(v.$info-color);
 }
 
 /* Warning notice */
 
 .notice--warning,
 .markdown-alert-warning {
-  @include notice($warning-color);
+  @include notice(v.$warning-color);
 }
 
 /* Success notice */
 
 .notice--success,
 .markdown-alert-tip {
-  @include notice($success-color);
+  @include notice(v.$success-color);
 }
 
 /* Danger notice */
 
 .notice--danger,
 .markdown-alert-caution {
-  @include notice($danger-color);
+  @include notice(v.$danger-color);
 }
