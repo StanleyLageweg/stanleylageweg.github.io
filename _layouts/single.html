@@ -3,8 +3,6 @@ layout: default
 ---
 {% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
   {% include page__hero.html %}
-{% elsif page.header.video.id and page.header.video.provider %}
-  {% include page__hero_video.html %}
 {% endif %}
 
 <main>
@@ -34,7 +32,6 @@ layout: default
 
       <section class="page__content e-content" itemprop="text">
         {{ content }}
-        {% if page.link %}<div><a href="{{ page.link | relative_url }}" class="btn btn--primary">Direct Link</a></div>{% endif %}
       </section>
     </div>
   </article>

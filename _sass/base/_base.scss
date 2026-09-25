@@ -82,21 +82,6 @@ del a {
   color: inherit;
 }
 
-/* reduce orphans and widows when printing */
-
-p,
-pre,
-blockquote,
-ul,
-ol,
-dl,
-figure,
-table,
-fieldset {
-  orphans: 3;
-  widows: 3;
-}
-
 /* abbreviations */
 
 abbr[title],
@@ -288,9 +273,7 @@ tr,
 td,
 form button,
 input[type="submit"],
-.btn,
-.highlight,
-.archive__item-teaser {
+.highlight {
   -webkit-transition: v.$global-transition;
   transition: v.$global-transition;
 }
