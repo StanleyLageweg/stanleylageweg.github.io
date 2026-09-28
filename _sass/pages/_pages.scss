@@ -1,3 +1,6 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
 /* ==========================================================================
    SINGLE PAGE/POST
    ========================================================================== */
@@ -6,16 +9,16 @@ main {
   display: flex;
   gap: 1em;
   align-items: flex-start;
-  margin: $page-margin-top auto $page-margin-bottom auto;
+  margin: v.$page-margin-top auto v.$page-margin-bottom auto;
   padding-inline: 1em;
-  -webkit-animation: $intro-transition;
-  animation: $intro-transition;
+  -webkit-animation: v.$intro-transition;
+  animation: v.$intro-transition;
   width: 100%;
-  max-width: $max-width;
+  max-width: v.$max-width;
   -webkit-animation-delay: 0.15s;
   animation-delay: 0.15s;
 
-  @media (max-width: $large) {
+  @media (max-width: v.$large) {
     flex-direction: column;
     align-items: stretch;
   }
@@ -37,15 +40,15 @@ body {
 }
 
 .page {
-  @media (min-width: $large) {
+  @media (min-width: v.$large) {
     float: inline-end;
-    width: calc(100% - #{$right-sidebar-width-narrow});
-    padding-inline-end: $right-sidebar-width-narrow;
+    width: calc(100% - #{v.$right-sidebar-width-narrow});
+    padding-inline-end: v.$right-sidebar-width-narrow;
   }
 
-  @media (min-width: $x-large) {
-    width: calc(100% - #{$right-sidebar-width});
-    padding-inline-end: $right-sidebar-width;
+  @media (min-width: v.$x-large) {
+    width: calc(100% - #{v.$right-sidebar-width});
+    padding-inline-end: v.$right-sidebar-width;
   }
 
   .page__inner-wrap {
@@ -69,7 +72,7 @@ body {
   line-height: 1;
 
   a {
-    color: $text-color;
+    color: v.$text-color;
     text-decoration: none;
   }
 
@@ -80,14 +83,14 @@ body {
 }
 
 .page__lead {
-  font-family: $global-font-family;
-  font-size: $type-size-4;
+  font-family: v.$global-font-family;
+  font-size: v.$type-size-4;
 }
 
 .page__content {
   h2 {
     padding-bottom: 0.5em;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid v.$border-color;
   }
 
 	h1, h2, h3, h4, h5, h6 {
@@ -119,22 +122,22 @@ body {
 
   /* paragraph indents */
   p {
-    margin: $indent-var 0 $indent-var 0;
+    margin: v.$indent-var 0 v.$indent-var 0;
 
     &:first-child {
       margin-top: 0;
     }
 
     /* sibling indentation*/
-    @if $paragraph-indent == true {
+    @if v.$paragraph-indent == true {
       & + p {
-        text-indent: $indent-var;
-        margin-top: -($indent-var);
+        text-indent: v.$indent-var;
+        margin-top: -(v.$indent-var);
       }
     }
   }
 
-  a:not(.btn) {
+  a {
     &:hover {
       text-decoration: underline;
 
@@ -148,8 +151,8 @@ body {
     padding-top: 0.1rem;
     padding-bottom: 0.1rem;
     font-size: 0.8em;
-    background: $code-background-color;
-    border-radius: $border-radius;
+    background: v.$code-background-color;
+    border-radius: v.$border-radius;
 
     &::before,
     &::after {
@@ -160,18 +163,18 @@ body {
 
   dt {
     margin-top: 1em;
-    font-family: $sans-serif;
+    font-family: v.$sans-serif;
     font-weight: bold;
   }
 
   dd {
     margin-inline-start: 1em;
-    font-family: $sans-serif;
-    font-size: $type-size-6;
+    font-family: v.$sans-serif;
+    font-size: v.$type-size-6;
   }
 
   .small {
-    font-size: $type-size-6;
+    font-size: v.$type-size-6;
   }
 
   /* blockquote citations */
@@ -187,7 +190,7 @@ body {
   }
 
   img, video {
-    border-radius: $border-radius;
+    border-radius: v.$border-radius;
     width: 100%;
   }
 }
@@ -195,9 +198,9 @@ body {
 .page__hero {
   position: relative;
   margin-bottom: 1.5em;
-  @include clearfix;
-  -webkit-animation: $intro-transition;
-  animation: $intro-transition;
+  @include mx.clearfix;
+  -webkit-animation: v.$intro-transition;
+  animation: v.$intro-transition;
   -webkit-animation-delay: 0.25s;
   animation-delay: 0.25s;
 
@@ -205,12 +208,12 @@ body {
     position: relative;
     margin-bottom: 2em;
     padding: 3em 0;
-    @include clearfix;
+    @include mx.clearfix;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    -webkit-animation: $intro-transition;
-    animation: $intro-transition;
+    -webkit-animation: v.$intro-transition;
+    animation: v.$intro-transition;
     -webkit-animation-delay: 0.25s;
     animation-delay: 0.25s;
 
@@ -221,27 +224,26 @@ body {
     .wrapper {
       padding-inline: 1em;
 
-      @media (min-width: $x-large) {
-        max-width: $x-large;
+      @media (min-width: v.$x-large) {
+        max-width: v.$x-large;
       }
     }
 
     .page__title,
-    .page__lead,
-    .btn {
+    .page__lead {
       color: #fff;
       text-shadow: 1px 1px 4px rgba(#000, 0.5);
     }
 
     .page__lead {
-      max-width: $medium;
+      max-width: v.$medium;
     }
 
     .page__title {
-      font-size: $type-size-2;
+      font-size: v.$type-size-2;
 
-      @media (min-width: $small) {
-        font-size: $type-size-1;
+      @media (min-width: v.$small) {
+        font-size: v.$type-size-1;
       }
     }
   }
@@ -260,15 +262,15 @@ body {
   margin: 0 auto;
   padding: 2px 5px;
   color: #fff;
-  font-family: $caption-font-family;
-  font-size: $type-size-7;
+  font-family: v.$caption-font-family;
+  font-size: v.$type-size-7;
   background: #000;
   text-align: end;
   z-index: 5;
   opacity: 0.5;
-  border-radius: $border-radius 0 0 0;
+  border-radius: v.$border-radius 0 0 0;
 
-  @media (min-width: $large) {
+  @media (min-width: v.$large) {
     padding: 5px 10px;
   }
 
@@ -284,11 +286,11 @@ body {
 
 .wide {
   .page {
-    @media (min-width: $large) {
+    @media (min-width: v.$large) {
       padding-inline-end: 0;
     }
 
-    @media (min-width: $x-large) {
+    @media (min-width: v.$x-large) {
       padding-inline-end: 0;
     }
   }

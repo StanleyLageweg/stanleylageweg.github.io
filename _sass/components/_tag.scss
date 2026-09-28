@@ -1,15 +1,17 @@
+@use "../abstracts/variables" as v;
+
 .tag, a.tag {
-  $font-size: $type-size-6;
+  $font-size: v.$type-size-6;
   gap: 0.5 * $font-size;
   display: inline-flex;
   align-items: center;
   padding: 0.25 * $font-size 0.5 * $font-size;
-  border-radius: $border-radius;
+  border-radius: v.$border-radius;
   color: inherit;
   font-size: $font-size;
   text-decoration: none;
   vertical-align: middle;
-  background: $lighter-gray;
+  background: v.$lighter-gray;
 
   img, picture, svg {
     height: 1.5em;
@@ -27,5 +29,5 @@
 
 a.tag:hover {
   text-decoration: underline;
-  background: $lighter-gray-hover;
+  background: v.$lighter-gray-hover;
 }

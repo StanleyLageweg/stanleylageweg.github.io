@@ -1,0 +1,29 @@
+@use "sass:math";
+@use "../abstracts/variables" as v;
+
+/* ==========================================================================
+   ARCHIVE
+   ========================================================================== */
+
+.archive {
+  width: 100%;
+  padding-right: v.$right-sidebar-width;
+
+  @media (max-width: v.$large) {
+    padding-right: v.$right-sidebar-width-narrow;
+  }
+}
+
+/*
+   Wide Pages
+   ========================================================================== */
+
+.wide {
+  .archive {
+    padding-right: 0;
+
+    @media (max-width: v.$large) {
+      padding-right: 0;
+    }
+  }
+}

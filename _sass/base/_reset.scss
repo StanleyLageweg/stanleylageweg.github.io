@@ -1,3 +1,5 @@
+@use "../abstracts/variables" as v;
+
 /* ==========================================================================
    STYLE RESETS
    ========================================================================== */
@@ -7,19 +9,19 @@
 html {
   /* apply a natural box layout model to all elements */
   box-sizing: border-box;
-  background-color: $background-color;
-  font-size: $doc-font-size;
+  background-color: v.$background-color;
+  font-size: v.$doc-font-size;
 
-  @media (min-width: $medium) {
-    font-size: $doc-font-size-medium;
+  @media (min-width: v.$medium) {
+    font-size: v.$doc-font-size-medium;
   }
 
-  @media (min-width: $large) {
-    font-size: $doc-font-size-large;
+  @media (min-width: v.$large) {
+    font-size: v.$doc-font-size-large;
   }
 
-  @media (min-width: $x-large) {
-    font-size: $doc-font-size-x-large;
+  @media (min-width: v.$x-large) {
+    font-size: v.$doc-font-size-x-large;
   }
 
   -webkit-text-size-adjust: 100%;
@@ -61,7 +63,7 @@ audio:not([controls]) {
 }
 
 a {
-  color: $link-color;
+  color: v.$link-color;
 }
 
 /* Remove outline from links */

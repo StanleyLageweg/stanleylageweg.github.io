@@ -1,6 +1,9 @@
-$card-spacing: 0.8rem;
-$card-image-aspect-ratio: 16 / 9;
-$card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
+@use "sass:math";
+@use "../abstracts/variables" as v;
+
+$spacing: 0.8rem;
+$image-aspect-ratio: #{16 / 9};
+$image-width: calc(min(10rem * #{$image-aspect-ratio}, 50%));
 
 .card__wrapper {
   container-type: inline-size;
@@ -8,17 +11,17 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 
   @supports #{"selector(::details-content)"} {
     & > .animated-details::details-content {
-      box-shadow: $box-shadow;
+      box-shadow: v.$box-shadow;
       clip-path: inset(0px -50px -50px -50px);
-      border-radius: 0 0 $border-radius $border-radius;
+      border-radius: 0 0 v.$border-radius v.$border-radius;
     }
   }
 
   @supports #{"not selector(::details-content)"} {
     & > .animated-details .animated-details__content-wrapper {
-      box-shadow: $box-shadow;
+      box-shadow: v.$box-shadow;
       clip-path: inset(0px -50px -50px -50px);
-      border-radius: 0 0 $border-radius $border-radius;
+      border-radius: 0 0 v.$border-radius v.$border-radius;
     }
   }
 }
@@ -26,23 +29,23 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 .card {
   display: flex;
   overflow: hidden;
-  box-shadow: $box-shadow;
-  border-radius: $border-radius;
+  box-shadow: v.$box-shadow;
+  border-radius: v.$border-radius;
   transition:
     box-shadow 0.2s ease,
     border-radius var(--animatedDetails-duration-transition, 0.3s) ease-out;
 }
 
 .animated-details[open] > .animated-details__summary > .card {
-  border-radius: $border-radius $border-radius 0 0;
+  border-radius: v.$border-radius v.$border-radius 0 0;
 }
 
 .card__image {
-  aspect-ratio: #{$card-image-aspect-ratio};
+  aspect-ratio: #{$image-aspect-ratio};
   flex-shrink: 0;
-  width: $card-image-width;
+  width: $image-width;
   overflow: hidden;
-  transition: width $global-transition-timing;
+  transition: width v.$global-transition-timing;
 
   img {
     object-fit: cover;
@@ -57,8 +60,8 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
   flex-shrink: 0;
   flex-grow: 1;
   flex-direction: column;
-  width: calc(100% - #{$card-image-width} - 2 * #{$card-spacing});
-  margin: $card-spacing;
+  width: calc(100% - #{$image-width} - 2 * #{$spacing});
+  margin: $spacing;
 }
 
 .card__title {
@@ -67,8 +70,8 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 
 .card__icon {
   float: right;
-  width: $h-size-3 * $h-line-height;
-  height: $h-size-3 * $h-line-height;
+  width: v.$h-size-3 * v.$h-line-height;
+  height: v.$h-size-3 * v.$h-line-height;
 
   svg {
     width: 100%;
@@ -77,7 +80,7 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 }
 
 .card__content {
-  gap: $card-spacing / 4;
+  gap: math.div($spacing, 4);
   display: flex;
   flex-grow: 1;
   flex-direction: column;
@@ -86,13 +89,13 @@ $card-image-width: calc(min(10rem * #{$card-image-aspect-ratio}, 50%));
 
 p.card__excerpt {
   margin: 0;
-  font-size: $type-size-6;
+  font-size: v.$type-size-6;
 }
 
 .card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: $card-spacing / 3;
+  gap: math.div($spacing, 3);
 }
 
 a.card__link {
@@ -103,7 +106,7 @@ a.card__link {
     color: inherit;
 
     .card {
-      box-shadow: $box-shadow-hover;
+      box-shadow: v.$box-shadow-hover;
     }
 
     .card__title {
@@ -113,7 +116,7 @@ a.card__link {
 }
 
 .animated-details__summary:hover .card {
-  box-shadow: $box-shadow-hover;
+  box-shadow: v.$box-shadow-hover;
 }
 
 @container (max-width: 650px) {
@@ -126,7 +129,7 @@ a.card__link {
   }
 
   .card__text {
-    width: calc(100% - 2 * #{$card-spacing});
+    width: calc(100% - 2 * #{$spacing});
   }
 }
 
@@ -134,6 +137,6 @@ a.card__link {
   display: unset;
 
   & > .card__content > .card__excerpt {
-    font-size: $type-size-5;
+    font-size: v.$type-size-5;
   }
 }
