@@ -51,7 +51,7 @@ jobs:
             _site/**/*.webp
             _site/**/*.png
             _site/**/*.jpg
-            .responsive-image-cache
+            .jekyll-cache/responsive-image-cache.yml
           key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic') }}-${{ github.sha }}
           restore-keys: |
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-
@@ -70,7 +70,7 @@ jobs:
           path: |
             _site/**/*.mp4
             _site/**/*.webm
-            .responsive-video-cache
+            .jekyll-cache/responsive-video-cache.yml
           key: responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.mp4', 'assets/**/*.webm', 'assets/**/*.mov', 'assets/**/*.m4v', 'assets/**/*.mkv', 'assets/**/*.avi') }}-${{ github.sha }}
           restore-keys: |
             responsive-videos-${{ steps.responsive-video-cache-key.outputs.key }}-${{ steps.responsive-video-cache-key.outputs.optional_key }}-

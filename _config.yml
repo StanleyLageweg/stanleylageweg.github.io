@@ -100,8 +100,6 @@ exclude:
   - tmp
   - performance-profiling
   - ruby-prof
-  - .responsive-image-cache
-  - .responsive-video-cache
   - svgo-inline.config.mjs
   - svgo.config.mjs
 keep_files:
