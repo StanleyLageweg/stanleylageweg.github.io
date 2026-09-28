@@ -14,14 +14,14 @@
   background: v.$lighter-gray;
 
   img, picture, svg {
-    height: 1.5em;
+    height: 1em * v.$line-height;
     width: auto;
     flex: none;
     line-height: 1.25;
   }
 
   picture {
-    min-width: 1.5em;
+    min-width: 1em * v.$line-height;
     display: inline-flex;
     justify-content: center;
   }

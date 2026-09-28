@@ -3,6 +3,7 @@ require "yaml"
 
 require "jekyll"
 require "liquid"
+require_relative "ico"
 require_relative "utils"
 
 # Require ruby-vips while capturing its startup chatter and routing it through Jekyll's logger.
@@ -135,11 +136,15 @@ module Jekyll
         outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
           Utils.log_duration("Responsive Image:") do
             to_generate.each do |output|
-              image = Vips::Image.new_from_file(source_path, access: :sequential)
-              image = image.autorot if image.respond_to?(:autorot)
-              scale = output[:config][:width].to_f / source_width
-              image = image.resize(scale) unless scale == 1.0
-              image.write_to_file(output[:path])
+              if (output[:config][:extension] == "ico")
+                Ico.img_to_ico(source_path, output[:path], [output[:config][:width]])
+              else
+                image = Vips::Image.new_from_file(source_path, access: :sequential)
+                image = image.autorot if image.respond_to?(:autorot)
+                scale = output[:config][:width].to_f / source_width
+                image = image.resize(scale) unless scale == 1.0
+                image.write_to_file(output[:path])
+              end
             end
 
             generated_outputs = to_generate.map { |output| "#{output[:config][:width]}w.#{output[:config][:extension]}" }

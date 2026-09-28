@@ -1,68 +1,46 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/mixins" as mx;
 
-/* ==========================================================================
-   MASTHEAD
-   ========================================================================== */
-
 .masthead {
-  position: relative;
   border-bottom: 1px solid v.$border-color;
-  -webkit-animation: v.$intro-transition;
   animation: v.$intro-transition;
-  -webkit-animation-delay: 0.15s;
   animation-delay: 0.15s;
-  z-index: 20;
 
-  &__inner-wrap {
-    @include mx.clearfix;
+  #site-nav {
+    display: flex;
+    align-items: center;
     margin-inline: auto;
     padding: 1em;
     max-width: 100%;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    font-family: v.$sans-serif-narrow;
 
     @media (min-width: v.$x-large) {
       max-width: v.$max-width;
     }
+  }
 
-    nav {
-      z-index: 10;
-    }
+  .site-title {
+    display: grid;
+    column-gap: 0.5rem;
+    color: v.$masthead-link-color;
+    text-decoration: none;
 
-    a {
-      text-decoration: none;
+    &:hover {
+      color: v.$masthead-link-color-hover;
     }
   }
-}
 
-.site-logo img {
-  max-height: 2rem;
-}
+  .site-title__logo {
+    grid-area: 1 / 1 / span 2;
+    height: (1em + v.$type-size-8) * v.$line-height;
+  }
 
-.site-title {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-item-align: center;
-  align-self: center;
-  font-weight: bold;
-  // z-index: 20;
-}
+  .site-title__title {
+    grid-area: 1 / 2;
+    font-weight: bold;
+  }
 
-.site-subtitle {
-  display: block;
-  font-size: v.$type-size-8;
-}
-
-.masthead__menu {
-  float: inline-start;
-  margin-inline: 0;
-  width: 100%;
-  clear: both;
+  .site-title__subtitle {
+    grid-area: 2 / 2;
+    font-size: v.$type-size-8;
+  }
 }

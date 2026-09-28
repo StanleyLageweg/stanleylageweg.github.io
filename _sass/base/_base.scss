@@ -20,7 +20,7 @@ body {
   background: v.$page-background;
   color: v.$text-color;
   font-family: v.$global-font-family;
-  line-height: 1.5;
+  line-height: v.$line-height;
 }
 
 h1,

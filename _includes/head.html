@@ -13,3 +13,18 @@
     <script src="{{ script | relative_url }}"></script>
   {% endfor %}
 {% endif %}
+
+{% assign favicon = site.favicon | default: site.favicon_light | default: site.favicon_dark %}
+{% if favicon %}
+  {% assign ico = favicon | responsive_image: 32, "ico", true %}
+  <link rel="icon" type="image/x-icon" href="{{ ico }}" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="{{ favicon }}" />
+  {% if site.favicon_dark %}
+    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_dark }}" media="(prefers-color-scheme: dark)" />
+  {% endif %}
+  {% if site.favicon_light %}
+    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_light }}" media="(prefers-color-scheme: light)" />
+  {% endif %}
+  {% assign apple_touch_icon = favicon | responsive_image: 180, "png", true %}
+  <link rel="apple-touch-icon" href="{{ apple_touch_icon }}" />
+{% endif %}

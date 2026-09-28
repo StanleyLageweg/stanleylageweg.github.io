@@ -3,12 +3,15 @@ source "https://rubygems.org"
 ruby file: ".ruby-version"
 
 gem "jekyll", ">= 4.4", "< 5.0"
+gem "jekyll-sass-converter", ">= 3.0"
 gem "jekyll-sitemap", "~> 1.3"
 gem "kramdown-math-katex", "~> 1.0"
 
 gem "bigdecimal"
+gem "bit-struct"
 gem "bundler"
 gem "launchy"
+gem "mime-types"
 gem "ruby-prof", group: :jekyll_plugins, require: ["ruby-prof", "./_plugins/hooks/rubyprof"]
 gem "ruby-vips"
 gem "wdm", ">= 0.1.0", :platforms => [:windows]
