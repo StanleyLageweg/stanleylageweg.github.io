@@ -3,3 +3,8 @@
 @forward "layout";
 @forward "components";
 @forward "utilities";
+
+/* Disable transitions while page is loading */
+.preload * {
+  transition: none !important;
+}
