@@ -40,14 +40,14 @@ module Jekyll
         )
 
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
-        attributes << %(width="#{sources[:data][:width]}") unless options.key?("width")
-        attributes << %(height="#{sources[:data][:height]}") unless options.key?("height")
+        attributes << %(width="#{sources[:width]}") unless options.key?("width")
+        attributes << %(height="#{sources[:height]}") unless options.key?("height")
         attributes << %(playsinline)
 
-        source_tags = sources[:paths].map do |path|
+        source_tags = sources[:outputs].map do |output|
           source_attributes = [
-            %(src="#{Utils.escape_html(path.public_url)}"),
-            %(type="#{Utils.escape_html(path.mime_type)}")
+            %(src="#{Utils.escape_html(output[:path].public_url)}"),
+            %(type="#{Utils.escape_html(output[:mime_type])}")
           ]
           %(<source #{source_attributes.join(' ')}/>)
         end

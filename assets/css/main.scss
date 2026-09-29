@@ -1,18 +1,6 @@
 ---
-# Only the main Sass file needs front matter (the dashes are enough)
-search: false
 ---
 
 @charset "utf-8";
 
-@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
-@import "minimal-mistakes"; // main partials
-
-@import "animated-details";
-@import "card";
-@import "date-range";
-@import "icon-label";
-@import "landing";
-@import "tag";
-@import "tag-groups";
-@import "timeline";
+@use "style";

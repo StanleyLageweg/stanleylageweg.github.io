@@ -1,0 +1,46 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
+.masthead {
+  border-bottom: 1px solid v.$border-color;
+  animation: v.$intro-transition;
+  animation-delay: 0.15s;
+
+  #site-nav {
+    display: flex;
+    align-items: center;
+    margin-inline: auto;
+    padding: 1em;
+    max-width: 100%;
+
+    @media (min-width: v.$x-large) {
+      max-width: v.$max-width;
+    }
+  }
+
+  .site-title {
+    display: grid;
+    column-gap: 0.5rem;
+    color: v.$masthead-link-color;
+    text-decoration: none;
+
+    &:hover {
+      color: v.$masthead-link-color-hover;
+    }
+  }
+
+  .site-title__logo {
+    grid-area: 1 / 1 / span 2;
+    height: (1em + v.$type-size-8) * v.$line-height;
+  }
+
+  .site-title__title {
+    grid-area: 1 / 2;
+    font-weight: bold;
+  }
+
+  .site-title__subtitle {
+    grid-area: 2 / 2;
+    font-size: v.$type-size-8;
+  }
+}

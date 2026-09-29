@@ -3,6 +3,7 @@ require "yaml"
 
 require "jekyll"
 require "liquid"
+require_relative "ico"
 require_relative "utils"
 
 # Require ruby-vips while capturing its startup chatter and routing it through Jekyll's logger.
@@ -102,28 +103,32 @@ module Jekyll
         end
       end
 
-      def has_alpha?(image)
-        image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
-      end
+      def get_data(site, source_path)
+        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE, {}) do
+          image = Vips::Image.new_from_file(source_path, access: :sequential)
+          image = image.autorot if image.respond_to?(:autorot)
+          width = image.width.to_i
+          height = image.height.to_i
+          has_alpha = image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
+          transparent = has_alpha && image[image.bands - 1].min < 255
 
-      def has_transparency?(image)
-        has_alpha?(image) && image[image.bands - 1].min < 255
+          {
+            width: width,
+            height: height,
+            transparent: transparent,
+          }
+        end
       end
 
       def build_sources(site, source_path, widths, formats)
-        source_image = Vips::Image.new_from_file(source_path, access: :sequential)
-        source_image = source_image.autorot if source_image.respond_to?(:autorot)
-        source_width = source_image.width.to_i
-        source_height = source_image.height.to_i
+        data = get_data(site, source_path)
 
-        max_width = [widths.max, source_width].compact.min
-        effective_widths = (widths << source_width).uniq.sort
+        max_width = [widths.max, data[:width]].compact.min
+        effective_widths = (widths << data[:width]).uniq.sort
         effective_widths = effective_widths.map { |w| Integer(w) }.select { |w| w <= max_width }
 
         effective_formats = formats.uniq
-
-        transparent = has_transparency?(source_image)
-        effective_formats.delete("jpg") if transparent
+        effective_formats.delete("jpg") if data[:transparent]
 
         configs = effective_formats.product(effective_widths).map do |pair|
           {
@@ -132,14 +137,18 @@ module Jekyll
           }
         end
 
-        outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
+        outputs = CacheUtils.get_or_generate_outputs(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
           Utils.log_duration("Responsive Image:") do
             to_generate.each do |output|
-              image = Vips::Image.new_from_file(source_path, access: :sequential)
-              image = image.autorot if image.respond_to?(:autorot)
-              scale = output[:config][:width].to_f / source_width
-              image = image.resize(scale) unless scale == 1.0
-              image.write_to_file(output[:path])
+              if (output[:config][:extension] == "ico")
+                Ico.img_to_ico(source_path, output[:path], [output[:config][:width]])
+              else
+                image = Vips::Image.new_from_file(source_path, access: :sequential)
+                image = image.autorot if image.respond_to?(:autorot)
+                scale = output[:config][:width].to_f / data[:width]
+                image = image.resize(scale) unless scale == 1.0
+                image.write_to_file(output[:path])
+              end
             end
 
             generated_outputs = to_generate.map { |output| "#{output[:config][:width]}w.#{output[:config][:extension]}" }
@@ -154,11 +163,41 @@ module Jekyll
           variants[format] << {path: output[:path], width: output[:config][:width]}
         end
         {
-          width: source_width,
-          height: source_height,
-          transparent: transparent,
+          **data,
           variants: variants,
         }
+      end
+
+      def build_svg(site, source_path)
+        data = get_data(site, source_path)
+        config_file = "./svgo.config.mjs"
+        configs = [{ svgo_config: File.read(config_file).gsub(/\s+/, "") }]
+        outputs = CacheUtils.get_or_generate_outputs(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
+          Utils.log_duration("Responsive Image:") do
+            to_generate.each do |output|
+              Utils.npx_command('svgo', source_path, '-o', output[:path], '-q', '--config', config_file)
+            end
+            "optimized #{source_path.relative_path}"
+          end
+        end
+
+        {
+          **data,
+          **outputs[0],
+        }
+      end
+
+      def build_inline_svg(site, source_path)
+        config_file = "./svgo-inline.config.mjs"
+        config = { svgo_config: File.read(config_file).gsub(/\s+/, "") }
+        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE, config) do
+          data = nil
+          Utils.log_duration("Responsive Image:") do
+            data = Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', config_file)
+            "optimized #{source_path.relative_path} (inline)"
+          end
+          data
+        end
       end
     end
   end

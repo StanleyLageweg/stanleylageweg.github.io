@@ -5,27 +5,27 @@ require_relative "../responsive_image"
 
 module Jekyll
   module ResponsiveImageFilter
-    OUTPUT_WIDTH = 1920.freeze
-    OUTPUT_FORMAT = "webp".freeze
-
-    def responsive_image(input)
+    def responsive_image(input, output_width = 1920, output_format = "webp", convert_svg = false)
       return input if input.nil? || input.to_s.empty?
 
       site = @context.registers[:site]
       source_path = Filepath.new(site, input.to_s)
       source_format = source_path.extension(normalize: true)
-      return Utils.escape_html(source_path.public_url) if source_format == "svg"
 
+      if source_format == "svg" && !convert_svg
+        source = ResponsiveImage.build_svg(site, source_path)
+        return Utils.escape_html(source[:path].public_url)
+      end
       
-      sources = Jekyll::ResponsiveImage.build_sources(site, source_path, [OUTPUT_WIDTH], [OUTPUT_FORMAT])
-      Utils.escape_html(sources[:variants][OUTPUT_FORMAT].last[:path].public_url || source_path.public_url)
+      sources = Jekyll::ResponsiveImage.build_sources(site, source_path, [output_width], [output_format])
+      Utils.escape_html(sources[:variants][output_format].last[:path].public_url || source_path.public_url)
     end
 
     def responsive_image_alt(input)
       return input if input.nil? || input.to_s.empty?
 
       site = @context.registers[:site]
-      source_path = Filepath.new(@context.registers[:site], input.to_s)
+      source_path = Filepath.new(site, input.to_s)
       Jekyll::ResponsiveImage.get_alt_text(site, source_path)
     end
   end

@@ -1,19 +1,11 @@
-{% capture logo_path %}{{ site.logo }}{% endcapture %}
-
 {% if page.masthead or layout.masthead %}
 <div class="masthead">
-  <div class="masthead__inner-wrap">
-    <div class="masthead__menu">
-      <nav id="site-nav" aria-label="Primary navigation">
-        {% unless logo_path == empty %}
-          <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}" alt="{{ site.masthead_title | default: site.title }}"></a>
-        {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">
-          {{ site.masthead_title | default: site.title | escape_once | strip }}
-          {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle | escape_once | strip }}</span>{% endif %}
-        </a>
-      </nav>
-    </div>
-  </div>
+  <nav id="site-nav" aria-label="Primary navigation">
+    <a class="site-title" href="{{ '/' | relative_url }}">
+      {% responsive_image site.logo class="site-title__logo" %}
+      <span class="site-title__title">{{ site.masthead_title | default: site.title | escape_once | strip }}</span>
+      <span class="site-title__subtitle">{{ site.subtitle | escape_once | strip }}</span>
+    </a>
+  </nav>
 </div>
 {% endif %}

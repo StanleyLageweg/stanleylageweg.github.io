@@ -1,0 +1,362 @@
+@use "sass:color";
+@use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mx;
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+/*
+   Visibility
+   ========================================================================== */
+
+/* http://www.456bereastreet.com/archive/200711/screen_readers_sometimes_ignore_displaynone/ */
+
+.hidden,
+.is--hidden {
+  display: none;
+  visibility: hidden;
+}
+
+/* for preloading images */
+
+.load {
+  display: none;
+}
+
+.transparent {
+  opacity: 0;
+}
+
+/* https://developer.yahoo.com/blogs/ydn/clip-hidden-content-better-accessibility-53456.html */
+
+.visually-hidden,
+.screen-reader-text,
+.screen-reader-text span,
+.screen-reader-shortcut,
+.sr-only,
+.sr-only-focusable:not(:focus) {
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0);
+  height: 1px !important;
+  width: 1px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+body:hover .visually-hidden a,
+body:hover .visually-hidden input,
+body:hover .visually-hidden button {
+  display: none !important;
+}
+
+/* screen readers */
+
+.screen-reader-text:focus,
+.screen-reader-shortcut:focus {
+  clip: auto !important;
+  height: auto !important;
+  width: auto !important;
+  display: block;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 15px 23px 14px;
+  background: #fff;
+  z-index: 100000;
+  text-decoration: none;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+}
+
+/*
+   Skip links
+   ========================================================================== */
+
+.skip-link {
+  position: fixed;
+  z-index: 20;
+  margin: 0;
+  font-family: v.$sans-serif;
+  white-space: nowrap;
+}
+
+.skip-link li {
+  height: 0;
+  width: 0;
+  list-style: none;
+}
+
+/*
+   Type
+   ========================================================================== */
+
+$text-alignments: left, right, start, end, center, justify;
+@each $alignment in $text-alignments {
+  .text-#{$alignment} {
+    text-align: $alignment;
+  }
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+/*
+   Task lists
+   ========================================================================== */
+
+.task-list {
+  padding: 0;
+
+  li {
+    list-style-type: none;
+  }
+
+  .task-list-item-checkbox {
+    margin-inline-end: 0.5em;
+    opacity: 1;
+  }
+}
+
+.task-list .task-list {
+  margin-inline-start: 1em;
+}
+
+/*
+   Alignment
+   ========================================================================== */
+
+/* clearfix */
+
+.cf {
+  clear: both;
+}
+
+.wrapper {
+  margin-inline: auto;
+  width: 100%;
+}
+
+/*
+   Images
+   ========================================================================== */
+
+/* image align left */
+
+.align-left {
+  display: block;
+  margin-inline: auto;
+
+  @media (min-width: v.$small) {
+    float: left;
+    margin-right: 1em;
+  }
+}
+
+/* image align right */
+
+.align-right {
+  display: block;
+  margin-inline: auto;
+
+  @media (min-width: v.$small) {
+    float: right;
+    margin-left: 1em;
+  }
+}
+
+/* image align center */
+
+.align-center {
+  display: block;
+  margin-inline: auto;
+}
+
+/*
+   Sticky, fixed to top content
+   ========================================================================== */
+
+.sticky {
+  @media (min-width: v.$large) {
+    @include mx.clearfix();
+    position: -webkit-sticky;
+    position: sticky;
+    top: 1em;
+
+    > * {
+      display: block;
+    }
+  }
+}
+
+/*
+   Wells
+   ========================================================================== */
+
+.well {
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  border-radius: v.$border-radius;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/*
+   Modals
+   ========================================================================== */
+
+.show-modal {
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+
+  .modal {
+    display: block;
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  width: 300px;
+  top: 50%;
+  inset-inline-start: 50%;
+  margin-inline-start: -150px;
+  margin-top: -150px;
+  min-height: 0;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid v.$border-color;
+  border-radius: v.$border-radius;
+  box-shadow: v.$box-shadow;
+
+  &__title {
+    margin: 0;
+    padding: 0.5em 1em;
+  }
+
+  &__supporting-text {
+    padding: 0 1em 0.5em 1em;
+  }
+
+  &__actions {
+    padding: 0.5em 1em;
+    border-top: 1px solid v.$border-color;
+  }
+}
+
+/*
+   Footnotes
+   ========================================================================== */
+
+.footnote {
+  color: color.mix(#fff, v.$gray, 25%);
+  text-decoration: none;
+}
+
+.footnotes {
+  color: color.mix(#fff, v.$gray, 25%);
+
+  ol,
+  li,
+  p {
+    margin-bottom: 0;
+    font-size: v.$type-size-6;
+  }
+}
+
+a.reversefootnote {
+  color: v.$gray;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/*
+   Required
+   ========================================================================== */
+
+.required {
+  color: v.$danger-color;
+  font-weight: bold;
+}
+
+/*
+   Responsive Video Embed
+   ========================================================================== */
+
+.responsive-video__container {
+  overflow: hidden;
+  container-type: size;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+}
+
+.responsive-video {
+  width: 100%;
+  height: 100%;
+  border-radius: v.$border-radius;
+}
+
+@container (max-width: 325px) {
+  .responsive-video {
+    width: 200%;
+    height: 200%;
+    transform: scale(0.5);
+    transform-origin: 0 0;
+  }
+}
+
+// full screen video fixes
+:-webkit-full-screen-ancestor {
+  .masthead {
+    position: static;
+  }
+}
+
+.video-grid, .video-grid__responsive {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: 1fr 1fr;
+}
+
+@container (max-width: 650px) {
+    .video-grid__responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+.katex {
+    margin: 0 0.1em;
+}
+
+p .katex {
+    margin: 0;
+}
+
+.page__content .math-derivation {
+  p {
+    margin: 0.1em 0 0 0;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+}

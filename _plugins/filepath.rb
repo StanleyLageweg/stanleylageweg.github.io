@@ -61,16 +61,6 @@ class Filepath
     @site.keep_files << keep_path unless @site.keep_files.include?(keep_path)
   end
 
-  def mime_type
-    stdout, stderr, status = Jekyll::Utils.fast_npx("ffmime", @path)
-    raise Liquid::Error, "ffmime failed for '#{@path}': #{stderr.strip}" unless status.success?
-
-    mime_type = stdout.strip
-    raise Liquid::Error, "ffmime returned no MIME type for '#{@path}'." if mime_type.empty?
-
-    mime_type
-  end
-
   def ==(other)
     other.is_a?(Filepath) && @path == other.path
   end

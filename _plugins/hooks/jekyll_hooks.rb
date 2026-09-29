@@ -15,6 +15,7 @@ end
 Jekyll::Hooks.register :site, :post_read do |site|
   Jekyll::JekyllRubyProf.start(site)
   Jekyll::BuildJs.exclude_source_files(site)
+  Jekyll::CollectionsOutput.run(site)
 end
 
 # Just before rendering the whole site
@@ -24,7 +25,6 @@ end
 
 # Just before rendering a document
 Jekyll::Hooks.register :documents, :pre_render do |document|
-  Jekyll::CollectionsOutput.run(document)
 end
 
 # After rendering a page, but before writing it to disk
@@ -44,8 +44,6 @@ end
 
 # After writing all of the rendered files to disk
 Jekyll::Hooks.register :site, :post_write do |site|
-  Jekyll::OptimizeSVG.run(site)
-  CacheUtils.clean_sidecars(site)
   Jekyll::LogOutputSize.run(site)
   Jekyll::JekyllRubyProf.stop(site)
 end

@@ -23,13 +23,6 @@
       {% elsif page.header.show_overlay_excerpt != false and page.excerpt %}
         <p class="page__lead">{{ page.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</p>
       {% endif %}
-      {% if page.header.actions %}
-        <p>
-        {% for action in page.header.actions %}
-          <a href="{{ action.url | relative_url }}" class="btn btn--light-outline btn--large">{{ action.label | default: "Learn More" }}</a>
-        {% endfor %}
-        </p>
-      {% endif %}
     </div>
   {% else %}
     {% responsive_image page.header.image class="page__hero-image" sizes="100vw" fetchpriority="high" sources=page.header.image_sources %}

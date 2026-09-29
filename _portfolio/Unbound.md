@@ -127,7 +127,7 @@ Another advantage of this system is that it's stable when walking along a longer
 
 {% endcapture_markdown %}
 
-{% include card.html title="Camera Smoothing" image="/assets/portfolio/unbound/camera-smoothing/teaser.png" excerpt="Smooth camera movement is very important for a comfortable VR experience. Instead of relying on level design to create smooth level geometry, I instead created a system which dynamically smoothens the movement of the camera." collapsed_content=camera_smoothing %}
+{% include card.html title="Camera Smoothing" image="/assets/portfolio/unbound/camera-smoothing/teaser.png" excerpt="Smooth camera movement is very important for a comfortable VR experience. Instead of relying on level design to create smooth level geometry, I created a system which dynamically smoothens the movement of the camera." collapsed_content=camera_smoothing %}
 
 
 
