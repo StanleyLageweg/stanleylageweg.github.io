@@ -51,8 +51,9 @@ jobs:
             _site/**/*.webp
             _site/**/*.png
             _site/**/*.jpg
+            _site/**/*.svg
             .jekyll-cache/responsive-image-cache.yml
-          key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic') }}-${{ github.sha }}
+          key: responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-${{ hashFiles('assets/**/*.jpg', 'assets/**/*.jpeg', 'assets/**/*.jfif', 'assets/**/*.png', 'assets/**/*.gif', 'assets/**/*.webp', 'assets/**/*.avif', 'assets/**/*.tif', 'assets/**/*.tiff', 'assets/**/*.heif', 'assets/**/*.heic', 'assets/**/*.svg') }}-${{ github.sha }}
           restore-keys: |
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-${{ steps.responsive-image-cache-key.outputs.optional_key }}-
             responsive-images-${{ steps.responsive-image-cache-key.outputs.key }}-
