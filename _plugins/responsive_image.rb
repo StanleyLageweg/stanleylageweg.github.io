@@ -191,10 +191,12 @@ module Jekyll
         config_file = "./svgo-inline.config.mjs"
         config = { svgo_config: File.read(config_file).gsub(/\s+/, "") }
         CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE, config) do
+          data = nil
           Utils.log_duration("Responsive Image:") do
-            Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', config_file)
+            data = Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', config_file)
             "optimized #{source_path.relative_path} (inline)"
           end
+          data
         end
       end
     end
