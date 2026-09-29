@@ -41,7 +41,7 @@ module CacheUtils
       config[:extension] ||= source_path.extension(normalize: true)
 
       cache_key = "#{source_path.relative_path}:#{config}:#{source_hash}"
-      output = cache.key?(cache_key) && { relative_path: cache[cache_key] }
+      output = cache[cache_key]
 
       unless output && File.exist?(File.join(site.dest, output[:relative_path]))
         output = {
@@ -63,12 +63,20 @@ module CacheUtils
         output[:path].mkdir_p
       end
 
-      generate.call(to_generate)
+      begin
+        generate.call(to_generate)
+      rescue => e
+        to_generate.each do |output|
+          output[:path].delete
+          cache.delete(output[:cache_key])
+        end
+        raise e
+      end
 
       missing_outputs = []
       to_generate.each do |output|
         if output[:path].exist?
-          cache[output[:cache_key]] = output[:relative_path]
+          cache[output[:cache_key]] = output.except(:config, :path, :cache_key)
         else
           missing_outputs << output
           cache.delete(output[:cache_key])

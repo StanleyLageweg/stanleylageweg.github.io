@@ -7,6 +7,7 @@ gem "jekyll-sass-converter", ">= 3.0"
 gem "jekyll-sitemap", "~> 1.3"
 gem "kramdown-math-katex", "~> 1.0"
 
+gem "activesupport"
 gem "bigdecimal"
 gem "bit-struct"
 gem "bundler"

@@ -6,7 +6,7 @@ module Jekyll
       return unless file.output && file.output_ext == '.html'
 
       Utils.log_duration("HTML Minify:") do
-        stdout, stderr, status = Utils.fast_npx(
+        file.output = Utils.npx_command(
           'html-minifier-terser',
           '--collapse-boolean-attributes',
           '--collapse-whitespace',
@@ -23,9 +23,6 @@ module Jekyll
           '--sort-class-name',
           stdin_data: file.output)
 
-        raise "HTML Minify failed: #{stderr.strip}" unless status.success?
-
-        file.output = stdout
         "minified #{file.relative_path}"
       end
     end

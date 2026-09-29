@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'set'
 require 'yaml'
+require "active_support/core_ext/object/deep_dup"
 
 # A key-value cache which lazy-loads from a yaml file and writes any changes on exit.
 class YamlCache
@@ -26,15 +27,16 @@ class YamlCache
     @accessed_keys = Set.new
   end
 
+  # Returns a deep copy of the cached data for the key, or nil if there's no cached data
   def [](key)
     if key?(key)
       @accessed_keys.add(key)
-      load_data[key]
+      load_data[key].deep_dup
     end
   end
 
   def []=(key, value)
-    load_data[key] = value
+    load_data[key] = value.deep_dup
     @accessed_keys.add(key)
     mark_dirty
   end
@@ -57,10 +59,6 @@ class YamlCache
     load_data.size
   end
 
-  def each(&block)
-    load_data.each(&block)
-  end
-
   def mark_dirty
     @dirty = true
   end
@@ -68,7 +66,7 @@ class YamlCache
   def flush(prune_stale: false)
     return unless @data
 
-    prune_unused_keys!
+    prune_unused_keys! if prune_stale
     return unless @dirty
 
     FileUtils.mkdir_p(File.dirname(@file_path))
@@ -88,7 +86,7 @@ class YamlCache
 
   def load_data
     return @data if @data
-    @data = (File.exist?(@file_path) && YAML.safe_load_file(@file_path)) || {}
+    @data = (File.exist?(@file_path) && YAML.load_file(@file_path, aliases: true)) || {}
   end
 end
 

@@ -42,7 +42,7 @@ module Jekyll
         Utils.log_duration("Javascript Minify:") do
           FileUtils.mkdir_p(File.dirname(target_file))
 
-          stdout, stderr, status = Utils.fast_npx(
+          Utils.npx_command(
             "uglifyjs",
             "-c",
             "--source-map",
@@ -50,8 +50,6 @@ module Jekyll
             "-o", target_file,
             *source_files
           )
-          
-          raise "JavaScript build failed: #{stderr.strip}" unless status.success?
 
           "finished"
         end

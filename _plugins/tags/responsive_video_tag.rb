@@ -44,10 +44,10 @@ module Jekyll
         attributes << %(height="#{sources[:data][:height]}") unless options.key?("height")
         attributes << %(playsinline)
 
-        source_tags = sources[:paths].map do |path|
+        source_tags = sources[:outputs].map do |output|
           source_attributes = [
-            %(src="#{Utils.escape_html(path.public_url)}"),
-            %(type="#{Utils.escape_html(path.mime_type)}")
+            %(src="#{Utils.escape_html(output[:path].public_url)}"),
+            %(type="#{Utils.escape_html(output[:mime_type])}")
           ]
           %(<source #{source_attributes.join(' ')}/>)
         end

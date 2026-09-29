@@ -1,6 +1,6 @@
-require "open3"
-
 require "jekyll"
+require "active_support/core_ext/object/deep_dup"
+
 require_relative "utils"
 
 module Jekyll
@@ -58,7 +58,7 @@ module Jekyll
     module_function
 
     def get_cache_key
-      profiles = Marshal.load(Marshal.dump(PROFILES))
+      profiles = PROFILES.deep_dup
       profiles["vp9"][:video_options].delete("row-mt")
       profiles.transform_values! do |profile|
         profile = profile.dup
@@ -82,7 +82,7 @@ module Jekyll
     end
 
     def get_data(source_path)
-      stdout, stderr, status = Open3.capture3(
+      stdout = Utils.command(
         "ffprobe",
         "-v", "error",
         "-select_streams", "v:0",
@@ -90,7 +90,6 @@ module Jekyll
         "-of", "json",
         source_path
       )
-      raise Liquid::Error, "ffprobe failed for '#{source_path.relative_path}': #{stderr.strip}" unless status.success?
 
       stream = JSON.parse(stdout).fetch("streams").first
       {
@@ -98,10 +97,6 @@ module Jekyll
         height: Integer(stream.fetch("height")),
         fps: Rational(stream.fetch("r_frame_rate")),
       }
-    rescue Errno::ENOENT
-      raise Liquid::Error, "Unable to run ffprobe. Install FFmpeg and make sure ffprobe is available on PATH."
-    rescue JSON::ParserError, KeyError, TypeError, ArgumentError => error
-      raise Liquid::Error, "Unable to read video metadata for '#{source_path.relative_path}': #{error.message}"
     end
 
     def build_sources(site, source_path, formats, muted: false, start_time: nil, end_time: nil, duration: nil, speed: nil, fps: nil, crop: nil)
@@ -165,11 +160,9 @@ module Jekyll
             )
           end
 
-          _stdout, stderr, status = Open3.capture3(*command_builder.generate)
-          unless status.success?
-            to_generate.each { |output| output[:path].delete }
-            raise Liquid::Error, "ffmpeg failed for '#{source_path.relative_path}': #{stderr.strip}"
-          end
+          Utils.command(*command_builder.generate)
+
+          to_generate.each { |output| output[:mime_type] = Utils.npx_command("ffmime", output[:path]).strip }
 
           generated_outputs = to_generate.map { |output| "#{output[:config][:format]}" }
           "generated #{source_path.relative_path} [#{generated_outputs.join(", ")}]"
@@ -178,7 +171,7 @@ module Jekyll
 
       {
         data: data,
-        paths: outputs.map { |output| output[:path] }
+        outputs: outputs
       }
     end
   end

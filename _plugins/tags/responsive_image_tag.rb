@@ -39,8 +39,7 @@ module Jekyll
         # Early return for SVG images
         if source_format == "svg"
           if ResponsiveImage.should_inline_svg(site, source_path)
-            stdout, stderr, status = Utils.fast_npx('svgo', source_path, '-o', '-', '-q', '--config', './svgo-inline.config.mjs')
-            raise "SVGO failed for #{source_path}: #{stderr.strip}" unless status.success?
+            stdout = Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', './svgo-inline.config.mjs')
             return stdout.sub("<svg", "<svg #{get_img_attrs.call(alt: false).join(' ')}")
           end
 

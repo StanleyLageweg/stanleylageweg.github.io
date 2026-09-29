@@ -21,9 +21,19 @@ module Jekyll
       $stdout.reopen orig_stdout
     end
 
-    def fast_npx(package, *args)
-      # Open3.capture3("npx", "--no-install", package, *args)
-      Open3.capture3(File.join("./node_modules/.bin", package), *args)
+    # Executes the command and raises an exception if there's an error
+    def command(*args)
+      stdout, stderr, status = Open3.capture3(*args)
+      unless status.success?
+        raise stderr
+      end
+      stdout
+    end
+
+    # Executes a node package command, while circumventing the npx overhead
+    def npx_command(package, *args)
+      # command("npx", "--no-install", package, *args)
+      command(File.join("./node_modules/.bin", package), *args)
     end
 
     def escape_html(value)
