@@ -103,28 +103,32 @@ module Jekyll
         end
       end
 
-      def has_alpha?(image)
-        image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
-      end
+      def get_data(site, source_path)
+        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE) do
+          image = Vips::Image.new_from_file(source_path, access: :sequential)
+          image = image.autorot if image.respond_to?(:autorot)
+          width = image.width.to_i
+          height = image.height.to_i
+          has_alpha = image.bands == 2 || (image.bands == 4 && image.interpretation != :cmyk) || image.bands > 4
+          transparent = has_alpha && image[image.bands - 1].min < 255
 
-      def has_transparency?(image)
-        has_alpha?(image) && image[image.bands - 1].min < 255
+          {
+            width: width,
+            height: height,
+            transparent: transparent,
+          }
+        end
       end
 
       def build_sources(site, source_path, widths, formats)
-        source_image = Vips::Image.new_from_file(source_path, access: :sequential)
-        source_image = source_image.autorot if source_image.respond_to?(:autorot)
-        source_width = source_image.width.to_i
-        source_height = source_image.height.to_i
+        data = get_data(site, source_path)
 
-        max_width = [widths.max, source_width].compact.min
-        effective_widths = (widths << source_width).uniq.sort
+        max_width = [widths.max, data[:width]].compact.min
+        effective_widths = (widths << data[:width]).uniq.sort
         effective_widths = effective_widths.map { |w| Integer(w) }.select { |w| w <= max_width }
 
         effective_formats = formats.uniq
-
-        transparent = has_transparency?(source_image)
-        effective_formats.delete("jpg") if transparent
+        effective_formats.delete("jpg") if data[:transparent]
 
         configs = effective_formats.product(effective_widths).map do |pair|
           {
@@ -133,7 +137,7 @@ module Jekyll
           }
         end
 
-        outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
+        outputs = CacheUtils.get_or_generate_outputs(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
           Utils.log_duration("Responsive Image:") do
             to_generate.each do |output|
               if (output[:config][:extension] == "ico")
@@ -141,7 +145,7 @@ module Jekyll
               else
                 image = Vips::Image.new_from_file(source_path, access: :sequential)
                 image = image.autorot if image.respond_to?(:autorot)
-                scale = output[:config][:width].to_f / source_width
+                scale = output[:config][:width].to_f / data[:width]
                 image = image.resize(scale) unless scale == 1.0
                 image.write_to_file(output[:path])
               end
@@ -159,9 +163,7 @@ module Jekyll
           variants[format] << {path: output[:path], width: output[:config][:width]}
         end
         {
-          width: source_width,
-          height: source_height,
-          transparent: transparent,
+          **data,
           variants: variants,
         }
       end

@@ -24,7 +24,7 @@ module CacheUtils
     digest.hexdigest
   end
 
-  def self.get_or_generate(site, source_path, cache_name, configs, &generate)
+  def self.get_or_generate_outputs(site, source_path, cache_name, configs, &generate)
     cache = YamlCache.instance(File.join(site.source, "#{cache_name}"))
     source_hash = get_hash(source_path)
 
@@ -92,5 +92,21 @@ module CacheUtils
     outputs.each { |output| output[:path].add_keep_file }
 
     outputs
+  end
+
+  def self.get_or_generate_data(site, source_path, cache_name, &generate)
+    # Get the cached data
+    cache = YamlCache.instance(File.join(site.source, "#{cache_name}"))
+    source_hash = get_hash(source_path)
+    cache_key = "#{source_path.relative_path}:#{source_hash}"
+    data = cache[cache_key]
+
+    # Generate the data, if we have a cache miss
+    unless data
+      data = generate.call
+      cache[cache_key] = data
+    end
+
+    data
   end
 end

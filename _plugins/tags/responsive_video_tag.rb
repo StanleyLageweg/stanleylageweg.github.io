@@ -40,8 +40,8 @@ module Jekyll
         )
 
         attributes = Utils.parse_html_attributes(options, excluded_keys: RESERVED_ATTRIBUTES)
-        attributes << %(width="#{sources[:data][:width]}") unless options.key?("width")
-        attributes << %(height="#{sources[:data][:height]}") unless options.key?("height")
+        attributes << %(width="#{sources[:width]}") unless options.key?("width")
+        attributes << %(height="#{sources[:height]}") unless options.key?("height")
         attributes << %(playsinline)
 
         source_tags = sources[:outputs].map do |output|

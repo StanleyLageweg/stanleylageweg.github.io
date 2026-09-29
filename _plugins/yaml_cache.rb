@@ -86,7 +86,8 @@ class YamlCache
 
   def load_data
     return @data if @data
-    @data = (File.exist?(@file_path) && YAML.load_file(@file_path, aliases: true)) || {}
+    permitted_classes = [Rational, Symbol]
+    @data = (File.exist?(@file_path) && YAML.load_file(@file_path, permitted_classes: permitted_classes)) || {}
   end
 end
 

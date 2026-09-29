@@ -81,27 +81,30 @@ module Jekyll
       formats
     end
 
-    def get_data(source_path)
-      stdout = Utils.command(
-        "ffprobe",
-        "-v", "error",
-        "-select_streams", "v:0",
-        "-show_entries", "stream=width,height,r_frame_rate",
-        "-of", "json",
-        source_path
-      )
+    def get_data(site, source_path)
+      CacheUtils.get_or_generate_data(site, source_path, CacheUtils::VIDEO_CACHE) do
+        stdout = Utils.command(
+          "ffprobe",
+          "-v", "error",
+          "-select_streams", "v:0",
+          "-show_entries", "stream=width,height,r_frame_rate",
+          "-of", "json",
+          source_path
+        )
 
-      stream = JSON.parse(stdout).fetch("streams").first
-      {
-        width: Integer(stream.fetch("width")), 
-        height: Integer(stream.fetch("height")),
-        fps: Rational(stream.fetch("r_frame_rate")),
-      }
+        stream = JSON.parse(stdout).fetch("streams").first
+
+        {
+          width: Integer(stream.fetch("width")), 
+          height: Integer(stream.fetch("height")),
+          fps: Rational(stream.fetch("r_frame_rate")),
+        }
+      end
     end
 
     def build_sources(site, source_path, formats, muted: false, start_time: nil, end_time: nil, duration: nil, speed: nil, fps: nil, crop: nil)
       raise ArgumentError, "end_time and duration are mutualy exclusive (#{source_path.relative_path})" if end_time && duration
-      data = get_data(source_path)
+      data = get_data(site, source_path)
       scale = 1r
       max_size = ([data[:width], data[:height]] + (crop&.split(":", 2)&.map(&:to_i) || [])).max
       if max_size > 1920
@@ -144,7 +147,7 @@ module Jekyll
         })
       end
 
-      outputs = CacheUtils.get_or_generate(site, source_path, CacheUtils::VIDEO_CACHE, configs) do |to_generate|
+      outputs = CacheUtils.get_or_generate_outputs(site, source_path, CacheUtils::VIDEO_CACHE, configs) do |to_generate|
         Utils.log_duration("Responsive Video:") do
           command_builder = FFmpegBuilder.new(source_path.path, input_options: input_options)
           to_generate.each do |output|
@@ -170,7 +173,7 @@ module Jekyll
       end
 
       {
-        data: data,
+        **data,
         outputs: outputs
       }
     end
