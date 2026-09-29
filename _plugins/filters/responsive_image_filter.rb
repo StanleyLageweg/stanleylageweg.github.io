@@ -11,7 +11,11 @@ module Jekyll
       site = @context.registers[:site]
       source_path = Filepath.new(site, input.to_s)
       source_format = source_path.extension(normalize: true)
-      return Utils.escape_html(source_path.public_url) if source_format == "svg" && !convert_svg
+
+      if source_format == "svg" && !convert_svg
+        source = ResponsiveImage.build_svg(site, source_path)
+        return Utils.escape_html(source[:path].public_url)
+      end
       
       sources = Jekyll::ResponsiveImage.build_sources(site, source_path, [output_width], [output_format])
       Utils.escape_html(sources[:variants][output_format].last[:path].public_url || source_path.public_url)

@@ -18,12 +18,12 @@
 {% if favicon %}
   {% assign ico = favicon | responsive_image: 32, "ico", true %}
   <link rel="icon" type="image/x-icon" href="{{ ico }}" sizes="32x32" />
-  <link rel="icon" type="image/svg+xml" href="{{ favicon }}" />
+  <link rel="icon" type="image/svg+xml" href="{{ favicon | responsive_image }}" />
   {% if site.favicon_dark %}
-    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_dark }}" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_dark | responsive_image }}" media="(prefers-color-scheme: dark)" />
   {% endif %}
   {% if site.favicon_light %}
-    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_light }}" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="{{ site.favicon_light | responsive_image }}" media="(prefers-color-scheme: light)" />
   {% endif %}
   {% assign apple_touch_icon = favicon | responsive_image: 180, "png", true %}
   <link rel="apple-touch-icon" href="{{ apple_touch_icon }}" />

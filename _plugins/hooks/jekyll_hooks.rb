@@ -44,7 +44,6 @@ end
 
 # After writing all of the rendered files to disk
 Jekyll::Hooks.register :site, :post_write do |site|
-  Jekyll::OptimizeSVG.run(site)
   Jekyll::LogOutputSize.run(site)
   Jekyll::JekyllRubyProf.stop(site)
 end

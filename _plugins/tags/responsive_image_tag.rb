@@ -39,13 +39,12 @@ module Jekyll
         # Early return for SVG images
         if source_format == "svg"
           if ResponsiveImage.should_inline_svg(site, source_path)
-            stdout = Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', './svgo-inline.config.mjs')
-            return stdout.sub("<svg", "<svg #{get_img_attrs.call(alt: false).join(' ')}")
+            svg = ResponsiveImage.build_inline_svg(site, source_path)
+            return svg.sub("<svg", "<svg #{get_img_attrs.call(alt: false).join(' ')}")
           end
 
-          source_image = Vips::Image.new_from_file(source_path, access: :sequential)
-          source_image = source_image.autorot if source_image.respond_to?(:autorot)
-          img_attrs = get_img_attrs.call(src: source_path, width: source_image.width, height: source_image.height)
+          source = ResponsiveImage.build_svg(site, source_path)
+          img_attrs = get_img_attrs.call(src: source[:path], width: source[:width], height: source[:height])
           return %(<img #{img_attrs.join(' ')}/>)
         end
 

@@ -40,7 +40,7 @@ module CacheUtils
     outputs = configs.map do |config|
       config[:extension] ||= source_path.extension(normalize: true)
 
-      cache_key = "#{source_path.relative_path}:#{config}:#{source_hash}"
+      cache_key = "outputs:#{source_path.relative_path}:#{config}:#{source_hash}"
       output = cache[cache_key]
 
       unless output && File.exist?(File.join(site.dest, output[:relative_path]))
@@ -94,11 +94,11 @@ module CacheUtils
     outputs
   end
 
-  def self.get_or_generate_data(site, source_path, cache_name, &generate)
+  def self.get_or_generate_data(site, source_path, cache_name, config, &generate)
     # Get the cached data
     cache = YamlCache.instance(File.join(site.source, "#{cache_name}"))
     source_hash = get_hash(source_path)
-    cache_key = "#{source_path.relative_path}:#{source_hash}"
+    cache_key = "data:#{source_path.relative_path}:#{config}:#{source_hash}"
     data = cache[cache_key]
 
     # Generate the data, if we have a cache miss

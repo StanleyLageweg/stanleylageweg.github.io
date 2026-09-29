@@ -82,7 +82,7 @@ module Jekyll
     end
 
     def get_data(site, source_path)
-      CacheUtils.get_or_generate_data(site, source_path, CacheUtils::VIDEO_CACHE) do
+      CacheUtils.get_or_generate_data(site, source_path, CacheUtils::VIDEO_CACHE, {}) do
         stdout = Utils.command(
           "ffprobe",
           "-v", "error",

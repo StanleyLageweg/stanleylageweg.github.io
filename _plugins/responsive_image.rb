@@ -104,7 +104,7 @@ module Jekyll
       end
 
       def get_data(site, source_path)
-        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE) do
+        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE, {}) do
           image = Vips::Image.new_from_file(source_path, access: :sequential)
           image = image.autorot if image.respond_to?(:autorot)
           width = image.width.to_i
@@ -166,6 +166,36 @@ module Jekyll
           **data,
           variants: variants,
         }
+      end
+
+      def build_svg(site, source_path)
+        data = get_data(site, source_path)
+        config_file = "./svgo.config.mjs"
+        configs = [{ svgo_config: File.read(config_file).gsub(/\s+/, "") }]
+        outputs = CacheUtils.get_or_generate_outputs(site, source_path, CacheUtils::IMAGE_CACHE, configs) do |to_generate|
+          Utils.log_duration("Responsive Image:") do
+            to_generate.each do |output|
+              Utils.npx_command('svgo', source_path, '-o', output[:path], '-q', '--config', config_file)
+            end
+            "optimized #{source_path.relative_path}"
+          end
+        end
+
+        {
+          **data,
+          **outputs[0],
+        }
+      end
+
+      def build_inline_svg(site, source_path)
+        config_file = "./svgo-inline.config.mjs"
+        config = { svgo_config: File.read(config_file).gsub(/\s+/, "") }
+        CacheUtils.get_or_generate_data(site, source_path, CacheUtils::IMAGE_CACHE, config) do
+          Utils.log_duration("Responsive Image:") do
+            Utils.npx_command('svgo', source_path, '-o', '-', '-q', '--config', config_file)
+            "optimized #{source_path.relative_path} (inline)"
+          end
+        end
       end
     end
   end
