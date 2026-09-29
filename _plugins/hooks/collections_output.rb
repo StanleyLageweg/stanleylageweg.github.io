@@ -6,7 +6,7 @@ module Jekyll
     def run(site)
       site.collections.each_value do |collection|
         collection.docs.each do |document|
-          return unless document.data['output'] == false
+          next unless document.data['output'] == false
 
           def document.write?
             false
