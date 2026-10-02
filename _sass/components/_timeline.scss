@@ -54,13 +54,13 @@ $color: v.$primary-color;
 .timeline__image {
   flex-shrink: 0;
   width: $image-size;
-  height: $image-size;
+  max-height: $image-size;
   border-radius: v.$border-radius;
   overflow: hidden;
   background-color: white;
   
   img {
-    object-fit: cover;
+    object-fit: contain;
     width: 100%;
     height: 100%;
   }
