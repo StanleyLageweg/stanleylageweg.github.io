@@ -15,7 +15,7 @@ function updateDateRangeDurations() {
 
 			// Use the first day of the next month, as we assume that the duration will have lasted the full month
 			const date = new Date(toString);
-				return new Date(date.getFullYear(), date.getMonth() + 1, 1);
+			return new Date(date.getFullYear(), date.getMonth() + 1, 1);
 		})();
 
 		if (isNaN(fromDate)) {
@@ -38,7 +38,7 @@ function updateDateRangeDurations() {
 		const years = Math.floor(totalMonths / 12);
 		const months = totalMonths % 12;
 
-		if (years < 0 && months < 0) {
+		if (years <= 0 && months <= 0) {
 			continue;
 		}
 

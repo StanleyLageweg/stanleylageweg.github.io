@@ -1,3 +1,10 @@
+- title: CoolGames
+  image: /assets/images/coolgames.png
+  link: https://www.coolgames.com/
+  positions:
+    - title: Senior Game Developer
+      from: Oct. 2026
+      
 - title: Vertigo Games
   image: /assets/images/vertigo-games.png
   link: https://www.vertigo-games.com/
